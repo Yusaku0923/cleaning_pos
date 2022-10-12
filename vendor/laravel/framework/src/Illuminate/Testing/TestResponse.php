@@ -6,8 +6,8 @@ use ArrayAccess;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\CookieValuePrefix;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -19,7 +19,6 @@ use Illuminate\Testing\Assert as PHPUnit;
 use Illuminate\Testing\Constraints\SeeInOrder;
 use Illuminate\Testing\Fluent\AssertableJson;
 use LogicException;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -43,7 +42,7 @@ class TestResponse implements ArrayAccess
      *
      * @var \Illuminate\Support\Collection
      */
-    public $exceptions;
+    protected $exceptions;
 
     /**
      * The streamed content of the response.
@@ -189,7 +188,74 @@ class TestResponse implements ArrayAccess
      */
     protected function statusMessageWithDetails($expected, $actual)
     {
+        $lastException = $this->exceptions->last();
+
+        if ($lastException) {
+            return $this->statusMessageWithException($expected, $actual, $lastException);
+        }
+
+        if ($this->baseResponse instanceof RedirectResponse) {
+            $session = $this->baseResponse->getSession();
+
+            if (! is_null($session) && $session->has('errors')) {
+                return $this->statusMessageWithErrors($expected, $actual, $session->get('errors')->all());
+            }
+        }
+
+        if ($this->baseResponse->headers->get('Content-Type') === 'application/json') {
+            $testJson = new AssertableJsonString($this->getContent());
+
+            if (isset($testJson['errors'])) {
+                return $this->statusMessageWithErrors($expected, $actual, $testJson->json());
+            }
+        }
+
         return "Expected response status code [{$expected}] but received {$actual}.";
+    }
+
+    /**
+     * Get an assertion message for a status assertion that has an unexpected exception.
+     *
+     * @param  string|int  $expected
+     * @param  string|int  $actual
+     * @param  \Throwable  $exception
+     * @return string
+     */
+    protected function statusMessageWithException($expected, $actual, $exception)
+    {
+        $exception = (string) $exception;
+
+        return <<<EOF
+Expected response status code [$expected] but received $actual.
+
+The following exception occurred during the request:
+
+$exception
+EOF;
+    }
+
+    /**
+     * Get an assertion message for a status assertion that contained errors.
+     *
+     * @param  string|int  $expected
+     * @param  string|int  $actual
+     * @param  array  $errors
+     * @return string
+     */
+    protected function statusMessageWithErrors($expected, $actual, $errors)
+    {
+        $errors = $this->baseResponse->headers->get('Content-Type') === 'application/json'
+            ? json_encode($errors, JSON_PRETTY_PRINT)
+            : implode(PHP_EOL, Arr::flatten($errors));
+
+        return <<<EOF
+Expected response status code [$expected] but received $actual.
+
+The following errors occurred during the request:
+
+$errors
+
+EOF;
     }
 
     /**
@@ -399,7 +465,7 @@ class TestResponse implements ArrayAccess
     public function assertCookie($cookieName, $value = null, $encrypted = true, $unserialize = false)
     {
         PHPUnit::assertNotNull(
-            $cookie = $this->getCookie($cookieName, $encrypted && ! is_null($value), $unserialize),
+            $cookie = $this->getCookie($cookieName),
             "Cookie [{$cookieName}] not present on response."
         );
 
@@ -409,9 +475,13 @@ class TestResponse implements ArrayAccess
 
         $cookieValue = $cookie->getValue();
 
+        $actual = $encrypted
+            ? CookieValuePrefix::remove(app('encrypter')->decrypt($cookieValue, $unserialize))
+            : $cookieValue;
+
         PHPUnit::assertEquals(
-            $value, $cookieValue,
-            "Cookie [{$cookieName}] was found, but value [{$cookieValue}] does not match [{$value}]."
+            $value, $actual,
+            "Cookie [{$cookieName}] was found, but value [{$actual}] does not match [{$value}]."
         );
 
         return $this;
@@ -426,14 +496,14 @@ class TestResponse implements ArrayAccess
     public function assertCookieExpired($cookieName)
     {
         PHPUnit::assertNotNull(
-            $cookie = $this->getCookie($cookieName, false),
+            $cookie = $this->getCookie($cookieName),
             "Cookie [{$cookieName}] not present on response."
         );
 
         $expiresAt = Carbon::createFromTimestamp($cookie->getExpiresTime());
 
         PHPUnit::assertTrue(
-            $cookie->getExpiresTime() !== 0 && $expiresAt->lessThan(Carbon::now()),
+            0 !== $cookie->getExpiresTime() && $expiresAt->lessThan(Carbon::now()),
             "Cookie [{$cookieName}] is not expired, it expires at [{$expiresAt}]."
         );
 
@@ -449,14 +519,14 @@ class TestResponse implements ArrayAccess
     public function assertCookieNotExpired($cookieName)
     {
         PHPUnit::assertNotNull(
-            $cookie = $this->getCookie($cookieName, false),
+            $cookie = $this->getCookie($cookieName),
             "Cookie [{$cookieName}] not present on response."
         );
 
         $expiresAt = Carbon::createFromTimestamp($cookie->getExpiresTime());
 
         PHPUnit::assertTrue(
-            $cookie->getExpiresTime() === 0 || $expiresAt->greaterThan(Carbon::now()),
+            0 === $cookie->getExpiresTime() || $expiresAt->greaterThan(Carbon::now()),
             "Cookie [{$cookieName}] is expired, it expired at [{$expiresAt}]."
         );
 
@@ -472,7 +542,7 @@ class TestResponse implements ArrayAccess
     public function assertCookieMissing($cookieName)
     {
         PHPUnit::assertNull(
-            $this->getCookie($cookieName, false),
+            $this->getCookie($cookieName),
             "Cookie [{$cookieName}] is present on response."
         );
 
@@ -483,33 +553,13 @@ class TestResponse implements ArrayAccess
      * Get the given cookie from the response.
      *
      * @param  string  $cookieName
-     * @param  bool  $decrypt
-     * @param  bool  $unserialize
      * @return \Symfony\Component\HttpFoundation\Cookie|null
      */
-    public function getCookie($cookieName, $decrypt = true, $unserialize = false)
+    public function getCookie($cookieName)
     {
         foreach ($this->headers->getCookies() as $cookie) {
             if ($cookie->getName() === $cookieName) {
-                if (! $decrypt) {
-                    return $cookie;
-                }
-
-                $decryptedValue = CookieValuePrefix::remove(
-                    app('encrypter')->decrypt($cookie->getValue(), $unserialize)
-                );
-
-                return new Cookie(
-                    $cookie->getName(),
-                    $decryptedValue,
-                    $cookie->getExpiresTime(),
-                    $cookie->getPath(),
-                    $cookie->getDomain(),
-                    $cookie->isSecure(),
-                    $cookie->isHttpOnly(),
-                    $cookie->isRaw(),
-                    $cookie->getSameSite()
-                );
+                return $cookie;
             }
         }
     }
@@ -737,19 +787,6 @@ class TestResponse implements ArrayAccess
     }
 
     /**
-     * Assert that the response does not contain the given path.
-     *
-     * @param  string  $path
-     * @return $this
-     */
-    public function assertJsonMissingPath(string $path)
-    {
-        $this->decodeResponseJson()->assertMissingPath($path);
-
-        return $this;
-    }
-
-    /**
      * Assert that the response has a given JSON structure.
      *
      * @param  array|null  $structure
@@ -931,17 +968,6 @@ class TestResponse implements ArrayAccess
     }
 
     /**
-     * Get the JSON decoded body of the response as a collection.
-     *
-     * @param  string|null  $key
-     * @return \Illuminate\Support\Collection
-     */
-    public function collect($key = null)
-    {
-        return Collection::make($this->json($key));
-    }
-
-    /**
      * Assert that the response view equals the given value.
      *
      * @param  string  $value
@@ -977,13 +1003,6 @@ class TestResponse implements ArrayAccess
             PHPUnit::assertTrue($value(Arr::get($this->original->gatherData(), $key)));
         } elseif ($value instanceof Model) {
             PHPUnit::assertTrue($value->is(Arr::get($this->original->gatherData(), $key)));
-        } elseif ($value instanceof EloquentCollection) {
-            $actual = Arr::get($this->original->gatherData(), $key);
-
-            PHPUnit::assertInstanceOf(EloquentCollection::class, $actual);
-            PHPUnit::assertSameSize($value, $actual);
-
-            $value->each(fn ($item, $index) => PHPUnit::assertTrue($actual->get($index)->is($item)));
         } else {
             PHPUnit::assertEquals($value, Arr::get($this->original->gatherData(), $key));
         }
@@ -1122,6 +1141,8 @@ class TestResponse implements ArrayAccess
         }
 
         $this->assertSessionHas('errors');
+
+        $keys = (array) $errors;
 
         $sessionErrors = $this->session()->get('errors')->getBag($errorBag)->getMessages();
 
@@ -1364,13 +1385,7 @@ class TestResponse implements ArrayAccess
      */
     protected function session()
     {
-        $session = app('session.store');
-
-        if (! $session->isStarted()) {
-            $session->start();
-        }
-
-        return $session;
+        return app('session.store');
     }
 
     /**
@@ -1413,10 +1428,9 @@ class TestResponse implements ArrayAccess
     /**
      * Dump the content from the response.
      *
-     * @param  string|null  $key
      * @return $this
      */
-    public function dump($key = null)
+    public function dump()
     {
         $content = $this->getContent();
 
@@ -1426,11 +1440,7 @@ class TestResponse implements ArrayAccess
             $content = $json;
         }
 
-        if (! is_null($key)) {
-            dump(data_get($content, $key));
-        } else {
-            dump($content);
-        }
+        dump($content);
 
         return $this;
     }
@@ -1535,7 +1545,8 @@ class TestResponse implements ArrayAccess
      * @param  string  $offset
      * @return bool
      */
-    public function offsetExists($offset): bool
+    #[\ReturnTypeWillChange]
+    public function offsetExists($offset)
     {
         return $this->responseHasView()
                     ? isset($this->original->gatherData()[$offset])
@@ -1548,7 +1559,8 @@ class TestResponse implements ArrayAccess
      * @param  string  $offset
      * @return mixed
      */
-    public function offsetGet($offset): mixed
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset)
     {
         return $this->responseHasView()
                     ? $this->viewData($offset)
@@ -1564,7 +1576,8 @@ class TestResponse implements ArrayAccess
      *
      * @throws \LogicException
      */
-    public function offsetSet($offset, $value): void
+    #[\ReturnTypeWillChange]
+    public function offsetSet($offset, $value)
     {
         throw new LogicException('Response data may not be mutated using array access.');
     }
@@ -1577,7 +1590,8 @@ class TestResponse implements ArrayAccess
      *
      * @throws \LogicException
      */
-    public function offsetUnset($offset): void
+    #[\ReturnTypeWillChange]
+    public function offsetUnset($offset)
     {
         throw new LogicException('Response data may not be mutated using array access.');
     }

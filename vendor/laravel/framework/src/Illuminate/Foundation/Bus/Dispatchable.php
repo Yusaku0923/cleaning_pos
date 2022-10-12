@@ -2,7 +2,6 @@
 
 namespace Illuminate\Foundation\Bus;
 
-use Closure;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\Fluent;
 
@@ -21,21 +20,13 @@ trait Dispatchable
     /**
      * Dispatch the job with the given arguments if the given truth test passes.
      *
-     * @param  bool|\Closure  $boolean
+     * @param  bool  $boolean
      * @param  mixed  ...$arguments
      * @return \Illuminate\Foundation\Bus\PendingDispatch|\Illuminate\Support\Fluent
      */
     public static function dispatchIf($boolean, ...$arguments)
     {
-        if ($boolean instanceof Closure) {
-            $dispatchable = new static(...$arguments);
-
-            return value($boolean, $dispatchable)
-                ? new PendingDispatch($dispatchable)
-                : new Fluent;
-        }
-
-        return value($boolean)
+        return $boolean
             ? new PendingDispatch(new static(...$arguments))
             : new Fluent;
     }
@@ -43,21 +34,13 @@ trait Dispatchable
     /**
      * Dispatch the job with the given arguments unless the given truth test passes.
      *
-     * @param  bool|\Closure  $boolean
+     * @param  bool  $boolean
      * @param  mixed  ...$arguments
      * @return \Illuminate\Foundation\Bus\PendingDispatch|\Illuminate\Support\Fluent
      */
     public static function dispatchUnless($boolean, ...$arguments)
     {
-        if ($boolean instanceof Closure) {
-            $dispatchable = new static(...$arguments);
-
-            return ! value($boolean, $dispatchable)
-                ? new PendingDispatch($dispatchable)
-                : new Fluent;
-        }
-
-        return ! value($boolean)
+        return ! $boolean
             ? new PendingDispatch(new static(...$arguments))
             : new Fluent;
     }

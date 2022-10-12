@@ -59,7 +59,9 @@ class DatabaseBatchRepository implements PrunableBatchRepository
         return $this->connection->table($this->table)
                             ->orderByDesc('id')
                             ->take($limit)
-                            ->when($before, fn ($q) => $q->where('id', '<', $before))
+                            ->when($before, function ($q) use ($before) {
+                                return $q->where('id', '<', $before);
+                            })
                             ->get()
                             ->map(function ($batch) {
                                 return $this->toBatch($batch);
@@ -76,7 +78,6 @@ class DatabaseBatchRepository implements PrunableBatchRepository
     public function find(string $batchId)
     {
         $batch = $this->connection->table($this->table)
-                            ->useWritePdo()
                             ->where('id', $batchId)
                             ->first();
 
@@ -285,7 +286,9 @@ class DatabaseBatchRepository implements PrunableBatchRepository
      */
     public function transaction(Closure $callback)
     {
-        return $this->connection->transaction(fn () => $callback());
+        return $this->connection->transaction(function () use ($callback) {
+            return $callback();
+        });
     }
 
     /**
@@ -340,26 +343,5 @@ class DatabaseBatchRepository implements PrunableBatchRepository
             $batch->cancelled_at ? CarbonImmutable::createFromTimestamp($batch->cancelled_at) : $batch->cancelled_at,
             $batch->finished_at ? CarbonImmutable::createFromTimestamp($batch->finished_at) : $batch->finished_at
         );
-    }
-
-    /**
-     * Get the underlying database connection.
-     *
-     * @return \Illuminate\Database\Connection
-     */
-    public function getConnection()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * Set the underlying database connection.
-     *
-     * @param  \Illuminate\Database\Connection  $connection
-     * @return void
-     */
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
     }
 }

@@ -10,7 +10,6 @@ use Illuminate\Database\DetectsLostConnections;
 use Illuminate\Queue\Events\JobExceptionOccurred;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
-use Illuminate\Queue\Events\JobReleasedAfterException;
 use Illuminate\Queue\Events\Looping;
 use Illuminate\Queue\Events\WorkerStopping;
 use Illuminate\Support\Carbon;
@@ -294,15 +293,19 @@ class Worker
      */
     protected function stopIfNecessary(WorkerOptions $options, $lastRestart, $startTime = 0, $jobsProcessed = 0, $job = null)
     {
-        return match (true) {
-            $this->shouldQuit => static::EXIT_SUCCESS,
-            $this->memoryExceeded($options->memory) => static::EXIT_MEMORY_LIMIT,
-            $this->queueShouldRestart($lastRestart) => static::EXIT_SUCCESS,
-            $options->stopWhenEmpty && is_null($job) => static::EXIT_SUCCESS,
-            $options->maxTime && hrtime(true) / 1e9 - $startTime >= $options->maxTime => static::EXIT_SUCCESS,
-            $options->maxJobs && $jobsProcessed >= $options->maxJobs => static::EXIT_SUCCESS,
-            default => null
-        };
+        if ($this->shouldQuit) {
+            return static::EXIT_SUCCESS;
+        } elseif ($this->memoryExceeded($options->memory)) {
+            return static::EXIT_MEMORY_LIMIT;
+        } elseif ($this->queueShouldRestart($lastRestart)) {
+            return static::EXIT_SUCCESS;
+        } elseif ($options->stopWhenEmpty && is_null($job)) {
+            return static::EXIT_SUCCESS;
+        } elseif ($options->maxTime && hrtime(true) / 1e9 - $startTime >= $options->maxTime) {
+            return static::EXIT_SUCCESS;
+        } elseif ($options->maxJobs && $jobsProcessed >= $options->maxJobs) {
+            return static::EXIT_SUCCESS;
+        }
     }
 
     /**
@@ -406,7 +409,7 @@ class Worker
     public function process($connectionName, $job, WorkerOptions $options)
     {
         try {
-            // First we will raise the before job event and determine if the job has already run
+            // First we will raise the before job event and determine if the job has already ran
             // over its maximum attempt limits, which could primarily happen when this job is
             // continually timing out and not actually throwing any exceptions from itself.
             $this->raiseBeforeJobEvent($connectionName, $job);
@@ -419,9 +422,9 @@ class Worker
                 return $this->raiseAfterJobEvent($connectionName, $job);
             }
 
-            // Here we will fire off the job and let it process. We will catch any exceptions, so
-            // they can be reported to the developer's logs, etc. Once the job is finished the
-            // proper events will be fired to let any listeners know this job has completed.
+            // Here we will fire off the job and let it process. We will catch any exceptions so
+            // they can be reported to the developers logs, etc. Once the job is finished the
+            // proper events will be fired to let any listeners know this job has finished.
             $job->fire();
 
             $this->raiseAfterJobEvent($connectionName, $job);
@@ -466,10 +469,6 @@ class Worker
             // another listener (or this same one). We will re-throw this exception after.
             if (! $job->isDeleted() && ! $job->isReleased() && ! $job->hasFailed()) {
                 $job->release($this->calculateBackoff($job, $options));
-
-                $this->events->dispatch(new JobReleasedAfterException(
-                    $connectionName, $job
-                ));
             }
         }
 
@@ -675,10 +674,6 @@ class Worker
     protected function listenForSignals()
     {
         pcntl_async_signals(true);
-
-        pcntl_signal(SIGQUIT, function () {
-            $this->shouldQuit = true;
-        });
 
         pcntl_signal(SIGTERM, function () {
             $this->shouldQuit = true;

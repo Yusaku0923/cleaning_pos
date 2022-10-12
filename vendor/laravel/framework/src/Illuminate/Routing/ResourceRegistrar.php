@@ -79,7 +79,7 @@ class ResourceRegistrar
         // If the resource name contains a slash, we will assume the developer wishes to
         // register these resource routes with a prefix so we will set that up out of
         // the box so they don't have to mess with it. Otherwise, we will continue.
-        if (str_contains($name, '/')) {
+        if (Str::contains($name, '/')) {
             $this->prefixedResource($name, $controller, $options);
 
             return;
@@ -94,20 +94,13 @@ class ResourceRegistrar
 
         $collection = new RouteCollection;
 
-        $resourceMethods = $this->getResourceMethods($defaults, $options);
-
-        foreach ($resourceMethods as $m) {
+        foreach ($this->getResourceMethods($defaults, $options) as $m) {
             $route = $this->{'addResource'.ucfirst($m)}(
                 $name, $base, $controller, $options
             );
 
             if (isset($options['bindingFields'])) {
                 $this->setResourceBindingFields($route, $options['bindingFields']);
-            }
-
-            if (isset($options['trashed']) &&
-                in_array($m, ! empty($options['trashed']) ? $options['trashed'] : array_intersect($resourceMethods, ['show', 'edit', 'update']))) {
-                $route->withTrashed();
             }
 
             $collection->add($route);
@@ -358,7 +351,7 @@ class ResourceRegistrar
      */
     public function getResourceUri($resource)
     {
-        if (! str_contains($resource, '.')) {
+        if (! Str::contains($resource, '.')) {
             return $resource;
         }
 

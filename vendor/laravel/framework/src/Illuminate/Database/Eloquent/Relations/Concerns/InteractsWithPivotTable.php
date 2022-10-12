@@ -92,19 +92,17 @@ trait InteractsWithPivotTable
         $current = $this->getCurrentlyAttachedPivots()
                         ->pluck($this->relatedPivotKey)->all();
 
-        $records = $this->formatRecordsList($this->parseIds($ids));
+        $detach = array_diff($current, array_keys(
+            $records = $this->formatRecordsList($this->parseIds($ids))
+        ));
 
         // Next, we will take the differences of the currents and given IDs and detach
         // all of the entities that exist in the "current" array but are not in the
         // array of the new IDs given to the method which will complete the sync.
-        if ($detaching) {
-            $detach = array_diff($current, array_keys($records));
+        if ($detaching && count($detach) > 0) {
+            $this->detach($detach);
 
-            if (count($detach) > 0) {
-                $this->detach($detach);
-
-                $changes['detached'] = $this->castKeys($detach);
-            }
+            $changes['detached'] = $this->castKeys($detach);
         }
 
         // Now we are finally ready to attach the new records. Note that we'll disable
@@ -209,7 +207,7 @@ trait InteractsWithPivotTable
             return $this->updateExistingPivotUsingCustomClass($id, $attributes, $touch);
         }
 
-        if ($this->hasPivotColumn($this->updatedAt())) {
+        if (in_array($this->updatedAt(), $this->pivotColumns)) {
             $attributes = $this->addTimestampsToAttachment($attributes, true);
         }
 
@@ -671,11 +669,18 @@ trait InteractsWithPivotTable
      */
     protected function getTypeSwapValue($type, $value)
     {
-        return match (strtolower($type)) {
-            'int', 'integer' => (int) $value,
-            'real', 'float', 'double' => (float) $value,
-            'string' => (string) $value,
-            default => $value,
-        };
+        switch (strtolower($type)) {
+            case 'int':
+            case 'integer':
+                return (int) $value;
+            case 'real':
+            case 'float':
+            case 'double':
+                return (float) $value;
+            case 'string':
+                return (string) $value;
+            default:
+                return $value;
+        }
     }
 }

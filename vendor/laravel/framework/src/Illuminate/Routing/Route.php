@@ -6,9 +6,7 @@ use Closure;
 use Illuminate\Container\Container;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Contracts\CallableDispatcher;
 use Illuminate\Routing\Contracts\ControllerDispatcher as ControllerDispatcherContract;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Matching\HostValidator;
 use Illuminate\Routing\Matching\MethodValidator;
 use Illuminate\Routing\Matching\SchemeValidator;
@@ -18,6 +16,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Laravel\SerializableClosure\SerializableClosure;
 use LogicException;
+use Opis\Closure\SerializableClosure as OpisSerializableClosure;
+use ReflectionFunction;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 
 class Route
@@ -234,7 +234,9 @@ class Route
             $callable = unserialize($this->action['uses'])->getClosure();
         }
 
-        return $this->container[CallableDispatcher::class]->dispatch($this, $callable);
+        return $callable(...array_values($this->resolveMethodDependencies(
+            $this->parametersWithoutNulls(), new ReflectionFunction($callable)
+        )));
     }
 
     /**
@@ -269,22 +271,12 @@ class Route
     public function getController()
     {
         if (! $this->controller) {
-            $class = $this->getControllerClass();
+            $class = $this->parseControllerCallback()[0];
 
             $this->controller = $this->container->make(ltrim($class, '\\'));
         }
 
         return $this->controller;
-    }
-
-    /**
-     * Get the controller class used for the route.
-     *
-     * @return string
-     */
-    public function getControllerClass()
-    {
-        return $this->parseControllerCallback()[0];
     }
 
     /**
@@ -488,7 +480,9 @@ class Route
      */
     public function parametersWithoutNulls()
     {
-        return array_filter($this->parameters(), fn ($p) => ! is_null($p));
+        return array_filter($this->parameters(), function ($p) {
+            return ! is_null($p);
+        });
     }
 
     /**
@@ -514,22 +508,20 @@ class Route
     {
         preg_match_all('/\{(.*?)\}/', $this->getDomain().$this->uri, $matches);
 
-        return array_map(fn ($m) => trim($m, '?'), $matches[1]);
+        return array_map(function ($m) {
+            return trim($m, '?');
+        }, $matches[1]);
     }
 
     /**
      * Get the parameters that are listed in the route / controller signature.
      *
-     * @param  array  $conditions
+     * @param  string|null  $subClass
      * @return array
      */
-    public function signatureParameters($conditions = [])
+    public function signatureParameters($subClass = null)
     {
-        if (is_string($conditions)) {
-            $conditions = ['subClass' => $conditions];
-        }
-
-        return RouteSignatureParameters::fromAction($this->action, $conditions);
+        return RouteSignatureParameters::fromAction($this->action, $subClass);
     }
 
     /**
@@ -795,7 +787,7 @@ class Route
      */
     public function prefix($prefix)
     {
-        $prefix ??= '';
+        $prefix = $prefix ?? '';
 
         $this->updatePrefixOnAction($prefix);
 
@@ -929,7 +921,7 @@ class Route
     {
         $groupStack = last($this->router->getGroupStack());
 
-        if (isset($groupStack['namespace']) && ! str_starts_with($action, '\\')) {
+        if (isset($groupStack['namespace']) && strpos($action, '\\') !== 0) {
             return $groupStack['namespace'].'\\'.$action;
         }
 
@@ -995,6 +987,7 @@ class Route
 
         return is_string($missing) &&
             Str::startsWith($missing, [
+                'C:32:"Opis\\Closure\\SerializableClosure',
                 'O:47:"Laravel\\SerializableClosure\\SerializableClosure',
             ]) ? unserialize($missing) : $missing;
     }
@@ -1082,47 +1075,16 @@ class Route
             return [];
         }
 
-        [$controllerClass, $controllerMethod] = [
-            $this->getControllerClass(),
-            $this->getControllerMethod(),
-        ];
-
-        if (is_a($controllerClass, HasMiddleware::class, true)) {
-            return $this->staticallyProvidedControllerMiddleware(
-                $controllerClass, $controllerMethod
-            );
-        }
-
-        if (is_a($controllerClass, Controller::class, true)) {
-            return $this->controllerDispatcher()->getMiddleware(
-                $this->getController(), $controllerMethod
-            );
-        }
-
-        return [];
-    }
-
-    /**
-     * Get the statically provided controller middleware for the given class and method.
-     *
-     * @param  string  $class
-     * @param  string  $method
-     * @return array
-     */
-    protected function staticallyProvidedControllerMiddleware(string $class, string $method)
-    {
-        return collect($class::middleware())->reject(function ($middleware) use ($method) {
-            return $this->controllerDispatcher()::methodExcludedByOptions(
-                $method, ['only' => $middleware->only, 'except' => $middleware->except]
-            );
-        })->map->middleware->values()->all();
+        return $this->controllerDispatcher()->getMiddleware(
+            $this->getController(), $this->getControllerMethod()
+        );
     }
 
     /**
      * Specify middleware that should be removed from the given route.
      *
      * @param  array|string  $middleware
-     * @return $this
+     * @return $this|array
      */
     public function withoutMiddleware($middleware)
     {
@@ -1146,7 +1108,7 @@ class Route
     /**
      * Indicate that the route should enforce scoping of multiple implicit Eloquent bindings.
      *
-     * @return $this
+     * @return bool
      */
     public function scopeBindings()
     {
@@ -1253,7 +1215,7 @@ class Route
     {
         return new SymfonyRoute(
             preg_replace('/\{(\w+?)\?\}/', '{$1}', $this->uri()), $this->getOptionalParameterNames(),
-            $this->wheres, ['utf8' => true],
+            $this->wheres, ['utf8' => true, 'action' => $this->action],
             $this->getDomain() ?: '', [], $this->methods
         );
     }
@@ -1316,14 +1278,16 @@ class Route
     public function prepareForSerialization()
     {
         if ($this->action['uses'] instanceof Closure) {
-            $this->action['uses'] = serialize(
-                new SerializableClosure($this->action['uses'])
+            $this->action['uses'] = serialize(\PHP_VERSION_ID < 70400
+                ? new OpisSerializableClosure($this->action['uses'])
+                : new SerializableClosure($this->action['uses'])
             );
         }
 
         if (isset($this->action['missing']) && $this->action['missing'] instanceof Closure) {
-            $this->action['missing'] = serialize(
-                new SerializableClosure($this->action['missing'])
+            $this->action['missing'] = serialize(\PHP_VERSION_ID < 70400
+                ? new OpisSerializableClosure($this->action['missing'])
+                : new SerializableClosure($this->action['missing'])
             );
         }
 

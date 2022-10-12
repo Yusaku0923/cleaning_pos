@@ -34,7 +34,7 @@ final class ExceptionHandler implements ExceptionHandlerContract
      */
     public function __construct(Container $container, ExceptionHandlerContract $appExceptionHandler)
     {
-        $this->container = $container;
+        $this->container           = $container;
         $this->appExceptionHandler = $appExceptionHandler;
     }
 
@@ -62,10 +62,8 @@ final class ExceptionHandler implements ExceptionHandlerContract
         if ($e instanceof SymfonyConsoleExceptionInterface) {
             $this->appExceptionHandler->renderForConsole($output, $e);
         } else {
-            /** @var \NunoMaduro\Collision\Contracts\Provider $provider */
-            $provider = $this->container->make(ProviderContract::class);
-
-            $handler = $provider->register()
+            $handler = $this->container->make(ProviderContract::class)
+                ->register()
                 ->getHandler()
                 ->setOutput($output);
 

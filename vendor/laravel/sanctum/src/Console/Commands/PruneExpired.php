@@ -28,26 +28,20 @@ class PruneExpired extends Command
      */
     public function handle()
     {
-        $model = Sanctum::$personalAccessTokenModel;
-
-        $hours = $this->option('hours');
-
-        $this->components->task(
-            'Pruning tokens with expired expires_at timestamps',
-            fn () => $model::where('expires_at', '<', now()->subHours($hours))->delete()
-        );
-
         if ($expiration = config('sanctum.expiration')) {
-            $this->components->task(
-                'Pruning tokens with expired expiration value based on configuration file',
-                fn () => $model::where('created_at', '<', now()->subMinutes($expiration + ($hours * 60)))->delete()
-            );
-        } else {
-            $this->components->warn('Expiration value not specified in configuration file.');
+            $model = Sanctum::$personalAccessTokenModel;
+
+            $hours = $this->option('hours');
+
+            $model::where('created_at', '<', now()->subMinutes($expiration + ($hours * 60)))->delete();
+
+            $this->info("Tokens expired for more than {$hours} hours pruned successfully.");
+
+            return 0;
         }
 
-        $this->components->info("Tokens expired for more than [$hours hours] pruned successfully.");
+        $this->warn('Expiration value not specified in configuration file.');
 
-        return 0;
+        return 1;
     }
 }

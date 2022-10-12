@@ -4,10 +4,8 @@ namespace Illuminate\Foundation\Console;
 
 use Illuminate\Console\GeneratorCommand;
 use InvalidArgumentException;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-#[AsCommand(name: 'make:observer')]
 class ObserverMakeCommand extends GeneratorCommand
 {
     /**
@@ -16,17 +14,6 @@ class ObserverMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'make:observer';
-
-    /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'make:observer';
 
     /**
      * The console command description.
@@ -146,8 +133,7 @@ class ObserverMakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the observer already exists'],
-            ['model', 'm', InputOption::VALUE_OPTIONAL, 'The model that the observer applies to'],
+            ['model', 'm', InputOption::VALUE_OPTIONAL, 'The model that the observer applies to.'],
         ];
     }
 }
