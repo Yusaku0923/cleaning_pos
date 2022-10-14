@@ -1,0 +1,94 @@
+@startuml tables
+entity stores as "stores\n店舗テーブル" {
+  + id [PK]
+  --
+  name [店舗名]
+  email [メールアドレス]
+  password [パスワード]
+  address [住所]
+  phone_number [電話番号]
+  created_at [作成日]
+  updated_at [更新日]
+}
+
+entity managers as "managers\n担当者テーブル" {
+  + id [PK]
+  --
+  store_id
+  name [名前]
+  created_at [作成日]
+  updated_at [更新日]
+}
+
+entity customers as "customers\n顧客テーブル" {
+  + id [PK]
+  --
+  manager_id
+  name [名前]
+  address [住所]
+  cutoff_date [締め日]？？？
+  created_at [作成日]
+  updated_at [更新日]
+}
+
+entity orders as "orders\n注文テーブル" {
+  + id [PK]
+  --
+  customer_id
+  total [合計金額]
+  is_registered_as_invoice [請求書フラグ]？？？
+  has_paied [支払い済みフラグ]
+  note [特記事項]
+  created_at [作成日]
+  updated_at [更新日]
+}
+
+entity categories as "categories\n商品カテゴリテーブル" {
+  + id [PK]
+  --
+  admin_id
+  category [カテゴリ名]
+  created_at [作成日]
+  updated_at [更新日]
+}
+
+entity products as "products\n商品テーブル" {
+  + id [PK]
+  --
+  admin_id
+  name [商品名]
+  price [値段]
+  created_at [作成日]
+  updated_at [更新日]
+}
+
+entity order_product as "order_product\n注文-商品テーブル" {
+  + id [PK]
+  --
+  order_id
+  product_id
+  product_count [注文個数]
+  created_at [作成日]
+  updated_at [更新日]
+}
+
+' entity invoices as "invoices\n領収書テーブル" {
+'   + id [PK]
+'   --
+'   user_id
+'   password [パスワード]
+'   created_at [作成日]
+'   updated_at [更新日]
+' }
+
+entity serial_numbers as "serial_numbers\nシリアルナンバーテーブル" {
+  + id [PK]
+  --
+  manager_id
+  serial_number [シリアルナンバー]
+  created_at [作成日]
+  updated_at [更新日]
+}
+
+@enduml
+' XREA(レンタルサーバー)

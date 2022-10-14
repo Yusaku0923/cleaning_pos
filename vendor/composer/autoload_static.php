@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite3a021a13a5af2ee75e1fa69c87416ed
+class ComposerStaticInit2d743dc54f03ff5a717d3328e96ec2c3
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -538,6 +538,14 @@ class ComposerStaticInite3a021a13a5af2ee75e1fa69c87416ed
         'App\\Http\\Middleware\\TrustHosts' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustHosts.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Models\\Category' => __DIR__ . '/../..' . '/app/Models/Category.php',
+        'App\\Models\\Customer' => __DIR__ . '/../..' . '/app/Models/Customer.php',
+        'App\\Models\\Manager' => __DIR__ . '/../..' . '/app/Models/Manager.php',
+        'App\\Models\\Order' => __DIR__ . '/../..' . '/app/Models/Order.php',
+        'App\\Models\\OrderProduct' => __DIR__ . '/../..' . '/app/Models/OrderProduct.php',
+        'App\\Models\\Product' => __DIR__ . '/../..' . '/app/Models/Product.php',
+        'App\\Models\\SerialNumber' => __DIR__ . '/../..' . '/app/Models/SerialNumber.php',
+        'App\\Models\\Store' => __DIR__ . '/../..' . '/app/Models/Store.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
@@ -5540,10 +5548,10 @@ class ComposerStaticInite3a021a13a5af2ee75e1fa69c87416ed
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite3a021a13a5af2ee75e1fa69c87416ed::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite3a021a13a5af2ee75e1fa69c87416ed::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInite3a021a13a5af2ee75e1fa69c87416ed::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInite3a021a13a5af2ee75e1fa69c87416ed::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2d743dc54f03ff5a717d3328e96ec2c3::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2d743dc54f03ff5a717d3328e96ec2c3::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2d743dc54f03ff5a717d3328e96ec2c3::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit2d743dc54f03ff5a717d3328e96ec2c3::$classMap;
 
         }, null, ClassLoader::class);
     }

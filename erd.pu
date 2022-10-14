@@ -1,0 +1,11 @@
+@startuml erd
+' tables.pu はこのファイルと同じディレクトリに存在している想定です。
+!include tables.pu
+
+companies ||-o{ users
+companies ||-o{ positions
+users ||-o| user_profiles
+users ||-o{ user_subordinate_users
+users ||-o{ user_positions
+positions ||-o{ user_positions
+@enduml
