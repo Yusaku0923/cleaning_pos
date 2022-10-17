@@ -1,0 +1,72 @@
+.csinfo-table {
+    margin-bottom: 0;
+}
+.csinfo-table td {
+    font-size: 18px;
+    border: none;
+    padding: 0 0.5rem;
+    line-height: 1.1;
+    text-align: left;
+}
+
+/* Grid */
+.col-3-custom {
+    width: 24%;
+    flex: 0 0 24%;
+}
+.col-15, .col-sm-15, .col-md-15, .col-lg-15 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 3px;
+    padding-left: 3px;
+    width: 100%;
+}
+.col-15{
+  width: 19%;
+  flex: 0 0 19%;
+}
+
+/* button */
+/* default */
+.cbtn {
+    cursor: pointer;
+    text-decoration:none;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+/* size */
+.cbtn-lg {
+    font-size: calc(1.2825rem + 0.39vw);
+}
+.cbtn-md {
+    font-size: calc(1.2825rem + 0.39vw);
+}
+.cbtn-sm {
+    font-size: calc(1.2825rem + 0.39vw);
+}
+/* color */
+.cbtn-blue {
+    color: #fff;
+    background-color: #007bff;
+}
+.cbtn-green {
+    color: #fff;
+    background-color: #28a745;
+}
+
+.lh-leftbtn {
+    height: 91px;
+    padding: 22.5px 0;
+}
+.lh-leftbtn-oneline {
+    height: 91px;
+    padding: 35px 0;
+}
+.lh-rightbtn {
+    line-height: 90px;
+}
+.ctl-btn {
+    line-height: 46px;
+}
