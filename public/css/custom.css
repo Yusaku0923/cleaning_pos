@@ -35,6 +35,7 @@
     margin-bottom: 0.5rem;
     font-weight: 500;
     line-height: 1.2;
+    /* pointer-events: none; */
 }
 /* size */
 .cbtn-lg {
@@ -47,11 +48,15 @@
     font-size: calc(1.2825rem + 0.39vw);
 }
 /* color */
-.cbtn-blue {
+.cbtn-blue, .cbtn-blue:hover {
     color: #fff;
     background-color: #007bff;
 }
-.cbtn-green {
+.cbtn-green, .cbtn-green:hover {
+    color: #fff;
+    background-color: #28a745;
+}
+.cbtn-red, .cbtn-red:hover {
     color: #fff;
     background-color: #28a745;
 }

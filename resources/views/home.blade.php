@@ -3,15 +3,6 @@
 @section('content')
 <div class="col-12 px-2">
     <div class="col-12 row justify-content-center mx-auto">
-        <div class="col-12 mb-4">
-            <div class="card py-2">
-                <div class="d-flex justify-content-between">
-                    <div class="col-4 px-5 text-start">担当者：吾輩</div>
-                    <div class="col-4 text-center fw-bold">顧　客　呼　出</div>
-                    <div class="col-4 px-5 text-end">0000年00月00日 00時00分</div>
-                </div>
-            </div>
-        </div>
         <div class="col-12 row justify-content-between">
             {{-- Left Block --}}
             <div class="col-6 left-block">
@@ -41,13 +32,13 @@
                     顧　客　情　報
                 </div>
                 <div class="card col-12 p-2 text-start">
-                    <div class="card col-12 p-1">名前:</div>
+                    <div class="card col-12 p-1">名前: {{ $customer->name ?? '' }}</div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="card col-10 p-1">電話番号</div>
+                        <div class="card col-10 p-1">電話番号: {{ $customer->phone_number ?? '' }}</div>
                         <div class="card col-2 p-1 text-center">会員客</div>
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="card col-6 p-1">誕生日</div>
+                        <div class="card col-6 p-1">誕生日: {{ $customer->birth_day ?? '' }}</div>
                         <div class="card col-6 p-1">性別</div>
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
@@ -71,13 +62,14 @@
                     </div>
                 </div>
 
-                <div class="card col-12 py-1 px-3 mt-3">担当者：吾輩</div>
+                <div class="card col-12 py-1 px-3 mt-3">担当者：{{ session('manager_name') }}</div>
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px">
                     <div class="card col-15 mr-1 text-center lh-leftbtn">直前預り<br>取り消し</div>
-                    <div class="card col-15 mr-1 text-center lh-leftbtn">担当者<br>変更</div>
+                    <button type="button" class="card col-15 mr-1 text-center lh-leftbtn" data-toggle="modal" data-target="#exampleModal"><div class="mx-auto">担当者<br>変更</div></button>
                     <div class="card col-15 mr-1 text-center lh-leftbtn">タグ番号<br>0-000</div>
                     <div class="card col-15 mr-1 text-center lh-leftbtn-oneline">画面ロック</div>
                     <div class="card col-15 mr-1 text-center lh-leftbtn">再印刷<br>(領収書)</div>
+                    @include('modals.select_manager')
                 </div>
             </div>
 
@@ -88,10 +80,10 @@
                 </div>
                 <div class="card">
                     <div class="col-12 d-flex py-4 justify-content-around">
-                        <a href="#" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-blue">
+                        <a href="{{ route('customer.create') }}" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-blue">
                             新規登録
                         </a>
-                        <a href="#" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-green">
+                        <a href="{{ route('customer.search') }}" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-green">
                             顧客検索
                         </a>
                     </div>
@@ -135,5 +127,4 @@
         </div>
     </div>
 </div>
-
 @endsection

@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Store;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Store;
 
 class CreateDeafaultStore extends Seeder
 {
