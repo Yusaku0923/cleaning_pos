@@ -32,8 +32,9 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group mt-5">
-                    <button type="submit">登録する</button>
+                <div class="form-group mt-5 d-flex justify-content-end">
+                    <a class="btn btn-secondary" href="{{ route('home') }}">ホームへ戻る</a>
+                    <button class="btn btn-primary ml-5" type="submit">登録する</button>
                 </div>
             </form>
         </div>

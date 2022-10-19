@@ -11,8 +11,16 @@ class SearchCustomers extends Component
 
     public function render()
     {
+        $customers = [];
+        if (!empty($this->search)) {
+            $customers = Customer::where(function ($query) {
+                $query->where('name', 'like', '%'.$this->search.'%')->orWhere('name_kana', 'like', '%'.$this->search.'%');
+            })->where('manager_id', session()->get('manager_id'))
+            ->get();
+        }
+
         return view('livewire.search-customers', [
-            'customers' => Customer::where('name', 'like', '%'.$this->search.'%')->get(),
+            'customers' => $customers,
         ]);
     }
 }

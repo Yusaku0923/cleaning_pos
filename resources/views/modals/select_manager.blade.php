@@ -1,9 +1,9 @@
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="manager-select-modal" tabindex="-1" role="dialog" aria-labelledby="manager-select-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="manager-select-modal-label">Modal title</h5>
                 <button type="button" class="close btn btn-danger" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" class="h5">×</span>
                 </button>

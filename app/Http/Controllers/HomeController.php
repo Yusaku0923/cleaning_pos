@@ -14,17 +14,30 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index(Request $request)
+    public function index()
     {
         $managers = Manager::where('store_id', Auth::id())->get();
-        if ($request->session()->exists('customer_id')) {
-            $customer = Customer::find($request->session()->get('customer_id'));
+        if (session()->exists('customer_id')) {
+            $customer = Customer::find(session()->get('customer_id'));
+
+            // 担当者が設定されいていない、もしくは顧客-担当者が一致しない場合は顧客セッション削除
+            if (!session()->exists('manager_id') || session()->get('manager_id') !== $customer->manager_id) {
+                session()->forget('customer_id');
+                $customer = [];
+            }
         }
 
         return view('home')->with([
             'title' => '顧　客　呼　出',
             'managers' => $managers,
             'customer' => $customer ?? [],
+        ]);
+    }
+
+    public function menu()
+    {
+        return view('menu')->with([
+            'title' => 'マスタ編集メニュー',
         ]);
     }
 }

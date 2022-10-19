@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Laravel\Ui\Presets\React;
 
 class CustomerController extends Controller
 {
@@ -15,6 +16,18 @@ class CustomerController extends Controller
     public function search()
     {
         return view('customers.search');
+    }
+
+    public function select($id) {
+        // TODO: アクセス権限確認
+        session()->put('customer_id', $id);
+        return redirect()->route('home');
+    }
+
+    public function clear() {
+        // TODO: アクセス権限確認
+        session()->forget('customer_id');
+        return redirect()->route('home');
     }
 
     /**

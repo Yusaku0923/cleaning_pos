@@ -40,6 +40,7 @@
 /* size */
 .cbtn-lg {
     font-size: calc(1.2825rem + 0.39vw);
+    text-decoration:none;
 }
 .cbtn-md {
     font-size: calc(1.2825rem + 0.39vw);
@@ -58,7 +59,7 @@
 }
 .cbtn-red, .cbtn-red:hover {
     color: #fff;
-    background-color: #28a745;
+    background-color: #F30100;
 }
 
 .lh-leftbtn {

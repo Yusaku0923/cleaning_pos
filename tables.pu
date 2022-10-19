@@ -52,7 +52,7 @@ entity categories as "categories\n商品カテゴリテーブル" {
   updated_at [更新日]
 }
 
-entity products as "products\n商品テーブル" {
+entity clothes as "clothes\n商品テーブル" {
   + id [PK]
   --
   admin_id
@@ -62,12 +62,12 @@ entity products as "products\n商品テーブル" {
   updated_at [更新日]
 }
 
-entity order_product as "order_product\n注文-商品テーブル" {
+entity order_clothes as "order_clothes\n注文-商品テーブル" {
   + id [PK]
   --
   order_id
-  product_id
-  product_count [注文個数]
+  clothes_id
+  clothes_count [注文個数]
   created_at [作成日]
   updated_at [更新日]
 }

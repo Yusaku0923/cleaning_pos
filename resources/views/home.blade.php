@@ -7,7 +7,7 @@
             {{-- Left Block --}}
             <div class="col-6 left-block">
                 <div class="card col-12 py-2 h4 text-center">
-                    [顧客名]
+                    {{ isset($customer->name) ? $customer->name . '　様': '顧客情報が選択されていません' }}
                 </div>
                 <div class="card col-12 text-center">
                     <table class="table h-100 csinfo-table">
@@ -32,22 +32,22 @@
                     顧　客　情　報
                 </div>
                 <div class="card col-12 p-2 text-start">
-                    <div class="card col-12 p-1">名前: {{ $customer->name ?? '' }}</div>
+                    <div class="card col-12 p-1">名前　{{ isset($customer->name) ? $customer->name . '　様': '' }}</div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="card col-10 p-1">電話番号: {{ $customer->phone_number ?? '' }}</div>
+                        <div class="card col-10 p-1">電話番号　{{ isset($customer->phone_number) ? $customer->phone_number: '' }}</div>
                         <div class="card col-2 p-1 text-center">会員客</div>
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="card col-6 p-1">誕生日: {{ $customer->birth_day ?? '' }}</div>
-                        <div class="card col-6 p-1">性別</div>
+                        <div class="card col-6 p-1">誕生日　{{ isset($customer->birth_day) ? date('m月d日', strtotime($customer->birth_day)): '' }}</div>
+                        <div class="card col-6 p-1">性別　</div>
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="card col-6 p-1">累計売上</div>
-                        <div class="card col-6 p-1">来店回数</div>
+                        <div class="card col-6 p-1">累計売上　</div>
+                        <div class="card col-6 p-1">来店回数　</div>
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="card col-6 p-1">ポイント</div>
-                        <div class="card col-6 p-1">未収金</div>
+                        <div class="card col-6 p-1">ポイント　</div>
+                        <div class="card col-6 p-1">未収金　</div>
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
                         <div class="col-7">
@@ -65,7 +65,7 @@
                 <div class="card col-12 py-1 px-3 mt-3">担当者：{{ session('manager_name') }}</div>
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px">
                     <div class="card col-15 mr-1 text-center lh-leftbtn">直前預り<br>取り消し</div>
-                    <button type="button" class="card col-15 mr-1 text-center lh-leftbtn" data-toggle="modal" data-target="#exampleModal"><div class="mx-auto">担当者<br>変更</div></button>
+                    <button type="button" class="card col-15 mr-1 text-center lh-leftbtn cbtn-blue" data-toggle="modal" data-target="#manager-select-modal"><div class="mx-auto">担当者<br>変更</div></button>
                     <div class="card col-15 mr-1 text-center lh-leftbtn">タグ番号<br>0-000</div>
                     <div class="card col-15 mr-1 text-center lh-leftbtn-oneline">画面ロック</div>
                     <div class="card col-15 mr-1 text-center lh-leftbtn">再印刷<br>(領収書)</div>
@@ -118,10 +118,10 @@
                 </div>
 
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px;">
-                    <div class="card col-3 col-3-custom lh-rightbtn text-center">メニュー</div>
+                    <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-green">メニュー</a>
                     <div class="card col-3 col-3-custom lh-rightbtn text-center">両替</div>
-                    <div class="card col-3 col-3-custom lh-rightbtn text-center">入力クリア</div>
-                    <div class="card col-3 col-3-custom lh-rightbtn text-center">預り入力</div>
+                    <a href="{{ route('customer.clear') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-red">入力クリア</a>
+                    <a href="{{ route('customer.clear') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue">預り入力</a>
                 </div>
             </div>
         </div>
