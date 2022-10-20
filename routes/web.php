@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ClothesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,5 +38,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('clear', [CustomerController::class, 'clear'])->name('customer.clear');
         Route::get('create', [CustomerController::class, 'create'])->name('customer.create');
         Route::post('store', [CustomerController::class, 'store'])->name('customer.store');
+    });
+
+    Route::prefix('clothes')->group(function () {
+        Route::get('create', [ClothesController::class, 'create'])->name('clothes.create');
     });
 });

@@ -76,3 +76,32 @@
 .ctl-btn {
     line-height: 46px;
 }
+
+/* card */
+.menu-columns {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
+    justify-content: space-between;
+    gap: 6px;
+}
+.menu-card {
+    height: 180px;
+    width: 180px;
+    /* border-color: #007bff; */
+}
+.menu-icon {
+    line-height: 130px;
+    font-size: 100px;
+}
+.category-label {
+    line-height: 180px;
+    font-size: 24px;
+}
+.clothes-label {
+
+}
+.price-label {
+
+}
+
+/* etc */

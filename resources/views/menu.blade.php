@@ -6,7 +6,7 @@
         <a class="card col-5 h3 p-4 cbtn cbtn-blue text-center">
             担当者マスタ
         </a>
-        <a class="card col-5 h3 p-4 cbtn cbtn-blue text-center">
+        <a href="{{ route('clothes.create') }}" class="card col-5 h3 p-4 cbtn cbtn-blue text-center">
             商品マスタ
         </a>
     </div>

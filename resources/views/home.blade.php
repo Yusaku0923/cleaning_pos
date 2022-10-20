@@ -118,7 +118,7 @@
                 </div>
 
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px;">
-                    <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-green">メニュー</a>
+                    <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue">メニュー</a>
                     <div class="card col-3 col-3-custom lh-rightbtn text-center">両替</div>
                     <a href="{{ route('customer.clear') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-red">入力クリア</a>
                     <a href="{{ route('customer.clear') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue">預り入力</a>
