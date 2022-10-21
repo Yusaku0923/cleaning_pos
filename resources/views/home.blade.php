@@ -65,7 +65,7 @@
                 <div class="card col-12 py-1 px-3 mt-3">担当者：{{ session('manager_name') }}</div>
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px">
                     <div class="card col-15 mr-1 text-center lh-leftbtn">直前預り<br>取り消し</div>
-                    <button type="button" class="card col-15 mr-1 text-center lh-leftbtn cbtn-blue" data-toggle="modal" data-target="#manager-select-modal"><div class="mx-auto">担当者<br>変更</div></button>
+                    <button type="button" class="card col-15 mr-1 text-center lh-leftbtn cbtn-blue" data-bs-toggle="modal" data-bs-target="#manager-select-modal"><div class="mx-auto">担当者<br>変更</div></button>
                     <div class="card col-15 mr-1 text-center lh-leftbtn">タグ番号<br>0-000</div>
                     <div class="card col-15 mr-1 text-center lh-leftbtn-oneline">画面ロック</div>
                     <div class="card col-15 mr-1 text-center lh-leftbtn">再印刷<br>(領収書)</div>

@@ -7,6 +7,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
@@ -28,13 +30,13 @@
     <div id="app">
         <main class="py-4">
             <div class="col-12 mb-4 px-2">
-                <div class="card py-2">
+                <a href="{{ route('home') }}" class="card py-2 text-decoration-none text-body">
                     <div class="d-flex justify-content-between">
                         <div class="col-4 px-5 text-start">担当者：{{ session('manager_name') ?? '設定されていません' }}</div>
                         <div class="col-4 text-center fw-bold">{{ $title ?? 'システム' }}</div>
                         <div class="col-4 px-5 text-end">0000年00月00日 00時00分</div>
                     </div>
-                </div>
+                </a>
             </div>
             @yield('content')
         </main>

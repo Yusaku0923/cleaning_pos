@@ -61,6 +61,11 @@
     color: #fff;
     background-color: #F30100;
 }
+.cbtn-gray, .cbtn-gray:hover {
+    color: #fff;
+    background-color: #6c757d;
+}
+
 
 .lh-leftbtn {
     height: 91px;
@@ -93,15 +98,28 @@
     line-height: 130px;
     font-size: 100px;
 }
+.return-icon {
+    display: block;
+    padding-top: 20px;
+    line-height:110px;
+    font-size: 65px;
+}
 .category-label {
-    line-height: 180px;
+    line-height: 160px;
+    margin-bottom: 20px;
     font-size: 24px;
 }
 .clothes-label {
-
+    display: block;
+    padding-top: 30px;
+    line-height: 50px;
+    font-size: 24px;
 }
 .price-label {
-
+    display: block;
+    line-height: 80px;
+    margin-bottom: 20px;
+    font-size: 24px;
 }
 
 /* etc */
