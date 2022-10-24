@@ -7,10 +7,10 @@
     </div>
     <div class="col-12 menu-columns justify-content-between">
         @if (!$is_category)
-        <button class="card menu-card col-12 mx-auto" wire:click="back">
+        <a href="{{ route('clothes.create') }}" class="card menu-card col-12 mx-auto text-dark text-decoration-none">
             <span class="fw-light text-secondary return-icon text-center mx-auto"><i class="fa-solid fa-rotate-left"></i></span>
             <span class="text-center mx-auto">もどる</span>
-        </button>
+        </a>
         @endif
         <button type="button" class="card menu-card col-12 mx-auto" data-bs-toggle="modal" data-bs-target="#menu-create-modal">
             <span class="fw-light text-primary menu-icon text-center mx-auto">＋</span>

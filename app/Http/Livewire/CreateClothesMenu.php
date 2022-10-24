@@ -38,6 +38,7 @@ class CreateClothesMenu extends Component
 
     public function save()
     {
+        // https://programing-school.work/laravel-belongsto/
         if (is_null($this->category_id)) {
             Category::create([
                 'store_id' => Auth::id(),
