@@ -8,7 +8,7 @@
                     <span aria-hidden="true" class="h5">×</span>
                 </button>
             </div>
-            <form wire:submit.prevent="store">
+            <form method="POST" action="{{ route('manager.update') }}" class="form-horizontal" autocomplete="off">
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group">

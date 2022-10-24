@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ClothesController;
 
@@ -30,6 +31,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('manager')->group(function () {
         Route::post('update', [ManagerController::class, 'update'])->name('manager.update');
+    });
+
+    Route::prefix('order')->group(function () {
+        Route::get('create', [OrdersController::class, 'create'])->name('order.create');
     });
 
     Route::prefix('customer')->group(function () {

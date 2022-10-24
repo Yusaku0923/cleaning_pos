@@ -122,4 +122,30 @@
     font-size: 24px;
 }
 
-/* etc */
+/* order */
+.order-left {
+    width: 40%;
+}
+.order-right {
+    width: 55%;
+}
+.search-menu {
+    width: 100%;
+    height: 80vh;
+}
+.slip-window {
+    width: 100%;
+    height: 70vh;
+}
+.order-btn-area {
+    width: 100%;
+    height: 10vh;
+    align-items: flex-end;
+}
+.order-btn-right {
+    /* align-items: flex-end; */
+}
+.order-btn {
+    font-size: 18px;
+    bottom: 0;
+}
