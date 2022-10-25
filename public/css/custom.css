@@ -165,7 +165,9 @@
 
     display: grid;
     grid-template-columns: 48% 48%;
+    grid-template-rows: repeat(2, minmax(5rem, auto));
     justify-content: space-around;
+    align-content: start;
     gap: 10px;
 
     font-size: 24px;

@@ -26,10 +26,11 @@ class OrdersController extends Controller
     {
         $category_clothes = Category::with('clothes')->get();
 
+        // dd(json_decode(json_encode($category_clothes), true));
         return view('orders.create')->with([
             'title' => '預　り　入　力',
             'list_json' => json_encode($category_clothes),
-            'category' => $category_clothes
+            'categories' => json_decode(json_encode($category_clothes), true)
         ]);
     }
 
