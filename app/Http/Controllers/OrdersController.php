@@ -24,13 +24,13 @@ class OrdersController extends Controller
      */
     public function create()
     {
-        // $category = new Category;
-        // $category_clothes = $category->getAllWithClothes();
-        // dd($category_clothes);
         $category_clothes = Category::with('clothes')->get();
-        dd($category_clothes);
 
-        return view('orders.create');
+        return view('orders.create')->with([
+            'title' => '預　り　入　力',
+            'list_json' => json_encode($category_clothes),
+            'category' => $category_clothes
+        ]);
     }
 
     /**

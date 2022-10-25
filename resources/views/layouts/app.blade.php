@@ -28,7 +28,7 @@
 </head>
 <body>
     <div id="app">
-        <main class="py-4">
+        <main class="py-4 position-relative">
             <div class="col-12 mb-4 px-2">
                 <a href="{{ route('home') }}" class="card py-2 text-decoration-none text-body">
                     <div class="d-flex justify-content-between">
