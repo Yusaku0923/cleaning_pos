@@ -195,3 +195,9 @@
 .order-text {
     line-height: 1.8;
 }
+.order-amount {
+    font-size: 28px;
+}
+.to-bill {
+    line-height: 3;
+}

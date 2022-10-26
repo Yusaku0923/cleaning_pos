@@ -5324,7 +5324,10 @@ __webpack_require__.r(__webpack_exports__);
     return {
       categories: this.categories,
       isActive: '1',
-      order: []
+      order: {},
+      total: 0,
+      amount: 0,
+      tax: 1.1
     };
   },
   methods: {
@@ -5332,16 +5335,32 @@ __webpack_require__.r(__webpack_exports__);
       this.isActive = num;
     },
     add: function add(clothes) {
-      if (this.order[clothes.name]) {
-        clothes.count = this.order[clothes.name].count + 1;
-        this.$set(this.order[clothes.name], 'count', this.order[clothes.id].count + 1);
-        // this.order.splece(index, 1, clothes);
+      if (this.order[clothes.id]) {
+        clothes.count = this.order[clothes.id].count + 1;
+        this.$delete(this.order, clothes.id);
       } else {
         clothes.count = 1;
-        this.$set(this.order, clothes.name, clothes);
       }
+      this.$set(this.order, clothes.id, clothes);
+      this.total++;
+      this.amount += this.order[clothes.id].price;
     },
-    increase: function increase(index) {}
+    increace: function increace(clothes) {
+      clothes.count = this.order[clothes.id].count + 1;
+      this.$delete(this.order, clothes.id);
+      this.$set(this.order, clothes.id, clothes);
+      this.total++;
+      this.amount += this.order[clothes.id].price;
+    },
+    decreace: function decreace(clothes) {
+      clothes.count = this.order[clothes.id].count - 1;
+      this.$delete(this.order, clothes.id);
+      if (clothes.count !== 0) {
+        this.$set(this.order, clothes.id, clothes);
+      }
+      this.total--;
+      this.amount -= this.order[clothes.id].price;
+    }
   }
 });
 
@@ -5393,13 +5412,13 @@ var render = function render() {
         }
       }, [_c("div", {}, [_vm._v("\n                        " + _vm._s(clothes.name) + "\n                    ")]), _vm._v(" "), _c("div", {
         staticClass: "position-absolute bottom-0"
-      }, [_vm._v("\n                        " + _vm._s(clothes.price) + " 円\n                    ")])]);
+      }, [_vm._v("\n                        " + _vm._s(clothes.price.toLocaleString()) + " 円\n                    ")])]);
     }) : _vm._e()];
   })], 2), _vm._v(" "), _c("div", {
     staticClass: "slip-bar col-4 position-relative"
   }, [_c("div", {
     staticClass: "col-12 py-3 px-2 border border-secondary bg-white"
-  }, [_vm._v("\n            計：5点\n        ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n            計：" + _vm._s(_vm.total) + "点\n        ")]), _vm._v(" "), _c("div", {
     staticClass: "order-list"
   }, _vm._l(_vm.order, function (item) {
     return _c("div", {
@@ -5411,30 +5430,46 @@ var render = function render() {
       staticClass: "col-12 mt-2 d-flex justify-content-between order-detail"
     }, [_c("div", {
       staticClass: "col-5 d-flex justify-content-between"
-    }, [_vm._m(0, true), _vm._v(" "), _vm._m(1, true), _vm._v(" "), _c("div", {
+    }, [_c("button", {
+      staticClass: "card border border-primary text-primary p-2",
+      on: {
+        click: function click($event) {
+          return _vm.decreace(item);
+        }
+      }
+    }, [_c("i", {
+      staticClass: "fa-solid fa-minus"
+    })]), _vm._v(" "), _c("button", {
+      staticClass: "card border border-primary text-primary p-2",
+      on: {
+        click: function click($event) {
+          return _vm.increace(item);
+        }
+      }
+    }, [_c("i", {
+      staticClass: "fa-solid fa-plus"
+    })]), _vm._v(" "), _c("div", {
       staticClass: "text-primary order-text"
     }, [_vm._v("\n                            " + _vm._s(item.count) + " 点\n                        ")])]), _vm._v(" "), _c("div", {
       staticClass: "col-5 order-text text-end"
-    }, [_vm._v("\n                        " + _vm._s(item.count * item.price) + " 円\n                    ")])])]);
+    }, [_vm._v("\n                        " + _vm._s((item.count * item.price).toLocaleString()) + " 円\n                    ")])])]);
   }), 0), _vm._v(" "), _c("div", {
-    staticClass: "col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0"
-  }, [_vm._v("\n            5000円 お会計へ\n        ")])])]);
+    staticClass: "col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 d-flex justify-content-between"
+  }, [_c("div", {
+    staticClass: "col-8 order-amount"
+  }, [_c("span", {
+    staticStyle: {
+      "font-size": "20px"
+    }
+  }, [_vm._v("税込")]), _vm._v(" " + _vm._s(Math.trunc(_vm.amount * _vm.tax).toLocaleString()) + " 円\n            ")]), _vm._v(" "), _vm._m(0)])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("button", {
-    staticClass: "card border border-primary text-primary p-2"
-  }, [_c("i", {
-    staticClass: "fa-solid fa-minus"
-  })]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("button", {
-    staticClass: "card border border-primary text-primary p-2"
-  }, [_c("i", {
-    staticClass: "fa-solid fa-plus"
+  return _c("div", {
+    staticClass: "col-4 text-end to-bill"
+  }, [_vm._v("\n                お会計へ　"), _c("i", {
+    staticClass: "fa-solid fa-chevron-right pl-2"
   })]);
 }];
 render._withStripped = true;

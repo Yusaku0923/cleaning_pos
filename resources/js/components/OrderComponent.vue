@@ -22,7 +22,7 @@
                             {{ clothes.name }}
                         </div>
                         <div class="position-absolute bottom-0">
-                            {{ clothes.price }} 円
+                            {{ clothes.price.toLocaleString() }} 円
                         </div>
                     </div>
                 </template>
@@ -31,7 +31,7 @@
 
         <div class="slip-bar col-4 position-relative">
             <div class="col-12 py-3 px-2 border border-secondary bg-white">
-                計：5点
+                計：{{ total }}点
             </div>
 
             <div class="order-list">
@@ -41,10 +41,10 @@
                     <div class="col-12 px-2 order-title">{{ item.name }}</div>
                     <div class="col-12 mt-2 d-flex justify-content-between order-detail">
                         <div class="col-5 d-flex justify-content-between">
-                            <button class="card border border-primary text-primary p-2">
+                            <button class="card border border-primary text-primary p-2" v-on:click="decreace(item)">
                                 <i class="fa-solid fa-minus"></i>
                             </button>
-                            <button class="card border border-primary text-primary p-2">
+                            <button class="card border border-primary text-primary p-2" v-on:click="increace(item)">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                             <div class="text-primary order-text">
@@ -52,14 +52,19 @@
                             </div>
                         </div>
                         <div class="col-5 order-text text-end">
-                            {{ item.count * item.price }} 円
+                            {{ (item.count * item.price).toLocaleString() }} 円
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0">
-                5000円 お会計へ
+            <div class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 d-flex justify-content-between">
+                <div class="col-8 order-amount">
+                    <span style="font-size:20px;">税込</span> {{ Math.trunc(amount * tax).toLocaleString() }} 円
+                </div>
+                <div class="col-4 text-end to-bill">
+                    お会計へ　<i class="fa-solid fa-chevron-right pl-2"></i>
+                </div>
             </div>
 
         </div>
@@ -78,7 +83,10 @@ export default ({
         return {
             categories: this.categories,
             isActive: '1',
-            order: [],
+            order: {},
+            total: 0,
+            amount: 0,
+            tax: 1.1
         }
     },
     methods: {
@@ -88,15 +96,29 @@ export default ({
         add: function(clothes) {
             if (this.order[clothes.id]) {
                 clothes.count = this.order[clothes.id].count + 1;
-                this.$set(this.order[clothes.id], 'count', this.order[clothes.id].count + 1);
-                // this.order.splece(index, 1, clothes);
+                this.$delete(this.order, clothes.id);
             } else {
                 clothes.count = 1;
+            }
+            this.$set(this.order, clothes.id, clothes);
+            this.total++;
+            this.amount += this.order[clothes.id].price;
+        },
+        increace: function (clothes) {
+            clothes.count = this.order[clothes.id].count + 1;
+            this.$delete(this.order, clothes.id);
+            this.$set(this.order, clothes.id, clothes);
+            this.total++;
+            this.amount += this.order[clothes.id].price;
+        },
+        decreace: function (clothes) {
+            clothes.count = this.order[clothes.id].count - 1;
+            this.$delete(this.order, clothes.id);
+            if (clothes.count !== 0) {
                 this.$set(this.order, clothes.id, clothes);
             }
-        },
-        increase: function (index) {
-
+            this.total--;
+            this.amount -= this.order[clothes.id].price;
         }
     }
 });
