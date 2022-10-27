@@ -1,10 +1,11 @@
 <template>
+ <!-- いずれcomponentにまとめる -->
     <div class="col-12 py-3 mx-auto d-flex justify-content-between">
-        <div class="category-bar col-3 border border-secondary">
+        <div class="category-bar col-3 border-top border-bottom border-secondary">
             <div class="card py-5 px-2 border border-secondary"
                 v-for="(category, index) in categories"
                 :key="category.id"
-                v-on:click="change(index)"
+                @click="changeCategory(index)"
                 v-bind:class="{'active': isActive === index}"
             >
                 {{ category.name }}
@@ -17,11 +18,11 @@
                     <div class="card border border-secondary clothes-card position-relative p-2"
                         v-for="clothes in category.clothes"
                         :key="clothes.id"
-                        v-on:click="add(clothes)">
-                        <div class="">
+                        @click="add(clothes)">
+                        <div class="text-nowrap overflow-auto">
                             {{ clothes.name }}
                         </div>
-                        <div class="position-absolute bottom-0">
+                        <div class="position-absolute bottom-0 text-primary">
                             {{ clothes.price.toLocaleString() }} 円
                         </div>
                     </div>
@@ -29,36 +30,38 @@
             </template>
         </div>
 
-        <div class="slip-bar col-4 position-relative">
-            <div class="col-12 py-3 px-2 border border-secondary bg-white">
+        <div class="slip-bar col-4 position-relative" v-if="step === 1">
+            <div class="col-12 py-3 px-2 border border-secondary bg-white slip-header">
                 計：{{ total }}点
             </div>
 
             <div class="order-list">
                 <div class="col-12 py-3 px-2 border border-secondary bg-white"
-                    v-for="item in order"
-                    :key="item.id">
-                    <div class="col-12 px-2 order-title">{{ item.name }}</div>
+                    v-for="i in indexes"
+                    :key="i">
+                    <div class="col-12 px-2 order-title">{{ order[i].name }}</div>
                     <div class="col-12 mt-2 d-flex justify-content-between order-detail">
                         <div class="col-5 d-flex justify-content-between">
-                            <button class="card border border-primary text-primary p-2" v-on:click="decreace(item)">
+                            <button class="card border border-2 border-secondary text-secondary p-2" @click="decreace(order[i])">
                                 <i class="fa-solid fa-minus"></i>
                             </button>
-                            <button class="card border border-primary text-primary p-2" v-on:click="increace(item)">
+                            <button class="card border border-2 border-secondary text-secondary p-2" @click="increace(order[i])">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                             <div class="text-primary order-text">
-                                {{ item.count }} 点
+                                {{ order[i].count }} 点
                             </div>
                         </div>
-                        <div class="col-5 order-text text-end">
-                            {{ (item.count * item.price).toLocaleString() }} 円
+                        <div class="col-5 order-text text-end text-primary">
+                            {{ (order[i].count * order[i].price).toLocaleString() }} 円
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 d-flex justify-content-between">
+            <div class="col-12 py-4 px-2 text-white position-absolute bottom-0 d-flex justify-content-between"
+                @click="changeStep(2)"
+                :class="{ 'bg-primary': total !== 0, 'bg-secondary': total === 0 }">
                 <div class="col-8 order-amount">
                     <span style="font-size:20px;">税込</span> {{ Math.trunc(amount * tax).toLocaleString() }} 円
                 </div>
@@ -68,10 +71,119 @@
             </div>
 
         </div>
+
+        <div class="slip-bar col-4 border border-secondary position-relative" v-if="step === 2 || step === 3 || step === 4 || step === 5">
+            <div class="col-12 py-3 px-2 border-bottom border-secondary bg-white d-flex justify-content-between slip-header">
+                <div class="col-3 text-primary" @click="changeStep(1)">
+                        <i class="fa-solid fa-chevron-left"></i> 戻る
+                </div>
+                <div class="col-6 text-center">
+                        中山友作様
+                </div>
+                <div class="col-3"></div>
+            </div>
+
+            <div class="bill-detail">
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                    <div class="col-6 px-3">
+                        数量
+                    </div>
+                    <div class="col-6 px-3 text-end text-primary">
+                        {{ total }}点
+                    </div>
+                </div>
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                    <div class="col-6 px-3">
+                        小計
+                    </div>
+                    <div class="col-6 px-3 text-end text-primary">
+                        {{ Math.trunc(amount * tax).toLocaleString() }} 円
+                    </div>
+                </div>
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                    <div class="col-6 px-3">
+                        値引・割引
+                    </div>
+                    <div class="col-6 px-3 text-end text-primary">
+                        0 円
+                    </div>
+                </div>
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step !== 5">
+                    <div class="col-8 px-3">
+                        値引・割引を追加
+                    </div>
+                    <div class="col-2 px-3 text-end">
+                        <i class="fa-solid fa-chevron-right text-secondary"></i>
+                    </div>
+                </div>
+
+                <div class="col-12 py-2 d-flex justify-content-between border-top border-bottom border-1 border-secondary bill-row">
+                    <div class="col-4 px-3" style="line-height: 2.6">
+                        合計
+                    </div>
+                    <div class="col-8 px-3 text-end bill-total text-primary">
+                        {{ Math.trunc(amount * tax).toLocaleString() }} 円
+                    </div>
+                </div>
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                    <div class="col-6 px-3 text-secondary">
+                        内消費税10%
+                    </div>
+                    <div class="col-6 px-3 text-end text-secondary">
+                        ({{ Math.trunc(amount * (tax - 1)).toLocaleString() }} 円)
+                    </div>
+                </div>
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step === 5">
+                    <div class="col-6 px-3">
+                        お釣り
+                    </div>
+                    <div class="col-6 px-3 text-end text-primary">
+                        {{ change.toLocaleString() }} 円
+                    </div>
+                </div>
+
+                <div class="receipt mt-4">
+                    <div class="col-11 mx-auto card bg-primary text-white p-3" v-show="step === 4 || step === 5">
+                        領収書発行
+                    </div>
+                    <div class="col-11 mx-auto card bg-primary text-white p-3 mt-2" v-show="step === 4 || step === 5">
+                        レシート発行
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount"
+                @click="changeStep(3)"
+                v-if="step === 2 || step === 3">
+                預り金入力
+            </div>
+            <a class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount text-decoration-none"
+                :href="route"
+                v-if="step === 4 || step === 5"
+            >ホームに戻る</a>
+
+        </div>
+
+        <accounting-modal
+            @close = "changeStep"
+            @account = "account"
+            :amount="amount"
+            :tax="tax"
+            v-if="step === 3"
+        ></accounting-modal>
+
+        <change-modal
+            @close = "changeStep"
+            :change="change"
+            v-if="step === 4"
+        ></change-modal>
     </div>
 </template>
 
 <script>
+import AccountingModal from './Modals/AccountingModalComponent';
+import ChangeModal from './Modals/ChangeModalComponent';
+
 export default ({
     props: {
         categories: {
@@ -82,44 +194,73 @@ export default ({
     data() {
         return {
             categories: this.categories,
+            route: '/',
             isActive: '1',
+            indexes: [],
             order: {},
             total: 0,
             amount: 0,
-            tax: 1.1
+            tax: (1 + 10 / 100),
+            step: 1,
+            change: 0,
         }
     },
+    components: {
+        'accounting-modal': AccountingModal,
+        'change-modal': ChangeModal,
+    },
     methods: {
-        change: function (num) {
+        changeCategory: function (num) {
             this.isActive = num;
         },
-        add: function(clothes) {
-            if (this.order[clothes.id]) {
-                clothes.count = this.order[clothes.id].count + 1;
-                this.$delete(this.order, clothes.id);
-            } else {
-                clothes.count = 1;
+        changeStep: function (num) {
+            if (this.total !== 0) {
+                this.step = num;
             }
-            this.$set(this.order, clothes.id, clothes);
-            this.total++;
-            this.amount += this.order[clothes.id].price;
+        },
+        add: function(clothes) {
+            if (this.step === 1) {
+                if (this.order[clothes.id]) {
+                    clothes.count = this.order[clothes.id].count + 1;
+                    this.$delete(this.order, clothes.id);
+                } else {
+                    clothes.count = 1;
+                    this.indexes.push(clothes.id);
+                }
+                this.$set(this.order, clothes.id, clothes);
+
+                this.total++;
+                this.amount += this.order[clothes.id].price;
+            }
         },
         increace: function (clothes) {
             clothes.count = this.order[clothes.id].count + 1;
             this.$delete(this.order, clothes.id);
             this.$set(this.order, clothes.id, clothes);
+
             this.total++;
             this.amount += this.order[clothes.id].price;
         },
         decreace: function (clothes) {
+            this.total--;
+            this.amount -= this.order[clothes.id].price;
+
             clothes.count = this.order[clothes.id].count - 1;
             this.$delete(this.order, clothes.id);
             if (clothes.count !== 0) {
                 this.$set(this.order, clothes.id, clothes);
+            } else {
+                this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
             }
-            this.total--;
-            this.amount -= this.order[clothes.id].price;
-        }
+        },
+
+        account: function(payment) {
+            if (payment < Math.trunc(this.amount * this.tax)) {
+                return;
+            }
+            this.step = 4;
+            this.change = payment - Math.trunc(this.amount * this.tax);
+        },
     }
 });
 </script>

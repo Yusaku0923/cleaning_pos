@@ -5302,6 +5302,89 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "accounting",
+  props: {
+    amount: {
+      type: Number,
+      required: true
+    },
+    tax: {
+      type: Number,
+      required: true
+    }
+  },
+  data: function data() {
+    return {
+      amountWithTax: Math.trunc(this.amount * this.tax),
+      payment: 0
+    };
+  },
+  mounted: function mounted() {
+    var modal = document.querySelector('.modal-window');
+  },
+  methods: {
+    typeNumber: function typeNumber(num) {
+      if (this.payment === 0) {
+        this.payment = Number(num);
+      } else {
+        var payment = Number(this.payment + num);
+        if (payment < 1000000) {
+          this.payment = payment;
+        }
+      }
+    },
+    typeZero: function typeZero(multi) {
+      var payment = this.payment * multi;
+      if (payment < 1000000) {
+        this.payment = payment;
+      }
+    },
+    typeBackspace: function typeBackspace() {
+      this.payment = Number(String(this.payment).slice(0, -1));
+    },
+    typeJust: function typeJust() {
+      this.payment = this.amountWithTax;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "change",
+  props: {
+    change: {
+      type: Number,
+      required: true
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/OrderComponent.vue?vue&type=script&lang=js&":
 /*!*********************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/OrderComponent.vue?vue&type=script&lang=js& ***!
@@ -5313,6 +5396,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _Modals_AccountingModalComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Modals/AccountingModalComponent */ "./resources/js/components/Modals/AccountingModalComponent.vue");
+/* harmony import */ var _Modals_ChangeModalComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Modals/ChangeModalComponent */ "./resources/js/components/Modals/ChangeModalComponent.vue");
+
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     categories: {
@@ -5323,27 +5410,43 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       categories: this.categories,
+      route: '/',
       isActive: '1',
+      indexes: [],
       order: {},
       total: 0,
       amount: 0,
-      tax: 1.1
+      tax: 1 + 10 / 100,
+      step: 1,
+      change: 0
     };
   },
+  components: {
+    'accounting-modal': _Modals_AccountingModalComponent__WEBPACK_IMPORTED_MODULE_0__["default"],
+    'change-modal': _Modals_ChangeModalComponent__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
   methods: {
-    change: function change(num) {
+    changeCategory: function changeCategory(num) {
       this.isActive = num;
     },
-    add: function add(clothes) {
-      if (this.order[clothes.id]) {
-        clothes.count = this.order[clothes.id].count + 1;
-        this.$delete(this.order, clothes.id);
-      } else {
-        clothes.count = 1;
+    changeStep: function changeStep(num) {
+      if (this.total !== 0) {
+        this.step = num;
       }
-      this.$set(this.order, clothes.id, clothes);
-      this.total++;
-      this.amount += this.order[clothes.id].price;
+    },
+    add: function add(clothes) {
+      if (this.step === 1) {
+        if (this.order[clothes.id]) {
+          clothes.count = this.order[clothes.id].count + 1;
+          this.$delete(this.order, clothes.id);
+        } else {
+          clothes.count = 1;
+          this.indexes.push(clothes.id);
+        }
+        this.$set(this.order, clothes.id, clothes);
+        this.total++;
+        this.amount += this.order[clothes.id].price;
+      }
     },
     increace: function increace(clothes) {
       clothes.count = this.order[clothes.id].count + 1;
@@ -5353,16 +5456,275 @@ __webpack_require__.r(__webpack_exports__);
       this.amount += this.order[clothes.id].price;
     },
     decreace: function decreace(clothes) {
+      this.total--;
+      this.amount -= this.order[clothes.id].price;
       clothes.count = this.order[clothes.id].count - 1;
       this.$delete(this.order, clothes.id);
       if (clothes.count !== 0) {
         this.$set(this.order, clothes.id, clothes);
+      } else {
+        this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
       }
-      this.total--;
-      this.amount -= this.order[clothes.id].price;
+    },
+    account: function account(payment) {
+      if (payment < Math.trunc(this.amount * this.tax)) {
+        return;
+      }
+      this.step = 4;
+      this.change = payment - Math.trunc(this.amount * this.tax);
     }
   }
 });
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=template&id=5c1f30d3&":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=template&id=5c1f30d3& ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("transition", {
+    attrs: {
+      name: "modal",
+      appear: ""
+    }
+  }, [_c("div", {
+    staticClass: "modal modal-overlay",
+    on: {
+      click: function click($event) {
+        if ($event.target !== $event.currentTarget) return null;
+        return _vm.$emit("close", 2);
+      }
+    }
+  }, [_c("div", {
+    staticClass: "modal-window"
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_c("div", {
+    staticClass: "modal-ac-board"
+  }, [_c("div", {
+    staticClass: "col-11 modal-ac-header mx-auto text-center text-white border-bottom border-white"
+  }, [_vm._v("預り金入力")]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 modal-ac-body d-flex justify-content-between"
+  }, [_c("div", {
+    staticClass: "col-5 p-3"
+  }, [_c("div", {
+    staticClass: "col-12 modal-ac-result"
+  }, [_c("div", {
+    staticClass: "col-12 modal-ac-result-total border-bottom border-secondary d-flex justify-content-between p-2"
+  }, [_c("div", {
+    staticClass: "modal-ac-result-total-label fw-bold"
+  }, [_vm._v("合計")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-result-total-price position-relative py-2 fw-bold"
+  }, [_vm._v("\n                                        " + _vm._s(_vm.amountWithTax.toLocaleString()) + " 円\n                                        "), _c("p", {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: _vm.payment - _vm.amountWithTax < 0,
+      expression: "(payment - amountWithTax) < 0"
+    }],
+    staticClass: "text-danger mb-0 position-absolute end-0 fw-normal"
+  }, [_c("span", {
+    staticStyle: {
+      "font-size": "14px"
+    }
+  }, [_vm._v("不足")]), _vm._v(" " + _vm._s((_vm.payment - _vm.amountWithTax).toLocaleString()) + " 円")])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 modal-ac-result-change d-flex justify-content-between p-2"
+  }, [_c("div", {
+    staticClass: "modal-ac-result-change-label fw-bold"
+  }, [_vm._v("お釣り")]), _vm._v(" "), _vm.payment - _vm.amountWithTax < 0 ? _c("div", {
+    staticClass: "modal-ac-result-change-price fw-bold"
+  }, [_vm._v("\n                                        0 円\n                                    ")]) : _c("div", {
+    staticClass: "modal-ac-result-change-price fw-bold"
+  }, [_vm._v("\n                                        " + _vm._s((_vm.payment - _vm.amountWithTax).toLocaleString()) + " 円\n                                    ")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 modal-ac-result-receive d-flex justify-content-between p-2"
+  }, [_c("div", {
+    staticClass: "modal-ac-result-receive-label fw-bold"
+  }, [_vm._v("\n                                        預り金額\n                                    ")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-result-receive-price fw-bold"
+  }, [_vm._v("\n                                        " + _vm._s(_vm.payment.toLocaleString()) + " 円\n                                    ")])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-7 p-3"
+  }, [_c("div", {
+    staticClass: "modal-ac-keypad position-relative mx-auto text-primary"
+  }, [_c("div", {
+    staticClass: "modal-ac-keypad-upper"
+  }, [_c("div", {
+    staticClass: "modal-ac-keypad-upper-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeNumber("7");
+      }
+    }
+  }, [_vm._v("7")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-upper-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeNumber("8");
+      }
+    }
+  }, [_vm._v("8")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-upper-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeNumber("9");
+      }
+    }
+  }, [_vm._v("9")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-upper-backspace text-white border border-bottom-0 border-white",
+    on: {
+      click: function click($event) {
+        return _vm.typeBackspace();
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fa-solid fa-delete-left"
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-upper-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeNumber("4");
+      }
+    }
+  }, [_vm._v("4")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-upper-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeNumber("5");
+      }
+    }
+  }, [_vm._v("5")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-upper-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeNumber("6");
+      }
+    }
+  }, [_vm._v("6")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-upper-minus text-white border border-bottom-0 border-white"
+  }, [_c("i", {
+    staticClass: "fa-solid fa-minus"
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between"
+  }, [_c("div", {
+    staticClass: "modal-ac-keypad-lower"
+  }, [_c("div", {
+    staticClass: "modal-ac-keypad-lower-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeNumber("1");
+      }
+    }
+  }, [_vm._v("1")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-lower-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeNumber("2");
+      }
+    }
+  }, [_vm._v("2")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-lower-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeNumber("3");
+      }
+    }
+  }, [_vm._v("3")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-lower-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeZero(10);
+      }
+    }
+  }, [_vm._v("0")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-lower-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeZero(100);
+      }
+    }
+  }, [_vm._v("00")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-lower-key bg-secondary border-bottom border-white"
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-lower-just text-white border border-white",
+    on: {
+      click: function click($event) {
+        return _vm.typeJust();
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fa-solid fa-arrow-down"
+  })])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 modal-ac-send bg-primary text-center text-white border border-white",
+    "class": {
+      "bg-primary": _vm.payment >= _vm.amountWithTax,
+      "bg-secondary": _vm.payment < _vm.amountWithTax
+    },
+    on: {
+      click: function click($event) {
+        return _vm.$emit("account", _vm.payment);
+      }
+    }
+  }, [_vm._v("\n                        お会計\n                    ")])])])])])]);
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=template&id=29e107a4&":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=template&id=29e107a4& ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("transition", {
+    attrs: {
+      name: "modal",
+      appear: ""
+    }
+  }, [_c("div", {
+    staticClass: "modal modal-overlay",
+    on: {
+      click: function click($event) {
+        if ($event.target !== $event.currentTarget) return null;
+        return _vm.$emit("close", 5);
+      }
+    }
+  }, [_c("div", {
+    staticClass: "modal-window"
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_c("div", {
+    staticClass: "col-6 card modal-ch p-3"
+  }, [_c("div", {
+    staticClass: "col-12 modal-ch-label"
+  }, [_vm._v("お釣り")]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 modal-ch-change text-primary text-end"
+  }, [_vm._v(_vm._s(this.change.toLocaleString()) + " 円")])])])])])]);
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
 
 /***/ }),
 
@@ -5384,7 +5746,7 @@ var render = function render() {
   return _c("div", {
     staticClass: "col-12 py-3 mx-auto d-flex justify-content-between"
   }, [_c("div", {
-    staticClass: "category-bar col-3 border border-secondary"
+    staticClass: "category-bar col-3 border-top border-bottom border-secondary"
   }, _vm._l(_vm.categories, function (category, index) {
     return _c("div", {
       key: category.id,
@@ -5394,10 +5756,10 @@ var render = function render() {
       },
       on: {
         click: function click($event) {
-          return _vm.change(index);
+          return _vm.changeCategory(index);
         }
       }
-    }, [_vm._v("\n            " + _vm._s(category.name) + "\n        ")]);
+    }, [_vm._v("\n               " + _vm._s(category.name) + "\n           ")]);
   }), 0), _vm._v(" "), _c("div", {
     staticClass: "clothes-bar col-5 border border-secondary"
   }, [_vm._l(_vm.categories, function (category, index) {
@@ -5410,66 +5772,197 @@ var render = function render() {
             return _vm.add(clothes);
           }
         }
-      }, [_c("div", {}, [_vm._v("\n                        " + _vm._s(clothes.name) + "\n                    ")]), _vm._v(" "), _c("div", {
-        staticClass: "position-absolute bottom-0"
-      }, [_vm._v("\n                        " + _vm._s(clothes.price.toLocaleString()) + " 円\n                    ")])]);
+      }, [_c("div", {
+        staticClass: "text-nowrap overflow-auto"
+      }, [_vm._v("\n                           " + _vm._s(clothes.name) + "\n                       ")]), _vm._v(" "), _c("div", {
+        staticClass: "position-absolute bottom-0 text-primary"
+      }, [_vm._v("\n                           " + _vm._s(clothes.price.toLocaleString()) + " 円\n                       ")])]);
     }) : _vm._e()];
-  })], 2), _vm._v(" "), _c("div", {
+  })], 2), _vm._v(" "), _vm.step === 1 ? _c("div", {
     staticClass: "slip-bar col-4 position-relative"
   }, [_c("div", {
-    staticClass: "col-12 py-3 px-2 border border-secondary bg-white"
-  }, [_vm._v("\n            計：" + _vm._s(_vm.total) + "点\n        ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 py-3 px-2 border border-secondary bg-white slip-header"
+  }, [_vm._v("\n               計：" + _vm._s(_vm.total) + "点\n           ")]), _vm._v(" "), _c("div", {
     staticClass: "order-list"
-  }, _vm._l(_vm.order, function (item) {
+  }, _vm._l(_vm.indexes, function (i) {
     return _c("div", {
-      key: item.id,
+      key: i,
       staticClass: "col-12 py-3 px-2 border border-secondary bg-white"
     }, [_c("div", {
       staticClass: "col-12 px-2 order-title"
-    }, [_vm._v(_vm._s(item.name))]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(_vm.order[i].name))]), _vm._v(" "), _c("div", {
       staticClass: "col-12 mt-2 d-flex justify-content-between order-detail"
     }, [_c("div", {
       staticClass: "col-5 d-flex justify-content-between"
     }, [_c("button", {
-      staticClass: "card border border-primary text-primary p-2",
+      staticClass: "card border border-2 border-secondary text-secondary p-2",
       on: {
         click: function click($event) {
-          return _vm.decreace(item);
+          return _vm.decreace(_vm.order[i]);
         }
       }
     }, [_c("i", {
       staticClass: "fa-solid fa-minus"
     })]), _vm._v(" "), _c("button", {
-      staticClass: "card border border-primary text-primary p-2",
+      staticClass: "card border border-2 border-secondary text-secondary p-2",
       on: {
         click: function click($event) {
-          return _vm.increace(item);
+          return _vm.increace(_vm.order[i]);
         }
       }
     }, [_c("i", {
       staticClass: "fa-solid fa-plus"
     })]), _vm._v(" "), _c("div", {
       staticClass: "text-primary order-text"
-    }, [_vm._v("\n                            " + _vm._s(item.count) + " 点\n                        ")])]), _vm._v(" "), _c("div", {
-      staticClass: "col-5 order-text text-end"
-    }, [_vm._v("\n                        " + _vm._s((item.count * item.price).toLocaleString()) + " 円\n                    ")])])]);
+    }, [_vm._v("\n                               " + _vm._s(_vm.order[i].count) + " 点\n                           ")])]), _vm._v(" "), _c("div", {
+      staticClass: "col-5 order-text text-end text-primary"
+    }, [_vm._v("\n                           " + _vm._s((_vm.order[i].count * _vm.order[i].price).toLocaleString()) + " 円\n                       ")])])]);
   }), 0), _vm._v(" "), _c("div", {
-    staticClass: "col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 d-flex justify-content-between"
+    staticClass: "col-12 py-4 px-2 text-white position-absolute bottom-0 d-flex justify-content-between",
+    "class": {
+      "bg-primary": _vm.total !== 0,
+      "bg-secondary": _vm.total === 0
+    },
+    on: {
+      click: function click($event) {
+        return _vm.changeStep(2);
+      }
+    }
   }, [_c("div", {
     staticClass: "col-8 order-amount"
   }, [_c("span", {
     staticStyle: {
       "font-size": "20px"
     }
-  }, [_vm._v("税込")]), _vm._v(" " + _vm._s(Math.trunc(_vm.amount * _vm.tax).toLocaleString()) + " 円\n            ")]), _vm._v(" "), _vm._m(0)])])]);
+  }, [_vm._v("税込")]), _vm._v(" " + _vm._s(Math.trunc(_vm.amount * _vm.tax).toLocaleString()) + " 円\n               ")]), _vm._v(" "), _vm._m(0)])]) : _vm._e(), _vm._v(" "), _vm.step === 2 || _vm.step === 3 || _vm.step === 4 || _vm.step === 5 ? _c("div", {
+    staticClass: "slip-bar col-4 border border-secondary position-relative"
+  }, [_c("div", {
+    staticClass: "col-12 py-3 px-2 border-bottom border-secondary bg-white d-flex justify-content-between slip-header"
+  }, [_c("div", {
+    staticClass: "col-3 text-primary",
+    on: {
+      click: function click($event) {
+        return _vm.changeStep(1);
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fa-solid fa-chevron-left"
+  }), _vm._v(" 戻る\n               ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 text-center"
+  }, [_vm._v("\n                       中山友作様\n               ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-3"
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "bill-detail"
+  }, [_c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+  }, [_c("div", {
+    staticClass: "col-6 px-3"
+  }, [_vm._v("\n                       数量\n                   ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 px-3 text-end text-primary"
+  }, [_vm._v("\n                       " + _vm._s(_vm.total) + "点\n                   ")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+  }, [_c("div", {
+    staticClass: "col-6 px-3"
+  }, [_vm._v("\n                       小計\n                   ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 px-3 text-end text-primary"
+  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount * _vm.tax).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _vm._m(1), _vm._v(" "), _vm.step !== 5 ? _c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+  }, [_c("div", {
+    staticClass: "col-8 px-3"
+  }, [_vm._v("\n                       値引・割引を追加\n                   ")]), _vm._v(" "), _vm._m(2)]) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-top border-bottom border-1 border-secondary bill-row"
+  }, [_c("div", {
+    staticClass: "col-4 px-3",
+    staticStyle: {
+      "line-height": "2.6"
+    }
+  }, [_vm._v("\n                       合計\n                   ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8 px-3 text-end bill-total text-primary"
+  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount * _vm.tax).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+  }, [_c("div", {
+    staticClass: "col-6 px-3 text-secondary"
+  }, [_vm._v("\n                       内消費税10%\n                   ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 px-3 text-end text-secondary"
+  }, [_vm._v("\n                       (" + _vm._s(Math.trunc(_vm.amount * (_vm.tax - 1)).toLocaleString()) + " 円)\n                   ")])]), _vm._v(" "), _vm.step === 5 ? _c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+  }, [_c("div", {
+    staticClass: "col-6 px-3"
+  }, [_vm._v("\n                       お釣り\n                   ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 px-3 text-end text-primary"
+  }, [_vm._v("\n                       " + _vm._s(_vm.change.toLocaleString()) + " 円\n                   ")])]) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "receipt mt-4"
+  }, [_c("div", {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: _vm.step === 4 || _vm.step === 5,
+      expression: "step === 4 || step === 5"
+    }],
+    staticClass: "col-11 mx-auto card bg-primary text-white p-3"
+  }, [_vm._v("\n                       領収書発行\n                   ")]), _vm._v(" "), _c("div", {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: _vm.step === 4 || _vm.step === 5,
+      expression: "step === 4 || step === 5"
+    }],
+    staticClass: "col-11 mx-auto card bg-primary text-white p-3 mt-2"
+  }, [_vm._v("\n                       レシート発行\n                   ")])])]), _vm._v(" "), _vm.step === 2 || _vm.step === 3 ? _c("div", {
+    staticClass: "col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount",
+    on: {
+      click: function click($event) {
+        return _vm.changeStep(3);
+      }
+    }
+  }, [_vm._v("\n               預り金入力\n           ")]) : _vm._e(), _vm._v(" "), _vm.step === 4 || _vm.step === 5 ? _c("a", {
+    staticClass: "col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount text-decoration-none",
+    attrs: {
+      href: _vm.route
+    }
+  }, [_vm._v("ホームに戻る")]) : _vm._e()]) : _vm._e(), _vm._v(" "), _vm.step === 3 ? _c("accounting-modal", {
+    attrs: {
+      amount: _vm.amount,
+      tax: _vm.tax
+    },
+    on: {
+      close: _vm.changeStep,
+      account: _vm.account
+    }
+  }) : _vm._e(), _vm._v(" "), _vm.step === 4 ? _c("change-modal", {
+    attrs: {
+      change: _vm.change
+    },
+    on: {
+      close: _vm.changeStep
+    }
+  }) : _vm._e()], 1);
 };
 var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
     staticClass: "col-4 text-end to-bill"
-  }, [_vm._v("\n                お会計へ　"), _c("i", {
+  }, [_vm._v("\n                   お会計へ　"), _c("i", {
     staticClass: "fa-solid fa-chevron-right pl-2"
+  })]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+  }, [_c("div", {
+    staticClass: "col-6 px-3"
+  }, [_vm._v("\n                       値引・割引\n                   ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 px-3 text-end text-primary"
+  }, [_vm._v("\n                       0 円\n                   ")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "col-2 px-3 text-end"
+  }, [_c("i", {
+    staticClass: "fa-solid fa-chevron-right text-secondary"
   })]);
 }];
 render._withStripped = true;
@@ -28020,6 +28513,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/sass/modal.scss":
+/*!***********************************!*\
+  !*** ./resources/sass/modal.scss ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./node_modules/process/browser.js":
 /*!*****************************************!*\
   !*** ./node_modules/process/browser.js ***!
@@ -28214,6 +28720,84 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./resources/js/components/Modals/AccountingModalComponent.vue":
+/*!*********************************************************************!*\
+  !*** ./resources/js/components/Modals/AccountingModalComponent.vue ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _AccountingModalComponent_vue_vue_type_template_id_5c1f30d3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AccountingModalComponent.vue?vue&type=template&id=5c1f30d3& */ "./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=template&id=5c1f30d3&");
+/* harmony import */ var _AccountingModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AccountingModalComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _AccountingModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _AccountingModalComponent_vue_vue_type_template_id_5c1f30d3___WEBPACK_IMPORTED_MODULE_0__.render,
+  _AccountingModalComponent_vue_vue_type_template_id_5c1f30d3___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Modals/AccountingModalComponent.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Modals/ChangeModalComponent.vue":
+/*!*****************************************************************!*\
+  !*** ./resources/js/components/Modals/ChangeModalComponent.vue ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ChangeModalComponent_vue_vue_type_template_id_29e107a4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChangeModalComponent.vue?vue&type=template&id=29e107a4& */ "./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=template&id=29e107a4&");
+/* harmony import */ var _ChangeModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ChangeModalComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _ChangeModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ChangeModalComponent_vue_vue_type_template_id_29e107a4___WEBPACK_IMPORTED_MODULE_0__.render,
+  _ChangeModalComponent_vue_vue_type_template_id_29e107a4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Modals/ChangeModalComponent.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/OrderComponent.vue":
 /*!****************************************************!*\
   !*** ./resources/js/components/OrderComponent.vue ***!
@@ -28253,6 +28837,38 @@ component.options.__file = "resources/js/components/OrderComponent.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************!*\
+  !*** ./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AccountingModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AccountingModalComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AccountingModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChangeModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ChangeModalComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChangeModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/OrderComponent.vue?vue&type=script&lang=js&":
 /*!*****************************************************************************!*\
   !*** ./resources/js/components/OrderComponent.vue?vue&type=script&lang=js& ***!
@@ -28266,6 +28882,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_OrderComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./OrderComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/OrderComponent.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_OrderComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=template&id=5c1f30d3&":
+/*!****************************************************************************************************!*\
+  !*** ./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=template&id=5c1f30d3& ***!
+  \****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AccountingModalComponent_vue_vue_type_template_id_5c1f30d3___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AccountingModalComponent_vue_vue_type_template_id_5c1f30d3___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_AccountingModalComponent_vue_vue_type_template_id_5c1f30d3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AccountingModalComponent.vue?vue&type=template&id=5c1f30d3& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/AccountingModalComponent.vue?vue&type=template&id=5c1f30d3&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=template&id=29e107a4&":
+/*!************************************************************************************************!*\
+  !*** ./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=template&id=29e107a4& ***!
+  \************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ChangeModalComponent_vue_vue_type_template_id_29e107a4___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ChangeModalComponent_vue_vue_type_template_id_29e107a4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ChangeModalComponent_vue_vue_type_template_id_29e107a4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ChangeModalComponent.vue?vue&type=template&id=29e107a4& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/ChangeModalComponent.vue?vue&type=template&id=29e107a4&");
+
 
 /***/ }),
 
@@ -40456,7 +41106,8 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			"/js/app": 0,
-/******/ 			"css/app": 0
+/******/ 			"css/app": 0,
+/******/ 			"css/modal": 0
 /******/ 		};
 /******/ 		
 /******/ 		// no chunk on demand loading
@@ -40506,8 +41157,9 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/sass/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/modal"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/modal"], () => (__webpack_require__("./resources/sass/app.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app","css/modal"], () => (__webpack_require__("./resources/sass/modal.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

@@ -5,7 +5,7 @@
 <div class="col-12 py-3 mx-auto d-flex justify-content-between">
     {{-- category bar --}}
     <div class="category-bar col-3">
-        @foreach ($category as $item)
+        @foreach ($categories as $item)
         {{-- element --}}
         <div class="card py-5 px-2 border border-secondary">
             {{ $item->name }}
@@ -17,7 +17,7 @@
 
     {{-- clothes bar --}}
     <div class="clothes-bar col-5">
-        @foreach ($category as $item)
+        @foreach ($categories as $item)
         {{-- element bar --}}
         <div class="card border border-secondary clothes-card position-relative p-2">
             <div class="">
@@ -33,44 +33,72 @@
     {{-- clothes bar --}}
 
     {{-- slip bar --}}
-    <div class="slip-bar col-4 bg-secondary position-relative">
-        <div class="col-12 py-3 px-2 border border-secondary bg-white">
-            計：0点
+    <div class="slip-bar col-4 border border-secondary position-relative">
+        <div class="col-12 py-3 px-2 border-bottom border-secondary bg-white d-flex justify-content-between bill-header">
+           <div class="col-3 text-primary">
+                <i class="fa-solid fa-chevron-left"></i> 戻る
+           </div>
+           <div class="col-6 text-center">
+                中山友作様
+           </div>
+           <div class="col-3"></div>
         </div>
 
-        {{-- order list --}}
-        <div class="order-list">
-            @for ($i = 0; $i < 15; $i++)
-            {{-- selected card --}}
-            <div class="col-12 py-3 px-2 border border-secondary bg-white">
-                <div class="col-12 px-2 order-title">絨毯</div>
-                <div class="col-12 mt-2 d-flex justify-content-between order-detail">
-                    <div class="col-5 d-flex justify-content-between">
-                        <button class="card border border-primary text-primary p-2">
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                        <button class="card border border-primary text-primary p-2">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                        <div class="text-primary order-text">
-                            1 点
-                        </div>
-                    </div>
-                    <div class="col-5 order-text text-end">
-                        1,000円
-                    </div>
+        <div class="bill-detail">
+            <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                <div class="col-6 px-3">
+                    数量
+                </div>
+                <div class="col-6 px-3 text-end text-primary">
+                    5点
                 </div>
             </div>
-            {{-- selected card --}}
-            @endfor
-        </div>
-        {{-- order list --}}
+            <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                <div class="col-6 px-3">
+                    小計
+                </div>
+                <div class="col-6 px-3 text-end text-primary">
+                    1,100 円
+                </div>
+            </div>
+            <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                <div class="col-6 px-3">
+                    値引・割引
+                </div>
+                <div class="col-6 px-3 text-end text-primary">
+                    0 円
+                </div>
+            </div>
+            <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                <div class="col-8 px-3">
+                    値引・割引を追加
+                </div>
+                <div class="col-2 px-3 text-end">
+                    <i class="fa-solid fa-chevron-right text-secondary"></i>
+                </div>
+            </div>
 
-        {{-- OK button --}}
-        <div class="col-12 py-4 px-2 bg-primary position-absolute bottom-0">
-            5000円 お会計へ
+            <div class="col-12 py-2 d-flex justify-content-between border-top border-bottom border-1 border-secondary bill-row">
+                <div class="col-4 px-3" style="line-height: 2.6">
+                    合計
+                </div>
+                <div class="col-8 px-3 text-end bill-total text-primary">
+                    1,100 円
+                </div>
+            </div>
+            <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                <div class="col-6 px-3 text-secondary">
+                    内消費税10%
+                </div>
+                <div class="col-6 px-3 text-end text-secondary">
+                    (100 円)
+                </div>
+            </div>
         </div>
-        {{-- OK button --}}
+
+        <div class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center">
+            預り金入力
+        </div>
 
     </div>
     {{-- slip bar --}}

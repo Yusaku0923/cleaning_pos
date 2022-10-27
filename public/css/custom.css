@@ -172,6 +172,10 @@
 
     font-size: 24px;
 }
+.clothes-bar::-webkit-scrollbar{
+    display: none;
+}
+
 .clothes-card {
     height: 100px;
 }
@@ -184,7 +188,7 @@
 }
 .order-list {
     overflow: scroll;
-    height: 80%;
+    height: 76%;
 }
 .order-title {
     font-size: 24px;
@@ -200,4 +204,16 @@
 }
 .to-bill {
     line-height: 3;
+}
+.slip-header {
+    font-size: 20px;
+}
+.bill-row {
+    font-size: 20px;
+}
+.bill-total {
+    font-size: 32px;
+}
+.receipt {
+    font-size: 18px;
 }
