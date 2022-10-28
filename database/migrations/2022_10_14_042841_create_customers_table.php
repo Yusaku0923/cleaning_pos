@@ -18,6 +18,7 @@ class CreateCustomersTable extends Migration
             $table->unsignedBigInteger('manager_id')->comment('担当者ID');
             $table->string('name')->comment('顧客名');
             $table->string('name_kana')->comment('顧客名カナ');
+            $table->string('phone_number')->nullable()->comment('電話番号');
             $table->date('birth_day')->nullable()->comment('生年月日');
             $table->unsignedTinyInteger('sex')->nullable()->comment('性別');
             $table->unsignedBigInteger('point')->nullable()->comment('ポイント');

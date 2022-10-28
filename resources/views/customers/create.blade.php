@@ -17,6 +17,10 @@
                     <label for="customer_name_kana" class="h4">お名前(カナ)</label>
                     <input type="text" class="form-control form-control-lg" name="name_kana" id="customer_name_kana" placeholder="お名前(カナ)">
                 </div>
+                <div class="form-group mt-2">
+                    <label for="customer_phone_number" class="h4">電話番号</label>
+                    <input type="tel" class="form-control form-control-lg" name="phone_number" id="customer_phone_number" placeholder="電話番号">
+                </div>
                 <div class="form-group mt-2 d-flex justify-content-between">
                     <div class="col-9">
                         <label for="customer_birth_day" class="h4">お誕生日</label>

@@ -54,6 +54,7 @@ class CustomerController extends Controller
             'manager_id' => $request->session()->get('manager_id'),
             'name' => $request->name,
             'name_kana' => $request->name_kana,
+            'phone_number' => $request->phone_number,
             'birth_day' => $request->birth_day ?? NULL,
             'sex' => $request->sex ?? NULL,
             'cutoff_date' => $request->cutoff_date ?? NULL,

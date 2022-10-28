@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Manager;
 use App\Models\Customer;
+use App\Models\Order;
 
 class HomeController extends Controller
 {
@@ -25,6 +26,8 @@ class HomeController extends Controller
                 session()->forget('customer_id');
                 $customer = [];
             }
+
+            // Orderモデルに取得用クエリを書く
         }
 
         return view('home')->with([

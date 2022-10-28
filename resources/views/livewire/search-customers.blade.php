@@ -1,6 +1,6 @@
 <div class="card col-12 py-4">
     <div class="form-group col-6 mx-auto">
-        <input wire:model="search" type="text" class="form-control form-control-lg" placeholder="名前、フリガナ等"/>
+        <input wire:model="search" type="text" class="form-control form-control-lg" placeholder="名前、フリガナ、電話番号"/>
     </div>
 
     <div class="col-12">

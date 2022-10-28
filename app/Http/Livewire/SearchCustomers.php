@@ -14,7 +14,9 @@ class SearchCustomers extends Component
         $customers = [];
         if (!empty($this->search)) {
             $customers = Customer::where(function ($query) {
-                $query->where('name', 'like', '%'.$this->search.'%')->orWhere('name_kana', 'like', '%'.$this->search.'%');
+                $query->where('name', 'like', '%'.$this->search.'%')
+                ->orWhere('name_kana', 'like', '%'.$this->search.'%')
+                ->orWhere('phone_number', 'like', '%'.$this->search.'%');
             })->where('manager_id', session()->get('manager_id'))
             ->get();
         }
