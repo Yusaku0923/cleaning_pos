@@ -39,6 +39,7 @@ class CreateClothesMenu extends Component
     public function save()
     {
         // https://programing-school.work/laravel-belongsto/
+        
         if (is_null($this->category_id)) {
             Category::create([
                 'store_id' => Auth::id(),
@@ -64,5 +65,10 @@ class CreateClothesMenu extends Component
     public function back()
     {
         $this->category_id = NULL;
+    }
+
+    public function edit()
+    {
+        // 更新履歴を残す
     }
 }

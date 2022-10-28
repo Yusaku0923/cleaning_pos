@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderClothes extends Model
+class TagNumber extends Model
 {
     use HasFactory, SoftDeletes;
 

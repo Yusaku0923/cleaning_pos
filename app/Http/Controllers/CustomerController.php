@@ -61,9 +61,8 @@ class CustomerController extends Controller
         // $customer->save();
 
         // TODO:遷移先選択
-        return redirect()->route('home')->with([
-            'customer_id' => $customer->id
-        ]);
+        session()->put('customer_id', $customer->id);
+        return redirect()->route('home');
     }
 
     /**

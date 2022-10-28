@@ -7,6 +7,7 @@
                         <div class="col-12 modal-ch-label">お釣り</div>
                         <div class="col-12 modal-ch-change text-primary text-end">{{ this.change.toLocaleString() }} 円</div>
                     </div>
+                    <!-- タグ番号のリストとか作るとよいかも -->
                 </div>
             </div>
         </div>
@@ -21,7 +22,7 @@ export default ({
             type: Number,
             required: true,
         },
-
+        
     },
 })
 

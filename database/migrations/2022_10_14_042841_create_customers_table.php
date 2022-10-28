@@ -22,6 +22,7 @@ class CreateCustomersTable extends Migration
             $table->unsignedTinyInteger('sex')->nullable()->comment('性別');
             $table->unsignedBigInteger('point')->nullable()->comment('ポイント');
             $table->date('cutoff_date')->nullable()->default(Null)->comment('締め日');
+            $table->softDeletes();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'))->comment('作成日時');
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'))->comment('更新日時');
 

@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Models\Category;
+use App\Models\Tax;
+use App\Models\Store;
+use App\Models\Customer;
 
 class OrdersController extends Controller
 {
@@ -24,13 +29,22 @@ class OrdersController extends Controller
      */
     public function create()
     {
+        if (!session()->has('manager_id') || !session()->has('customer_id')) {
+            return redirect()->route('home');
+        }
         $category_clothes = Category::with('clothes')->get();
+        $tax = Tax::where('store_id', Auth::id())->value('tax');
+        $store = Store::find(Auth::id());
+        $token = $store->createToken(Str::random(10));
 
-        // dd(json_decode(json_encode($category_clothes), true));
         return view('orders.create')->with([
             'title' => '預　り　入　力',
+            'manager_id' => session()->get('manager_id'),
+            'customer_id' => session()->get('customer_id'),
+            'customer_name' => json_encode(Customer::find(session()->get('customer_id'))->value('name')),
+            'auth_token' => json_encode($token->plainTextToken),
             'list_json' => json_encode($category_clothes),
-            'categories' => $category_clothes
+            'tax' => (1 + $tax / 100),
         ]);
     }
 

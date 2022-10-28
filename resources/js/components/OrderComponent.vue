@@ -63,7 +63,7 @@
                 @click="changeStep(2)"
                 :class="{ 'bg-primary': total !== 0, 'bg-secondary': total === 0 }">
                 <div class="col-8 order-amount">
-                    <span style="font-size:20px;">税込</span> {{ Math.trunc(amount * tax).toLocaleString() }} 円
+                    <span style="font-size:20px;">税込</span> {{ Math.trunc((amount - discount) * tax).toLocaleString() }} 円
                 </div>
                 <div class="col-4 text-end to-bill">
                     お会計へ　<i class="fa-solid fa-chevron-right pl-2"></i>
@@ -74,11 +74,12 @@
 
         <div class="slip-bar col-4 border border-secondary position-relative" v-if="step === 2 || step === 3 || step === 4 || step === 5">
             <div class="col-12 py-3 px-2 border-bottom border-secondary bg-white d-flex justify-content-between slip-header">
-                <div class="col-3 text-primary" @click="changeStep(1)">
+                <div class="col-3 text-primary" @click="changeStep(1)" v-if="step !== 5">
                         <i class="fa-solid fa-chevron-left"></i> 戻る
                 </div>
+                <div class="col-3" v-if="step === 5"></div>
                 <div class="col-6 text-center">
-                        中山友作様
+                    {{ customer_name }} 様
                 </div>
                 <div class="col-3"></div>
             </div>
@@ -97,7 +98,7 @@
                         小計
                     </div>
                     <div class="col-6 px-3 text-end text-primary">
-                        {{ Math.trunc(amount * tax).toLocaleString() }} 円
+                        {{ Math.trunc((amount - discount) * tax).toLocaleString() }} 円
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
@@ -122,15 +123,23 @@
                         合計
                     </div>
                     <div class="col-8 px-3 text-end bill-total text-primary">
-                        {{ Math.trunc(amount * tax).toLocaleString() }} 円
+                        {{ Math.trunc((amount - discount) * tax).toLocaleString() }} 円
                     </div>
                 </div>
-                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step !== 5">
                     <div class="col-6 px-3 text-secondary">
                         内消費税10%
                     </div>
                     <div class="col-6 px-3 text-end text-secondary">
-                        ({{ Math.trunc(amount * (tax - 1)).toLocaleString() }} 円)
+                        ({{ Math.trunc((amount - discount) * (tax - 1)).toLocaleString() }} 円)
+                    </div>
+                </div>
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step === 5">
+                    <div class="col-6 px-3">
+                        お支払い
+                    </div>
+                    <div class="col-6 px-3 text-end text-primary">
+                        {{ payment.toLocaleString() }} 円
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step === 5">
@@ -167,7 +176,7 @@
         <accounting-modal
             @close = "changeStep"
             @account = "account"
-            :amount="amount"
+            :amount="amount - discount"
             :tax="tax"
             v-if="step === 3"
         ></accounting-modal>
@@ -186,22 +195,43 @@ import ChangeModal from './Modals/ChangeModalComponent';
 
 export default ({
     props: {
+        manager_id: {
+            type: Number,
+            required: true
+        },
+        customer_id: {
+            type: Number,
+            required: true
+        },
+        customer_name: {
+            type: String,
+            required: true
+        },
         categories: {
             type: Object,
             required: true
-        }
+        },
+        tax: {
+            type: Object,
+            required: true
+        },
+        token: {
+            type: String,
+            required: true
+        },
     },
     data() {
         return {
-            categories: this.categories,
+            step: 1,
             route: '/',
             isActive: '1',
             indexes: [],
             order: {},
+            orderForSend: {},
             total: 0,
-            amount: 0,
-            tax: (1 + 10 / 100),
-            step: 1,
+            amount: 0, // without tax
+            discount: 0,
+            payment: 0,
             change: 0,
         }
     },
@@ -221,11 +251,16 @@ export default ({
         add: function(clothes) {
             if (this.step === 1) {
                 if (this.order[clothes.id]) {
-                    clothes.count = this.order[clothes.id].count + 1;
+                    let addedCount = this.order[clothes.id].count + 1;
+                    clothes.count = addedCount;
                     this.$delete(this.order, clothes.id);
+
+                    this.orderForSend[clothes.id] = addedCount;
                 } else {
                     clothes.count = 1;
                     this.indexes.push(clothes.id);
+
+                    this.orderForSend[clothes.id] = 1;
                 }
                 this.$set(this.order, clothes.id, clothes);
 
@@ -234,9 +269,12 @@ export default ({
             }
         },
         increace: function (clothes) {
-            clothes.count = this.order[clothes.id].count + 1;
+            let addedCount = this.order[clothes.id].count + 1;
+            clothes.count = addedCount;
             this.$delete(this.order, clothes.id);
             this.$set(this.order, clothes.id, clothes);
+
+            this.orderForSend[clothes.id] = addedCount;
 
             this.total++;
             this.amount += this.order[clothes.id].price;
@@ -245,21 +283,48 @@ export default ({
             this.total--;
             this.amount -= this.order[clothes.id].price;
 
-            clothes.count = this.order[clothes.id].count - 1;
+            let substractedCount = this.order[clothes.id].count - 1;
+            clothes.count = substractedCount;
+
+            this.orderForSend[clothes.id] = substractedCount;
+
             this.$delete(this.order, clothes.id);
             if (clothes.count !== 0) {
                 this.$set(this.order, clothes.id, clothes);
             } else {
                 this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
+                delete this.orderForSend[clothes.id];
             }
         },
 
         account: function(payment) {
-            if (payment < Math.trunc(this.amount * this.tax)) {
+            if (payment < Math.trunc((this.amount - this.discount) * this.tax)) {
                 return;
             }
             this.step = 4;
-            this.change = payment - Math.trunc(this.amount * this.tax);
+            this.payment = payment;
+            this.change = payment - Math.trunc((this.amount - this.discount) * this.tax);
+
+            // order登録API
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/order', {
+                manager_id: this.manager_id,
+                customer_id: this.customer_id,
+                order: this.orderForSend,
+                amount: Math.trunc((this.amount - this.discount) * this.tax), // with tax
+                discount: this.discount,
+                payment: payment,
+                invoice: false,
+            })
+            .then(function (response) {
+                // タグ番号受取
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+            // レシート発行
+            // キャッシャーopen
         },
     }
 });

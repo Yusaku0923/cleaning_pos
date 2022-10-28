@@ -29,7 +29,8 @@ class Store extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password'
+        'password',
+        'api_token',
     ];
 
     /**

@@ -5402,22 +5402,44 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
+    manager_id: {
+      type: Number,
+      required: true
+    },
+    customer_id: {
+      type: Number,
+      required: true
+    },
+    customer_name: {
+      type: String,
+      required: true
+    },
     categories: {
       type: Object,
+      required: true
+    },
+    tax: {
+      type: Object,
+      required: true
+    },
+    token: {
+      type: String,
       required: true
     }
   },
   data: function data() {
     return {
-      categories: this.categories,
+      step: 1,
       route: '/',
       isActive: '1',
       indexes: [],
       order: {},
+      orderForSend: {},
       total: 0,
       amount: 0,
-      tax: 1 + 10 / 100,
-      step: 1,
+      // without tax
+      discount: 0,
+      payment: 0,
       change: 0
     };
   },
@@ -5437,11 +5459,14 @@ __webpack_require__.r(__webpack_exports__);
     add: function add(clothes) {
       if (this.step === 1) {
         if (this.order[clothes.id]) {
-          clothes.count = this.order[clothes.id].count + 1;
+          var addedCount = this.order[clothes.id].count + 1;
+          clothes.count = addedCount;
           this.$delete(this.order, clothes.id);
+          this.orderForSend[clothes.id] = addedCount;
         } else {
           clothes.count = 1;
           this.indexes.push(clothes.id);
+          this.orderForSend[clothes.id] = 1;
         }
         this.$set(this.order, clothes.id, clothes);
         this.total++;
@@ -5449,29 +5474,55 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     increace: function increace(clothes) {
-      clothes.count = this.order[clothes.id].count + 1;
+      var addedCount = this.order[clothes.id].count + 1;
+      clothes.count = addedCount;
       this.$delete(this.order, clothes.id);
       this.$set(this.order, clothes.id, clothes);
+      this.orderForSend[clothes.id] = addedCount;
       this.total++;
       this.amount += this.order[clothes.id].price;
     },
     decreace: function decreace(clothes) {
       this.total--;
       this.amount -= this.order[clothes.id].price;
-      clothes.count = this.order[clothes.id].count - 1;
+      var substractedCount = this.order[clothes.id].count - 1;
+      clothes.count = substractedCount;
+      this.orderForSend[clothes.id] = substractedCount;
       this.$delete(this.order, clothes.id);
       if (clothes.count !== 0) {
         this.$set(this.order, clothes.id, clothes);
       } else {
         this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
+        delete this.orderForSend[clothes.id];
       }
     },
     account: function account(payment) {
-      if (payment < Math.trunc(this.amount * this.tax)) {
+      if (payment < Math.trunc((this.amount - this.discount) * this.tax)) {
         return;
       }
       this.step = 4;
-      this.change = payment - Math.trunc(this.amount * this.tax);
+      this.payment = payment;
+      this.change = payment - Math.trunc((this.amount - this.discount) * this.tax);
+
+      // order登録API
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+      axios.post('/api/order', {
+        manager_id: this.manager_id,
+        customer_id: this.customer_id,
+        order: this.orderForSend,
+        amount: Math.trunc((this.amount - this.discount) * this.tax),
+        // with tax
+        discount: this.discount,
+        payment: payment,
+        invoice: false
+      }).then(function (response) {
+        // タグ番号受取
+        console.log(response);
+      })["catch"](function (error) {
+        console.log(error);
+      });
+      // レシート発行
+      // キャッシャーopen
     }
   }
 });
@@ -5653,8 +5704,13 @@ var render = function render() {
       }
     }
   }, [_vm._v("00")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key bg-secondary border-bottom border-white"
-  })]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-lower-key",
+    on: {
+      click: function click($event) {
+        return _vm.typeZero(1000);
+      }
+    }
+  }, [_vm._v("000")])]), _vm._v(" "), _c("div", {
     staticClass: "modal-ac-keypad-lower-just text-white border border-white",
     on: {
       click: function click($event) {
@@ -5834,11 +5890,11 @@ var render = function render() {
     staticStyle: {
       "font-size": "20px"
     }
-  }, [_vm._v("税込")]), _vm._v(" " + _vm._s(Math.trunc(_vm.amount * _vm.tax).toLocaleString()) + " 円\n               ")]), _vm._v(" "), _vm._m(0)])]) : _vm._e(), _vm._v(" "), _vm.step === 2 || _vm.step === 3 || _vm.step === 4 || _vm.step === 5 ? _c("div", {
+  }, [_vm._v("税込")]), _vm._v(" " + _vm._s(Math.trunc((_vm.amount - _vm.discount) * _vm.tax).toLocaleString()) + " 円\n               ")]), _vm._v(" "), _vm._m(0)])]) : _vm._e(), _vm._v(" "), _vm.step === 2 || _vm.step === 3 || _vm.step === 4 || _vm.step === 5 ? _c("div", {
     staticClass: "slip-bar col-4 border border-secondary position-relative"
   }, [_c("div", {
     staticClass: "col-12 py-3 px-2 border-bottom border-secondary bg-white d-flex justify-content-between slip-header"
-  }, [_c("div", {
+  }, [_vm.step !== 5 ? _c("div", {
     staticClass: "col-3 text-primary",
     on: {
       click: function click($event) {
@@ -5847,9 +5903,11 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fa-solid fa-chevron-left"
-  }), _vm._v(" 戻る\n               ")]), _vm._v(" "), _c("div", {
+  }), _vm._v(" 戻る\n               ")]) : _vm._e(), _vm._v(" "), _vm.step === 5 ? _c("div", {
+    staticClass: "col-3"
+  }) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-6 text-center"
-  }, [_vm._v("\n                       中山友作様\n               ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                   " + _vm._s(_vm.customer_name) + " 様\n               ")]), _vm._v(" "), _c("div", {
     staticClass: "col-3"
   })]), _vm._v(" "), _c("div", {
     staticClass: "bill-detail"
@@ -5865,7 +5923,7 @@ var render = function render() {
     staticClass: "col-6 px-3"
   }, [_vm._v("\n                       小計\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-6 px-3 text-end text-primary"
-  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount * _vm.tax).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _vm._m(1), _vm._v(" "), _vm.step !== 5 ? _c("div", {
+  }, [_vm._v("\n                       " + _vm._s(Math.trunc((_vm.amount - _vm.discount) * _vm.tax).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _vm._m(1), _vm._v(" "), _vm.step !== 5 ? _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-8 px-3"
@@ -5878,13 +5936,19 @@ var render = function render() {
     }
   }, [_vm._v("\n                       合計\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-8 px-3 text-end bill-total text-primary"
-  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount * _vm.tax).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                       " + _vm._s(Math.trunc((_vm.amount - _vm.discount) * _vm.tax).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _vm.step !== 5 ? _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-6 px-3 text-secondary"
   }, [_vm._v("\n                       内消費税10%\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-6 px-3 text-end text-secondary"
-  }, [_vm._v("\n                       (" + _vm._s(Math.trunc(_vm.amount * (_vm.tax - 1)).toLocaleString()) + " 円)\n                   ")])]), _vm._v(" "), _vm.step === 5 ? _c("div", {
+  }, [_vm._v("\n                       (" + _vm._s(Math.trunc((_vm.amount - _vm.discount) * (_vm.tax - 1)).toLocaleString()) + " 円)\n                   ")])]) : _vm._e(), _vm._v(" "), _vm.step === 5 ? _c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+  }, [_c("div", {
+    staticClass: "col-6 px-3"
+  }, [_vm._v("\n                       お支払い\n                   ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 px-3 text-end text-primary"
+  }, [_vm._v("\n                       " + _vm._s(_vm.payment.toLocaleString()) + " 円\n                   ")])]) : _vm._e(), _vm._v(" "), _vm.step === 5 ? _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-6 px-3"
@@ -5922,7 +5986,7 @@ var render = function render() {
     }
   }, [_vm._v("ホームに戻る")]) : _vm._e()]) : _vm._e(), _vm._v(" "), _vm.step === 3 ? _c("accounting-modal", {
     attrs: {
-      amount: _vm.amount,
+      amount: _vm.amount - _vm.discount,
       tax: _vm.tax
     },
     on: {

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCategoriesTable extends Migration
+class CreateTagNumbersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,15 @@ class CreateCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('tag_numbers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('store_id')->comment('店舗ID');
-            $table->string('name')->comment('カテゴリ名');
+            $table->unsignedBigInteger('manager_id')->comment('担当者ID');
+            $table->unsignedBigInteger('tag_number')->comment('シリアルナンバー');
             $table->softDeletes();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'))->comment('作成日時');
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'))->comment('更新日時');
 
-            $table->foreign('store_id')->references('id')->on('stores');
+            $table->foreign('manager_id')->references('id')->on('managers');
         });
     }
 
@@ -32,6 +32,6 @@ class CreateCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('tag_numbers');
     }
 }

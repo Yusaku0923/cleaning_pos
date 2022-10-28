@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Manager;
-use App\Models\SerialNumber;
+use App\Models\TagNumber;
 
 class CreateDefaultManager extends Seeder
 {
@@ -32,9 +32,9 @@ class CreateDefaultManager extends Seeder
                 'name' => $arr['name'],
             ]);
 
-            SerialNumber::query()->create([
+            TagNumber::query()->create([
                 'manager_id' => $obj->id,
-                'serial_numbers' => '0000'
+                'tag_number' => 0
             ]);
         }
     }

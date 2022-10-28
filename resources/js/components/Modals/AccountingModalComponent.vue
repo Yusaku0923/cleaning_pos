@@ -59,13 +59,15 @@
                                             <div class="modal-ac-keypad-lower-key" @click="typeNumber('3')">3</div>
                                             <div class="modal-ac-keypad-lower-key" @click="typeZero(10)">0</div>
                                             <div class="modal-ac-keypad-lower-key" @click="typeZero(100)">00</div>
-                                            <div class="modal-ac-keypad-lower-key bg-secondary border-bottom border-white"></div>
+                                            <div class="modal-ac-keypad-lower-key" @click="typeZero(1000)">000</div>
                                         </div>
                                         <div class="modal-ac-keypad-lower-just text-white border border-white" @click="typeJust()"><i class="fa-solid fa-arrow-down"></i></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- TODO:請求書払いフラグ -->
 
                         <div class="col-12 modal-ac-send bg-primary text-center text-white border border-white"
                             @click="$emit('account', payment)"
