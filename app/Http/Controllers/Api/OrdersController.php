@@ -47,6 +47,10 @@ class OrdersController extends Controller
                 }
             }
         }
+        TagNumber::where('manager_id', $request->manager_id)
+                ->update([
+                    'tag_number' => $tag
+                ]);
 
         return response()->json([
             'tag' => $response

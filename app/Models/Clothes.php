@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Clothes extends Model
 {
@@ -15,5 +16,19 @@ class Clothes extends Model
     public function categories()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function fetchOftenOrdered($customer_id, $limit = 12)
+    {
+        $clothes = OrderClothes::selectRaw(DB::raw('clothes.*, COUNT(order_clothes.clothes_id) AS count'))
+                                ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
+                                ->join('orders', 'order_clothes.order_id', '=', 'orders.id')
+                                ->where('orders.customer_id', $customer_id)
+                                ->groupBy('order_clothes.clothes_id')
+                                ->orderByDesc('count')
+                                ->limit($limit)
+                                ->get()->toArray();
+
+        return $clothes;
     }
 }

@@ -28,12 +28,16 @@ class HomeController extends Controller
             }
 
             // Orderモデルに取得用クエリを書く
+            $model = new Order;
+            $orders = $model->fetchOrder($customer->id);
+            // dd($orders);
         }
 
         return view('home')->with([
             'title' => '顧　客　呼　出',
             'managers' => $managers,
             'customer' => $customer ?? [],
+            'orders' => $orders ?? [],
         ]);
     }
 

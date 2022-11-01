@@ -12,14 +12,9 @@
                 {{ csrf_field() }}
                 <div class="modal-body">
                     <div class="form-group">
-                        @foreach($managers as $manager)
-                        <div class="form-check mb-4">
-                            <input class="form-check-input col-2" type="radio" name="id" value="{{ $manager->id }}" id="manager_{{ $manager->id }}">
-                            <label class="form-check-label col-10" for="manager_{{ $manager->id }}">
-                                <div class="card h3 p-3 text-right">{{ $manager->name }}</div>
-                            </label>
-                        </div>
-                        @endforeach
+                        <manager-component
+                            :managers="{{ json_encode($managers) }}"
+                        ></manager-component>
                     </div>
                 </div>
                 <div class="modal-footer">

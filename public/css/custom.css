@@ -125,6 +125,12 @@
     margin-bottom: 20px;
     font-size: 24px;
 }
+.history-field {
+    height: 207px;
+}
+.history-card {
+    height: 140px;
+}
 
 /* order */
 .order-left {

@@ -2,6 +2,13 @@
  <!-- いずれcomponentにまとめる -->
     <div class="col-12 py-3 mx-auto d-flex justify-content-between">
         <div class="category-bar col-3 border-top border-bottom border-secondary">
+            <div class="card py-5 px-2 border border-secondary" 
+                @click="changeCategory(-1)"
+                v-bind:class="{'active': isActive === -1}"
+            >
+                よく注文される項目
+            </div>
+
             <div class="card py-5 px-2 border border-secondary"
                 v-for="(category, index) in categories"
                 :key="category.id"
@@ -13,6 +20,20 @@
         </div>
 
         <div class="clothes-bar col-5 border border-secondary">
+            <template v-if="isActive === -1">
+                <div class="card border border-secondary clothes-card position-relative p-2"
+                    v-for="clothes in often_ordered"
+                    :key="clothes.id"
+                    @click="add(clothes)">
+                    <div class="text-nowrap overflow-auto">
+                        {{ clothes.name }}
+                    </div>
+                    <div class="position-absolute bottom-0 text-primary">
+                        {{ clothes.price.toLocaleString() }} 円
+                    </div>
+                </div>
+            </template>
+
             <template v-for="(category, index) in categories">
                 <template v-if="isActive === index">
                     <div class="card border border-secondary clothes-card position-relative p-2"
@@ -211,6 +232,10 @@ export default ({
             type: Object,
             required: true
         },
+        often_ordered: {
+            type: Object,
+            required: true
+        },
         tax: {
             type: Object,
             required: true
@@ -224,7 +249,7 @@ export default ({
         return {
             step: 1,
             route: '/',
-            isActive: '1',
+            isActive: -1,
             indexes: [],
             order: {},
             orderForSend: {},
@@ -323,8 +348,10 @@ export default ({
             .catch(function (error) {
                 console.log(error);
             });
+
             // レシート発行
-            // キャッシャーopen
+            
+            // LeceiptDesignerでデザイン作成しAPI埋め込み
         },
     }
 });

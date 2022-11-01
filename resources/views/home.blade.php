@@ -99,22 +99,24 @@
                 <div class="card col-12 py-2 h4 text-center mt-2">
                     来　店　履　歴
                 </div>
-                <div class="card">
+                <div class="card {{ empty($orders) ? 'history-field' : '' }}">
                     <div class="col-12 d-flex py-2 justify-content-around">
-                        <div class="card col-3 col-3-custom">
-                            シャツ<br>ズボン<br>全４点<br>1,800円<br>未渡し<br>未納品
+                        @foreach ((array_splice($orders, 0, 4)) as $order)
+                        <div class="card col-3 col-3-custom p-2 history-card">
+                            @foreach (array_splice($order['items'], 0, 2) as $item)
+                                <div class="col-12 text-nowrap overflow-hidden">{{ $item['name'] }}</div>
+                            @endforeach
+                            全{{ $order['total_count'] }}
+                            <br>
+                            {{ number_format($order['amount']) }}円
+                            <br>
+                            {{ $order['is_handed_over'] ? 'お渡し済': '未渡し' }}
                         </div>
-                        <div class="card col-3 col-3-custom">
-                            シャツ<br>ズボン<br>全４点<br>1,800円<br>未渡し<br>未納品
-                        </div>
-                        <div class="card col-3 col-3-custom">
-                            シャツ<br>ズボン<br>全４点<br>1,800円<br>未渡し<br>未納品
-                        </div>
-                        <div class="card col-3 col-3-custom">
-                            シャツ<br>ズボン<br>全４点<br>1,800円<br>未渡し<br>未納品
-                        </div>
+                        @endforeach
                     </div>
-                    <div class="card col-11 p-2 mx-auto mb-2">もっと見る</div>
+                    @if (isset($orders))
+                    <div class="card col-11 p-2 mx-auto mb-2 text-end">一覧で見る >></div>
+                    @endif
                 </div>
 
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px;">
