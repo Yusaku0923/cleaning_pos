@@ -1,6 +1,4 @@
-<template
-    v-for="manager in managers"
-    :key="manager.id">
+<template v-for="(manager, index) in managers">
     <div class="form-check mb-4">
         <input class="form-check-input col-2" type="radio" name="id" >
         <label class="form-check-label col-10" for="manager_">
@@ -17,7 +15,13 @@ export default ({
             required: true
         },
     },
-    
+
+    data() {
+        return {
+            manager: []
+        }
+    },
+
     methods: {
 
     }

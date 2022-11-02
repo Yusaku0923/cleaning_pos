@@ -207,12 +207,17 @@
             :change="change"
             v-if="step === 4"
         ></change-modal>
+
+        <receipt-printer
+            ref="child"
+        ></receipt-printer>
     </div>
 </template>
 
 <script>
 import AccountingModal from './Modals/AccountingModalComponent';
 import ChangeModal from './Modals/ChangeModalComponent';
+import ReceiptPrinter from './Functions/ReceiptPrinter';
 
 export default ({
     props: {
@@ -229,15 +234,14 @@ export default ({
             required: true
         },
         categories: {
-            type: Object,
+            type: Array,
             required: true
         },
         often_ordered: {
-            type: Object,
+            type: Array,
             required: true
         },
         tax: {
-            type: Object,
             required: true
         },
         token: {
@@ -263,6 +267,7 @@ export default ({
     components: {
         'accounting-modal': AccountingModal,
         'change-modal': ChangeModal,
+        'receipt-printer': ReceiptPrinter,
     },
     methods: {
         changeCategory: function (num) {
@@ -322,7 +327,7 @@ export default ({
             }
         },
 
-        account: function(payment) {
+        account: async function(payment) {
             if (payment < Math.trunc((this.amount - this.discount) * this.tax)) {
                 return;
             }
@@ -331,28 +336,31 @@ export default ({
             this.change = payment - Math.trunc((this.amount - this.discount) * this.tax);
 
             // order登録API
+            let order_id = await this.storeOrder();
+           
+           // レシート発行
+            this.$refs.child.printReceipt(order_id);
+        },
+
+        storeOrder: async function() {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
-            axios.post('/api/order', {
+            return await axios.post('/api/order', {
                 manager_id: this.manager_id,
                 customer_id: this.customer_id,
                 order: this.orderForSend,
                 amount: Math.trunc((this.amount - this.discount) * this.tax), // with tax
                 discount: this.discount,
-                payment: payment,
+                payment: this.payment,
                 invoice: false,
             })
             .then(function (response) {
-                // タグ番号受取
-                console.log(response);
+                return response.data.order_id;
             })
             .catch(function (error) {
                 console.log(error);
+                return;
             });
-
-            // レシート発行
-            
-            // LeceiptDesignerでデザイン作成しAPI埋め込み
-        },
+        }
     }
 });
 </script>

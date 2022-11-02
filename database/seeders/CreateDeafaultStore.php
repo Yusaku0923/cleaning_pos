@@ -21,7 +21,8 @@ class CreateDeafaultStore extends Seeder
             'name' => 'てすとクリーニング',
             'email' => 'test@gmail.com',
             'password' => Hash::make('Test123456'),
-            'address' => '東京',
+            'address' => '東京都新宿区1-1-1',
+            'phone_number' => '1111-2222',
         ]);
 
         Tax::query()->create([

@@ -53,7 +53,7 @@ class OrdersController extends Controller
                 ]);
 
         return response()->json([
-            'tag' => $response
+            'order_id' => $order->id
         ]);
     }
 
