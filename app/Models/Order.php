@@ -42,6 +42,10 @@ class Order extends Model
                         ->orderBy('created_at', 'desc')
                         ->get()->toArray();
 
+        if (empty($orders)) {
+            return [];
+        }
+
         foreach ($orders as $key => $order) {
             $orders[$key]['total_count'] = OrderClothes::where('order_id', $order['id'])->count();
             $clothes = OrderClothes::select('clothes_id')
