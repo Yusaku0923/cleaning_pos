@@ -84,7 +84,7 @@
                 @click="changeStep(2)"
                 :class="{ 'bg-primary': total !== 0, 'bg-secondary': total === 0 }">
                 <div class="col-8 order-amount">
-                    <span style="font-size:20px;">税込</span> {{ Math.trunc((amount - discount) * tax).toLocaleString() }} 円
+                    <span style="font-size:20px;">税込</span> {{ Math.trunc((amount - discount)).toLocaleString() }} 円
                 </div>
                 <div class="col-4 text-end to-bill">
                     お会計へ　<i class="fa-solid fa-chevron-right pl-2"></i>
@@ -119,7 +119,7 @@
                         小計
                     </div>
                     <div class="col-6 px-3 text-end text-primary">
-                        {{ Math.trunc((amount - discount) * tax).toLocaleString() }} 円
+                        {{ Math.trunc((amount - discount)).toLocaleString() }} 円
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
@@ -130,7 +130,9 @@
                         0 円
                     </div>
                 </div>
-                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step !== 5">
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+                    v-if="step !== 5"
+                    @click="switchDiscount()">
                     <div class="col-8 px-3">
                         値引・割引を追加
                     </div>
@@ -144,7 +146,7 @@
                         合計
                     </div>
                     <div class="col-8 px-3 text-end bill-total text-primary">
-                        {{ Math.trunc((amount - discount) * tax).toLocaleString() }} 円
+                        {{ Math.trunc((amount - discount)).toLocaleString() }} 円
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step !== 5">
@@ -152,7 +154,7 @@
                         内消費税10%
                     </div>
                     <div class="col-6 px-3 text-end text-secondary">
-                        ({{ Math.trunc((amount - discount) * (tax - 1)).toLocaleString() }} 円)
+                        ({{ Math.trunc((amount - discount) - ((amount - discount) / tax)).toLocaleString() }} 円)
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step === 5">
@@ -194,11 +196,16 @@
 
         </div>
 
+        <discount-modal
+            @close = "switchDiscount"
+            :amount="amount"
+            v-if="showDiscount"
+        ></discount-modal>
+
         <accounting-modal
             @close = "changeStep"
             @account = "account"
             :amount="amount - discount"
-            :tax="tax"
             v-if="step === 3"
         ></accounting-modal>
 
@@ -216,6 +223,7 @@
 </template>
 
 <script>
+import DiscountModal from './Modals/DiscountModalComponent';
 import AccountingModal from './Modals/AccountingModalComponent';
 import ChangeModal from './Modals/ChangeModalComponent';
 import ReceiptPrinter from './Functions/ReceiptPrinter';
@@ -255,6 +263,7 @@ export default ({
             step: 1,
             route: '/',
             isActive: -1,
+            showDiscount: false,
             indexes: [],
             order: {},
             orderForSend: {},
@@ -266,6 +275,7 @@ export default ({
         }
     },
     components: {
+        'discount-modal': DiscountModal,
         'accounting-modal': AccountingModal,
         'change-modal': ChangeModal,
         'receipt-printer': ReceiptPrinter,
@@ -278,6 +288,9 @@ export default ({
             if (this.total !== 0) {
                 this.step = num;
             }
+        },
+        switchDiscount: function () {
+            this.showDiscount = !this.showDiscount;
         },
         add: function(clothes) {
             if (this.step === 1) {
@@ -329,12 +342,12 @@ export default ({
         },
 
         account: async function(payment) {
-            if (payment < Math.trunc((this.amount - this.discount) * this.tax)) {
+            if (payment < Math.trunc((this.amount - this.discount))) {
                 return;
             }
             this.step = 4;
             this.payment = payment;
-            this.change = payment - Math.trunc((this.amount - this.discount) * this.tax);
+            this.change = payment - Math.trunc((this.amount - this.discount));
 
             // order登録API
             let order_id = await this.storeOrder();
@@ -349,7 +362,7 @@ export default ({
                 manager_id: this.manager_id,
                 customer_id: this.customer_id,
                 order: this.orderForSend,
-                amount: Math.trunc((this.amount - this.discount) * this.tax), // with tax
+                amount: Math.trunc((this.amount - this.discount)), // with tax
                 discount: this.discount,
                 payment: this.payment,
                 invoice: false,

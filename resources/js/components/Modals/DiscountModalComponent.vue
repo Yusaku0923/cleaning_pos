@@ -81,10 +81,9 @@
         </div>
     </transition>
 </template>
-
 <script>
-export default ({
-    name: "accounting",
+export default {
+    name: "discount",
     props: {
         amount: {
             type: Number,
@@ -95,9 +94,6 @@ export default ({
         return {
             payment: 0
         }
-    },
-    mounted() {
-        const modal = document.querySelector('.modal-window')
     },
     methods: {
         typeNumber: function(num) {
@@ -123,5 +119,5 @@ export default ({
             this.payment = this.amount;
         }
     }
-})
+}
 </script>
