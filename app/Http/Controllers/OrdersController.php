@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\Order;
 use App\Models\Category;
 use App\Models\Clothes;
 use App\Models\Tax;
@@ -35,7 +36,11 @@ class OrdersController extends Controller
         }
         $category_clothes = Category::with('clothes')->get();
         $model = new Clothes;
-        $often_ordered = $model->fetchOftenOrdered(session()->get('customer_id'));
+        if (Order::where('customer_id', session()->get('customer_id'))->exists()) {
+            $often_ordered = $model->fetchOftenOrdered(session()->get('customer_id'));
+        } else {
+            $often_ordered = [];
+        }
         $tax = Tax::where('store_id', Auth::id())->value('tax');
         $store = Store::find(Auth::id());
         $token = $store->createToken(Str::random(10));
