@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\Store;
+use App\Models\Manager;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderClothes;
 use App\Models\TagNumber;
+use App\Models\Tax;
 
 class OrdersController extends Controller
 {
@@ -54,6 +58,35 @@ class OrdersController extends Controller
 
         return response()->json([
             'order_id' => $order->id
+        ]);
+    }
+
+    public function fetchReceiptInfo($order_id) {
+
+        $order = Order::find($order_id);
+        $customer = Customer::find($order->customer_id);
+        $store = Store::find($order->store_id);
+        $manager_name = Manager::where('id', $customer->manager_id)->value('name');
+        $tax = Tax::where('store_id', $order->store_id)->value('tax');
+
+        $model = new Order;
+        $orders = $model->fetchReciptDetail($order_id);
+
+        return response()->json([
+            'store_name'         => $store->name,
+            'store_address'      => $store->address,
+            'store_tel'          => $store->phone_number,
+            'customer_name_kana' => $customer->name_kana,
+            'customer_name'      => $customer->name,
+            'customer_tel'       => $customer->phone_number,
+            'manager_name'       => $manager_name,
+            'ordered_at'         => date('Y年m月d日 H時i分', strtotime($order->created_at)),
+            'order_list'         => $orders,
+            'subtotal'           => $order->amount,
+            'discount'           => $order->discount,
+            'discount_raito'     => $order->discount_raito,
+            'payment'            => $order->payment,
+            'tax'                => $tax,
         ]);
     }
 

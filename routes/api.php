@@ -17,4 +17,5 @@ use App\Http\Controllers\Api\OrdersController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('order', [OrdersController::class, 'store'])->name('order.store');
+    Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
 });

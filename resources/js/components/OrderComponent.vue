@@ -210,6 +210,7 @@
 
         <receipt-printer
             ref="child"
+            :token="token"
         ></receipt-printer>
     </div>
 </template>

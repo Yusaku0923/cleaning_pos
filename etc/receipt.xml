@@ -32,6 +32,7 @@
 <text width="2" height="2"/>
 <text>田中太郎 様</text>
 <feed/>
+<feed/>
 <text width="1" height="1"/>
 <text x="20"/>
 <text>お電話 080-5555-6666</text>
@@ -42,10 +43,9 @@
 <feed/>
 <text>2022年11月11日 12時12分</text>
 <text width="2" height="2"/>
-<text x="250"/>
+<text x="270"/>
 <text>55555</text>
-<text width="1" height="1"/>
-<text>-01/01&#10;</text>
+<feed/>
 <hline x1="0" x2="575" style="thin"/>
 <feed/>
 <text x="10"/>

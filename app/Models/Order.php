@@ -69,4 +69,29 @@ class Order extends Model
         return $orders;
     }
 
+    public function fetchReciptDetail($order_id) {
+        $result = [];
+        $list = OrderClothes::join('orders', 'order_clothes.order_id', '=', 'orders.id')
+                            ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
+                            ->where('order_id', $order_id)
+                            ->get()->toArray();
+        foreach ($list as $row) {
+            $index = array_search($row['clothes_id'], array_column($result, 'id'));
+            if ($index === false) {
+                $result[] = [
+                    'id' => $row['clothes_id'],
+                    'name' => $row['name'],
+                    'tag_start' => $row['tag'],
+                    'tag_end' => $row['tag'],
+                    'price' => $row['price'],
+                    'count' => 1,
+                ];
+            } else {
+                $result[$index]['count']++;
+                $result[$index]['tag_end'] = $row['tag'];
+            }
+        }
+
+        return $result;
+    }
 }

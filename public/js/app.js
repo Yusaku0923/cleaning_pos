@@ -5313,179 +5313,318 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  methods: {
-    printReceipt: function printReceipt(order_id) {
-      console.log(order_id);
-      var store_name = '';
-      var store_address = '';
-      var store_tel = '';
-      var customer_name_kana = '';
-      var customer_name = '';
-      var customer_tel = '';
-      var manager_name = '';
-      var total_count = '';
-      var printer = null;
-      var ePosDev = new epson.ePOSDevice();
-      ePosDev.connect('192.168.192.168', 8008, cbConnect);
-      function cbConnect(data) {
-        if (data == 'OK' || data == 'SSL_CONNECT_OK') {
-          ePosDev.createDevice('local_printer', ePosDev.DEVICE_TYPE_PRINTER, {
-            'crypto': false,
-            'buffer': false
-          }, cbCreateDevice_printer);
-        } else {
-          console.log(data);
-        }
-      }
-      function cbCreateDevice_printer(devobj, retcode) {
-        if (retcode == 'OK') {
-          printer = devobj;
-          printer.timeout = 60000;
-          printer.onreceive = function (res) {
-            console.log(res.success);
-          };
-          printer.oncoveropen = function () {
-            console.log('coveropen');
-          };
-          print();
-        } else {
-          console.log(retcode);
-        }
-      }
-      function print() {
-        printer.addFeed();
-        printer.addFeed();
-        printer.addTextFont(printer.FONT_B);
-        printer.addTextLineSpace(30);
-        printer.addTextLang('ja');
-        printer.addTextSmooth(true);
-        printer.addTextAlign(printer.ALIGN_CENTER);
-        printer.addTextSize(1, 2);
-        printer.addText('テストクリーニング');
-        printer.addTextSmooth(false);
-        printer.addFeed();
-        printer.addTextSize(1, 1);
-        printer.addText('東京都新宿区西新宿1-1-1 (TEL 11-2222)');
-        printer.addFeed();
-        printer.addFeed();
-        printer.addTextStyle(true, false, true, printer.COLOR_1);
-        printer.addTextSize(2, 2);
-        printer.addText('お預り票');
-        printer.addFeed();
-        printer.addFeed();
-        printer.addTextAlign(printer.ALIGN_LEFT);
-        printer.addTextPosition(20);
-        printer.addTextSize(1, 1);
-        printer.addTextStyle(false, false, false, printer.COLOR_1);
-        printer.addText('お名前');
-        printer.addFeed();
-        printer.addTextPosition(40);
-        printer.addText('タナカタロウ');
-        printer.addFeed();
-        printer.addTextPosition(40);
-        printer.addTextSize(2, 2);
-        printer.addText('田中太郎 様');
-        printer.addFeed();
-        printer.addTextSize(1, 1);
-        printer.addTextPosition(20);
-        printer.addText('お電話 080-5555-6666');
-        printer.addTextPosition(250);
-        printer.addText('担当者:本店レジ');
-        printer.addFeed();
-        printer.addHLine(0, 575, printer.LINE_MEDIUM);
-        printer.addFeed();
-        printer.addText('2022年11月11日 12時12分');
-        printer.addTextSize(2, 2);
-        printer.addTextPosition(250);
-        printer.addText('55555');
-        printer.addTextSize(1, 1);
-        printer.addText('-01/01');
-        printer.addFeed();
-        printer.addHLine(0, 575, printer.LINE_THIN);
-        printer.addFeed();
-        printer.addTextPosition(10);
-        printer.addTextSize(2, 2);
-        printer.addText('0-001');
-        printer.addTextSize(1, 2);
-        printer.addTextPosition(130);
-        printer.addText('絹ブラウス');
-        printer.addTextPosition(350);
-        printer.addText('1,000');
-        printer.addFeed();
-        printer.addTextPosition(10);
-        printer.addTextSize(2, 2);
-        printer.addText('0-002');
-        printer.addTextSize(1, 2);
-        printer.addTextPosition(130);
-        printer.addText('絹ブラウス');
-        printer.addTextPosition(340);
-        printer.addText('X 4');
-        printer.addFeed();
-        printer.addTextSize(2, 2);
-        printer.addText('～0-005');
-        printer.addTextPosition(350);
-        printer.addTextSize(1, 2);
-        printer.addText('1,000');
-        printer.addFeed();
-        printer.addFeed();
-        printer.addHLine(0, 575, printer.LINE_THIN);
-        printer.addFeed();
-        printer.addTextPosition(10);
-        printer.addTextSize(1, 1);
-        printer.addText('点数　');
-        printer.addTextPosition(100);
-        printer.addText('5');
-        printer.addTextPosition(200);
-        printer.addText('小計');
-        printer.addTextPosition(340);
-        printer.addText('5,000');
-        printer.addFeed();
-        printer.addHLine(0, 575, printer.LINE_THIN);
-        printer.addFeed();
-        printer.addTextPosition(10);
-        printer.addText('点数');
-        printer.addTextPosition(100);
-        printer.addText('5');
-        printer.addTextPosition(200);
-        printer.addText('伝票合計');
-        printer.addTextPosition(340);
-        printer.addText('5,000');
-        printer.addFeed();
-        printer.addFeed();
-        printer.addTextPosition(200);
-        printer.addText('(うち消費税');
-        printer.addTextPosition(360);
-        printer.addText('909）');
-        printer.addFeed();
-        printer.addHLine(0, 575, printer.LINE_MEDIUM);
-        printer.addFeed();
-        printer.addTextSize(2, 2);
-        printer.addTextPosition(50);
-        printer.addText('未収額');
-        printer.addTextPosition(240);
-        printer.addText('5,000');
-        printer.addFeed();
-        printer.addHLine(0, 575, printer.LINE_THIN);
-        printer.addFeed();
-        printer.addTextSize(1, 1);
-        printer.addTextPosition(20);
-        printer.addText('いつもご利用ありがとうございます。');
-        printer.addFeed();
-        printer.addTextPosition(20);
-        printer.addText('今後ともよろしくお願いいたします。');
-        printer.addFeed();
-        printer.addHLine(0, 575, printer.LINE_THIN);
-        printer.addFeed();
-        printer.addTextAlign(printer.ALIGN_CENTER);
-        printer.addTextSize(2, 2);
-        printer.addText('未　収');
-        printer.addFeed();
-        printer.addFeed();
-        printer.addCut(printer.CUT_FEED);
-        printer.send();
-      }
+  props: {
+    token: {
+      type: String,
+      required: true
     }
+  },
+  methods: {
+    fetchReceipt: function () {
+      var _fetchReceipt = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(order_id) {
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+                _context.next = 3;
+                return axios.get('/api/receipt/' + order_id).then(function (response) {
+                  console.log(response);
+                  return response.data;
+                })["catch"](function (error) {
+                  console.log(error);
+                  return;
+                });
+              case 3:
+                return _context.abrupt("return", _context.sent);
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+      function fetchReceipt(_x) {
+        return _fetchReceipt.apply(this, arguments);
+      }
+      return fetchReceipt;
+    }(),
+    printReceipt: function () {
+      var _printReceipt = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(order_id) {
+        var receipt, store_name, store_address, store_tel, customer_name_kana, customer_name, customer_tel, manager_name, ordered_at, order_list, total_count, subtotal, discount, payment, tax, printer, ePosDev, cbConnect, cbCreateDevice_printer, print;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                print = function _print() {
+                  printer.addFeed();
+                  printer.addFeed();
+                  printer.addTextFont(printer.FONT_B);
+                  printer.addTextLineSpace(30);
+                  printer.addTextLang('ja');
+                  printer.addTextSmooth(true);
+                  printer.addTextAlign(printer.ALIGN_CENTER);
+                  printer.addTextSize(1, 2);
+
+                  // store name
+                  printer.addText(store_name);
+                  printer.addTextSmooth(false);
+                  printer.addFeed();
+                  printer.addTextSize(1, 1);
+
+                  // store address, store tel
+                  printer.addText(store_address + ' (TEL' + store_tel + ')');
+                  printer.addFeed();
+                  printer.addFeed();
+                  printer.addTextStyle(true, false, true, printer.COLOR_1);
+                  printer.addTextSize(2, 2);
+                  printer.addText('お預り票');
+                  printer.addFeed();
+                  printer.addFeed();
+                  printer.addTextAlign(printer.ALIGN_LEFT);
+                  printer.addTextPosition(20);
+                  printer.addTextSize(1, 1);
+                  printer.addTextStyle(false, false, false, printer.COLOR_1);
+                  printer.addText('お名前');
+                  printer.addFeed();
+                  printer.addTextPosition(40);
+
+                  // customer name kana
+                  printer.addText(customer_name_kana);
+                  printer.addFeed();
+                  printer.addTextPosition(40);
+                  printer.addTextSize(2, 2);
+
+                  // customer name
+                  printer.addText(customer_name + ' 様');
+                  printer.addFeed();
+                  printer.addFeed();
+                  printer.addTextSize(1, 1);
+                  printer.addTextPosition(20);
+
+                  // customer tel
+                  printer.addText('お電話 ' + customer_tel);
+                  printer.addTextPosition(250);
+
+                  // manager_name
+                  printer.addText('担当者:' + manager_name);
+                  printer.addFeed();
+                  printer.addHLine(0, 575, printer.LINE_MEDIUM);
+                  printer.addFeed();
+
+                  // ordered at
+                  printer.addText(ordered_at);
+                  printer.addTextSize(2, 2);
+                  printer.addTextPosition(270);
+
+                  // identity
+                  printer.addText(order_id);
+                  printer.addFeed();
+                  printer.addHLine(0, 575, printer.LINE_THIN);
+                  printer.addFeed();
+
+                  // order list
+                  for (var order in order_list) {
+                    if (order['count'] <= 1) {
+                      // one line
+                      printer.addTextPosition(10);
+                      printer.addTextSize(2, 2);
+
+                      // tag start
+                      printer.addText(order['tag_start']);
+                      printer.addTextSize(1, 2);
+                      printer.addTextPosition(130);
+
+                      // clothes name
+                      printer.addText(order['name']);
+                      printer.addTextPosition(350);
+
+                      // clothes price
+                      printer.addText(order['price']);
+                      printer.addFeed();
+                    } else {
+                      // multiple line
+                      printer.addTextPosition(10);
+                      printer.addTextSize(2, 2);
+
+                      // tag start
+                      printer.addText(order['tag_start']);
+                      printer.addTextSize(1, 2);
+                      printer.addTextPosition(130);
+
+                      // clothes name
+                      printer.addText(order['name']);
+                      printer.addTextPosition(340);
+
+                      // clothes count
+                      printer.addText('X ' + order['count']);
+                      printer.addFeed();
+                      printer.addTextSize(2, 2);
+
+                      // tag end
+                      printer.addText('～' + order['tag_end']);
+                      printer.addTextPosition(350);
+                      printer.addTextSize(1, 2);
+
+                      // clothes price
+                      printer.addText(order['price']);
+                    }
+                  }
+                  printer.addFeed();
+                  printer.addFeed();
+                  printer.addHLine(0, 575, printer.LINE_THIN);
+                  printer.addFeed();
+                  printer.addTextPosition(10);
+                  printer.addTextSize(1, 1);
+                  printer.addText('点数　');
+                  printer.addTextPosition(100);
+
+                  // total count
+                  printer.addText(total_count);
+                  printer.addTextPosition(200);
+                  printer.addText('小計');
+                  printer.addTextPosition(340);
+
+                  // subtotal
+                  printer.addText(subtotal);
+                  printer.addFeed();
+                  printer.addHLine(0, 575, printer.LINE_THIN);
+                  printer.addFeed();
+                  printer.addTextPosition(10);
+                  printer.addText('点数');
+                  printer.addTextPosition(100);
+
+                  // total count
+                  printer.addText(total_count);
+                  printer.addTextPosition(200);
+                  printer.addText('伝票合計');
+                  printer.addTextPosition(340);
+
+                  // total
+                  printer.addText(tatal);
+                  printer.addFeed();
+                  printer.addFeed();
+                  printer.addTextPosition(200);
+                  printer.addText('(うち消費税');
+                  printer.addTextPosition(360);
+
+                  // tax
+                  printer.addText(tax + '）');
+                  printer.addFeed();
+                  printer.addHLine(0, 575, printer.LINE_MEDIUM);
+                  printer.addFeed();
+                  printer.addTextSize(2, 2);
+                  printer.addTextPosition(50);
+                  if (has_paid) {
+                    printer.addText('合計額');
+                    printer.addTextPosition(240);
+
+                    // total
+                    printer.addText(tatal);
+                    printer.addFeed();
+                    printer.addHLine(0, 575, printer.LINE_THIN);
+                    printer.addFeed();
+                    printer.addTextSize(1, 1);
+                    printer.addTextAlign(printer.ALIGN_LEFT);
+                    printer.addTextPosition(10);
+                    printer.addText('お預り');
+                    printer.addTextPosition(120);
+                    printer.addText(payment);
+                    printer.addTextPosition(240);
+                    printer.addText('お釣り');
+                    printer.addTextAlign(printer.ALIGN_RIGHT);
+                    printer.addTextPosition(340);
+                    printer.addText(payment - total);
+                  } else {
+                    printer.addText('未収額');
+                    printer.addTextPosition(240);
+                    printer.addText(total - payment);
+                    printer.addFeed();
+                    printer.addHLine(0, 575, printer.LINE_THIN);
+                  }
+                  printer.addFeed();
+                  printer.addTextSize(1, 1);
+                  printer.addTextPosition(20);
+                  printer.addText('いつもご利用ありがとうございます。');
+                  printer.addFeed();
+                  printer.addTextPosition(20);
+                  printer.addText('今後ともよろしくお願いいたします。');
+                  printer.addFeed();
+                  printer.addHLine(0, 575, printer.LINE_THIN);
+                  printer.addFeed();
+                  if (!has_paid) {
+                    printer.addTextAlign(printer.ALIGN_CENTER);
+                    printer.addTextSize(2, 2);
+                    printer.addText('未　収');
+                  }
+                  printer.addFeed();
+                  printer.addFeed();
+                  printer.addCut(printer.CUT_FEED);
+                  printer.send();
+                };
+                cbCreateDevice_printer = function _cbCreateDevice_print(devobj, retcode) {
+                  if (retcode == 'OK') {
+                    printer = devobj;
+                    printer.timeout = 60000;
+                    printer.onreceive = function (res) {
+                      console.log(res.success);
+                    };
+                    printer.oncoveropen = function () {
+                      console.log('coveropen');
+                    };
+                    print();
+                  } else {
+                    console.log(retcode);
+                  }
+                };
+                cbConnect = function _cbConnect(data) {
+                  if (data == 'OK' || data == 'SSL_CONNECT_OK') {
+                    ePosDev.createDevice('local_printer', ePosDev.DEVICE_TYPE_PRINTER, {
+                      'crypto': false,
+                      'buffer': false
+                    }, cbCreateDevice_printer);
+                  } else {
+                    console.log(data);
+                  }
+                };
+                _context2.next = 5;
+                return this.fetchReceipt(order_id);
+              case 5:
+                receipt = _context2.sent;
+                store_name = receipt['store_name'];
+                store_address = receipt['store_address'];
+                store_tel = receipt['store_tel'];
+                customer_name_kana = receipt['customer_name_kana'];
+                customer_name = receipt['customer_name'];
+                customer_tel = receipt['customer_tel'];
+                manager_name = receipt['manager_name'];
+                ordered_at = receipt['ordered_at'];
+                order_list = receipt['order_list'];
+                total_count = receipt['total_count'];
+                subtotal = receipt['subtotal'];
+                discount = receipt['discount'];
+                payment = receipt['payment'];
+                tax = receipt['tax'];
+                printer = null;
+                ePosDev = new epson.ePOSDevice();
+                ePosDev.connect('192.168.0.215', 8008, cbConnect);
+              case 23:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+      function printReceipt(_x2) {
+        return _printReceipt.apply(this, arguments);
+      }
+      return printReceipt;
+    }()
   }
 });
 
@@ -6358,7 +6497,10 @@ var render = function render() {
       close: _vm.changeStep
     }
   }) : _vm._e(), _vm._v(" "), _c("receipt-printer", {
-    ref: "child"
+    ref: "child",
+    attrs: {
+      token: _vm.token
+    }
   })], 1);
 };
 var staticRenderFns = [function () {
