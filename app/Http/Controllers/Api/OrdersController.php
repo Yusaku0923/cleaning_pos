@@ -21,10 +21,11 @@ class OrdersController extends Controller
             'store_id' => Auth::id(),
             'customer_id' => $request->customer_id,
             'amount' => $request->amount,
+            'reduction' => $request->reduction,
             'discount' => $request->discount,
             'payment' => $request->payment,
             'is_registered_as_invoice' => $request->invoice,
-            'has_paid' => true,
+            'paid_at' => date('Y-m-d H:i:s'),
         ]);
 
         $tag = TagNumber::find($request->manager_id)->value('tag_number');
@@ -87,7 +88,7 @@ class OrdersController extends Controller
             'discount_raito'     => $order->discount_raito,
             'payment'            => $order->payment,
             'tax'                => $tax,
-            'has_paid'           => $order->has_paid,
+            'paid_at'            => $order->paid_at,
         ]);
     }
 

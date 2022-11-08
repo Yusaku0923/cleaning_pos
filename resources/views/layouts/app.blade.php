@@ -46,3 +46,9 @@
     </div>
 </body>
 </html>
+
+<script>
+    window.addEventListener('load', (event) => {
+        document.addEventListener("dblclick", function(e){ e.preventDefault();}, { passive: false });
+    });
+</script>

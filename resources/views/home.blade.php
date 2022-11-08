@@ -110,7 +110,7 @@
                             <br>
                             {{ number_format($order['amount']) }}円
                             <br>
-                            {{ $order['is_handed_over'] ? 'お渡し済': '未渡し' }}
+                            {{ is_null($order['handed_at']) ? '未渡し': 'お渡し済' }}
                         </div>
                         @endforeach
                     </div>

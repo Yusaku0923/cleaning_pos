@@ -119,7 +119,7 @@
                         小計
                     </div>
                     <div class="col-6 px-3 text-end text-primary">
-                        {{ Math.trunc((amount - reduction)).toLocaleString() }} 円
+                        {{ Math.trunc((amount)).toLocaleString() }} 円
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
@@ -175,11 +175,10 @@
                 </div>
 
                 <div class="receipt mt-4">
-                    <div class="col-11 mx-auto card bg-primary text-white p-3" v-show="step === 4 || step === 5">
-                        領収書発行
-                    </div>
-                    <div class="col-11 mx-auto card bg-primary text-white p-3 mt-2" v-show="step === 4 || step === 5">
-                        レシート発行
+                    <div class="col-11 mx-auto card bg-primary text-white p-3 mt-2"
+                        v-show="step === 4 || step === 5"
+                        @click="receiptReissue()">
+                        レシート再発行
                     </div>
                 </div>
             </div>
@@ -276,6 +275,8 @@ export default ({
             discount: 0,
             payment: 0,
             change: 0,
+
+            orderId: null
         }
     },
     components: {
@@ -353,18 +354,23 @@ export default ({
         },
 
         account: async function(payment) {
-            if (payment < Math.trunc((this.amount - this.discount))) {
+            if (payment < Math.trunc((this.amount - this.reduction))) {
                 return;
             }
             this.step = 4;
             this.payment = payment;
-            this.change = payment - Math.trunc((this.amount - this.discount));
+            this.change = payment - Math.trunc((this.amount - this.reduction));
 
             // order登録API
             let order_id = await this.storeOrder();
            
-           // レシート発行
+            // レシート発行
             this.$refs.child.printReceipt(order_id);
+            this.orderId = order_id;
+        },
+
+        receiptReissue: function() {
+            this.$refs.child.printReceipt(this.orderId);
         },
 
         storeOrder: async function() {
@@ -373,7 +379,8 @@ export default ({
                 manager_id: this.manager_id,
                 customer_id: this.customer_id,
                 order: this.orderForSend,
-                amount: Math.trunc((this.amount - this.discount)), // with tax
+                amount: this.amount - this.reduction, // with tax
+                reduction: this.reduction,
                 discount: this.discount,
                 payment: this.payment,
                 invoice: false,

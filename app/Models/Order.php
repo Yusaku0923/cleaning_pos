@@ -30,7 +30,7 @@ class Order extends Model
          *     'order.discount',
          *     'order.payment',
          *     'order.is_registered_as_invoice',
-         *     'order.has_paid',
+         *     'order.paid_at',
          *     'order.is_handed_over',
          *     'order.note',
          * ]

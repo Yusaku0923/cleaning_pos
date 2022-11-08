@@ -22,8 +22,8 @@ class CreateOrdersTable extends Migration
             $table->bigInteger('discount')->default(0)->comment('値引き割合');
             $table->bigInteger('payment')->comment('お支払い金額');
             $table->boolean('is_registered_as_invoice')->default(false)->comment('請求書フラグ');
-            $table->boolean('has_paid')->default(false)->comment('支払い済みフラグ');
-            $table->boolean('is_handed_over')->default(false)->comment('お渡し済みフラグ');
+            $table->dateTime('paid_at')->nullable()->default(null)->comment('支払い日時');
+            $table->dateTime('handed_at')->nullable()->default(null)->comment('お渡し日時');
             $table->text('note')->nullable()->comment('特記事項');
             $table->softDeletes();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'))->comment('作成日時');

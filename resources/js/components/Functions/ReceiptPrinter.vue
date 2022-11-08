@@ -13,7 +13,6 @@ export default ({
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
             return await axios.get('/api/receipt/' + order_id)
             .then(function (response) {
-                console.log(response);
                 return response.data;
             })
             .catch(function (error) {
@@ -39,7 +38,7 @@ export default ({
             let discount           = receipt['discount'];
             let payment            = receipt['payment'];
             let tax                = receipt['tax'];
-            let has_paid           = receipt['has_paid'];
+            let paid_at            = receipt['paid_at'];
 
             let printer = null;
             let ePosDev = new epson.ePOSDevice();
@@ -241,7 +240,7 @@ export default ({
                 printer.addFeed();
                 printer.addTextSize(2, 2);
                 printer.addTextPosition(50);
-                if (has_paid) {
+                if (paid_at !== null) {
                     printer.addText('合計額');
                     printer.addTextPosition(240);
 
@@ -278,7 +277,7 @@ export default ({
                 printer.addFeed();
                 printer.addHLine(0, 575, printer.LINE_THIN);
                 printer.addFeed();
-                if (!has_paid) {
+                if (paid_at === null) {
                     printer.addTextAlign(printer.ALIGN_CENTER);
                     printer.addTextSize(2, 2);
                     printer.addText('未　収');

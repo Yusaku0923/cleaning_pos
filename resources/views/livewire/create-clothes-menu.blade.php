@@ -19,12 +19,18 @@
         @foreach ($cards as $card)
         @if ($is_category)
         <button class="card menu-card col-12 mx-auto" wire:click="select({{ $card->id }})">
-            <span class="category-label mx-auto">{{ $card->name }}</span>
+            <div class="category-label-field position-relative">
+                <p class="category-label text-center position-absolute top-50 start-50 translate-middle">{{ $card->name }}</p>
+            </div>
         </button>
         @else
         <button class="card menu-card col-12 mx-auto">
-            <span class="clothes-label mx-auto">{{ $card->name }}</span>
-            <span class="price-label mx-auto">{{ number_format($card->price) }}円</span>
+            <div class="clothes-label-upper-field">
+                <span class="clothes-label mx-auto text-center">{{ $card->name }}</span>
+            </div>
+            <div class="clothes-label-lower-field text-center">
+                <span class="price-label mx-auto text-center">{{ number_format($card->price) }}円</span>
+            </div>
         </button>
         @endif
         @endforeach

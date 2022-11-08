@@ -5334,7 +5334,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
                 _context.next = 3;
                 return axios.get('/api/receipt/' + order_id).then(function (response) {
-                  console.log(response);
                   return response.data;
                 })["catch"](function (error) {
                   console.log(error);
@@ -5906,7 +5905,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       reduction: 0,
       discount: 0,
       payment: 0,
-      change: 0
+      change: 0,
+      orderId: null
     };
   },
   components: {
@@ -5979,7 +5979,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                if (!(payment < Math.trunc(this.amount - this.discount))) {
+                if (!(payment < Math.trunc(this.amount - this.reduction))) {
                   _context.next = 2;
                   break;
                 }
@@ -5987,7 +5987,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 2:
                 this.step = 4;
                 this.payment = payment;
-                this.change = payment - Math.trunc(this.amount - this.discount);
+                this.change = payment - Math.trunc(this.amount - this.reduction);
 
                 // order登録API
                 _context.next = 7;
@@ -5996,7 +5996,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 order_id = _context.sent;
                 // レシート発行
                 this.$refs.child.printReceipt(order_id);
-              case 9:
+                this.orderId = order_id;
+              case 10:
               case "end":
                 return _context.stop();
             }
@@ -6008,6 +6009,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
       return account;
     }(),
+    receiptReissue: function receiptReissue() {
+      this.$refs.child.printReceipt(this.orderId);
+    },
     storeOrder: function () {
       var _storeOrder = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
@@ -6020,8 +6024,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   manager_id: this.manager_id,
                   customer_id: this.customer_id,
                   order: this.orderForSend,
-                  amount: Math.trunc(this.amount - this.discount),
+                  amount: this.amount - this.reduction,
                   // with tax
+                  reduction: this.reduction,
                   discount: this.discount,
                   payment: this.payment,
                   invoice: false
@@ -6729,7 +6734,7 @@ var render = function render() {
     staticClass: "col-6 px-3"
   }, [_vm._v("\n                       小計\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-6 px-3 text-end text-primary"
-  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount - _vm.reduction).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-6 px-3"
@@ -6780,16 +6785,13 @@ var render = function render() {
       value: _vm.step === 4 || _vm.step === 5,
       expression: "step === 4 || step === 5"
     }],
-    staticClass: "col-11 mx-auto card bg-primary text-white p-3"
-  }, [_vm._v("\n                       領収書発行\n                   ")]), _vm._v(" "), _c("div", {
-    directives: [{
-      name: "show",
-      rawName: "v-show",
-      value: _vm.step === 4 || _vm.step === 5,
-      expression: "step === 4 || step === 5"
-    }],
-    staticClass: "col-11 mx-auto card bg-primary text-white p-3 mt-2"
-  }, [_vm._v("\n                       レシート発行\n                   ")])])]), _vm._v(" "), _vm.step === 2 || _vm.step === 3 ? _c("div", {
+    staticClass: "col-11 mx-auto card bg-primary text-white p-3 mt-2",
+    on: {
+      click: function click($event) {
+        return _vm.receiptReissue();
+      }
+    }
+  }, [_vm._v("\n                       レシート再発行\n                   ")])])]), _vm._v(" "), _vm.step === 2 || _vm.step === 3 ? _c("div", {
     staticClass: "col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount",
     on: {
       click: function click($event) {
