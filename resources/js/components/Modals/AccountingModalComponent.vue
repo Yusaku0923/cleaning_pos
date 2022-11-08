@@ -15,17 +15,14 @@
                                         <div class="modal-ac-result-total-label fw-bold">合計</div>
                                         <div class="modal-ac-result-total-price position-relative py-2 fw-bold">
                                             {{ amount.toLocaleString() }} 円
-                                            <p class="text-danger mb-0 position-absolute end-0 fw-normal" v-show="payment < 0"><span style="font-size: 14px;">不足</span> {{ (payment - amount).toLocaleString() }} 円</p>
                                         </div>
                                     </div>
 
                                     <div class="col-12 modal-ac-result-change d-flex justify-content-between p-2">
-                                        <div class="modal-ac-result-change-label fw-bold">お釣り</div>
-                                        <div class="modal-ac-result-change-price fw-bold" v-if="payment < 0">
-                                            0 円
-                                        </div>
-                                        <div class="modal-ac-result-change-price fw-bold" v-else>
-                                            {{ (payment - amount).toLocaleString() }} 円
+                                        <div class="modal-ac-result-change-label fw-bold" v-if="payment < amount">不足</div>
+                                        <div class="modal-ac-result-change-label fw-bold" v-else>お釣り</div>
+                                        <div class="modal-ac-result-change-price fw-bold" :class="{'text-danger': payment < amount}">
+                                            {{ Math.abs(payment - amount).toLocaleString() }} 円
                                         </div>
                                     </div>
 
@@ -43,23 +40,23 @@
                             <div class="col-7 p-3">
                                 <div class="modal-ac-keypad position-relative mx-auto text-primary">
                                     <div class="modal-ac-keypad-upper">
-                                        <div class="modal-ac-keypad-upper-key" @click="typeNumber('7')">7</div>
-                                        <div class="modal-ac-keypad-upper-key" @click="typeNumber('8')">8</div>
-                                        <div class="modal-ac-keypad-upper-key" @click="typeNumber('9')">9</div>
+                                        <div class="modal-ac-keypad-upper-key border border-secondary" @click="typeNumber('7')">7</div>
+                                        <div class="modal-ac-keypad-upper-key border border-secondary" @click="typeNumber('8')">8</div>
+                                        <div class="modal-ac-keypad-upper-key border border-secondary" @click="typeNumber('9')">9</div>
                                         <div class="modal-ac-keypad-upper-backspace text-white border border-bottom-0 border-white" @click="typeBackspace()"><i class="fa-solid fa-delete-left"></i></div>
-                                        <div class="modal-ac-keypad-upper-key" @click="typeNumber('4')">4</div>
-                                        <div class="modal-ac-keypad-upper-key" @click="typeNumber('5')">5</div>
-                                        <div class="modal-ac-keypad-upper-key" @click="typeNumber('6')">6</div>
+                                        <div class="modal-ac-keypad-upper-key border border-secondary" @click="typeNumber('4')">4</div>
+                                        <div class="modal-ac-keypad-upper-key border border-secondary" @click="typeNumber('5')">5</div>
+                                        <div class="modal-ac-keypad-upper-key border border-secondary" @click="typeNumber('6')">6</div>
                                         <div class="modal-ac-keypad-upper-minus text-white border border-bottom-0 border-white"><i class="fa-solid fa-minus"></i></div>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <div class="modal-ac-keypad-lower">
-                                            <div class="modal-ac-keypad-lower-key" @click="typeNumber('1')">1</div>
-                                            <div class="modal-ac-keypad-lower-key" @click="typeNumber('2')">2</div>
-                                            <div class="modal-ac-keypad-lower-key" @click="typeNumber('3')">3</div>
-                                            <div class="modal-ac-keypad-lower-key" @click="typeZero(10)">0</div>
-                                            <div class="modal-ac-keypad-lower-key" @click="typeZero(100)">00</div>
-                                            <div class="modal-ac-keypad-lower-key" @click="typeZero(1000)">000</div>
+                                            <div class="modal-ac-keypad-lower-key border border-secondary" @click="typeNumber('1')">1</div>
+                                            <div class="modal-ac-keypad-lower-key border border-secondary" @click="typeNumber('2')">2</div>
+                                            <div class="modal-ac-keypad-lower-key border border-secondary" @click="typeNumber('3')">3</div>
+                                            <div class="modal-ac-keypad-lower-key border border-secondary" @click="typeZero(10)">0</div>
+                                            <div class="modal-ac-keypad-lower-key border border-secondary" @click="typeZero(100)">00</div>
+                                            <div class="modal-ac-keypad-lower-key border border-secondary" @click="typeZero(1000)">000</div>
                                         </div>
                                         <div class="modal-ac-keypad-lower-just text-white border border-white" @click="typeJust()"><i class="fa-solid fa-arrow-down"></i></div>
                                     </div>
@@ -93,7 +90,7 @@ export default ({
     },
     data() {
         return {
-            payment: 0
+            payment: 0,
         }
     },
     mounted() {

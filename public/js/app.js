@@ -5356,7 +5356,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }(),
     printReceipt: function () {
       var _printReceipt = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(order_id) {
-        var receipt, store_name, store_address, store_tel, customer_name_kana, customer_name, customer_tel, manager_name, ordered_at, order_list, total_count, subtotal, discount, payment, tax, printer, ePosDev, cbConnect, cbCreateDevice_printer, print;
+        var receipt, store_name, store_address, store_tel, customer_name_kana, customer_name, customer_tel, manager_name, ordered_at, order_list, total_count, subtotal, discount, payment, tax, has_paid, printer, ePosDev, cbConnect, cbCreateDevice_printer, print;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -5366,7 +5366,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   printer.addFeed();
                   printer.addTextFont(printer.FONT_B);
                   printer.addTextLineSpace(30);
-                  printer.addTextLang('ja');
+                  printer.addTextLang('mul');
                   printer.addTextSmooth(true);
                   printer.addTextAlign(printer.ALIGN_CENTER);
                   printer.addTextSize(1, 2);
@@ -5610,10 +5610,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 discount = receipt['discount'];
                 payment = receipt['payment'];
                 tax = receipt['tax'];
+                has_paid = receipt['has_paid'];
                 printer = null;
                 ePosDev = new epson.ePOSDevice();
                 ePosDev.connect('192.168.0.215', 8008, cbConnect);
-              case 23:
+              case 24:
               case "end":
                 return _context2.stop();
             }
@@ -5750,6 +5751,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "discount",
   props: {
+    preDiscount: {
+      type: Number,
+      required: true
+    },
+    preReduction: {
+      type: Number,
+      required: true
+    },
     amount: {
       type: Number,
       required: true
@@ -5757,31 +5766,72 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      payment: 0
+      mode: "discount",
+      // discount: 割引, reduction: 値引
+      discount: this.preDiscount,
+      reduction: this.preReduction
     };
   },
   methods: {
+    switchMode: function switchMode(change) {
+      this.mode = change;
+      this.discount = 0;
+      this.reduction = 0;
+    },
     typeNumber: function typeNumber(num) {
-      if (this.payment === 0) {
-        this.payment = Number(num);
-      } else {
-        var payment = Number(this.payment + num);
-        if (payment < 1000000) {
-          this.payment = payment;
+      if (this.mode === 'discount') {
+        if (this.discount === 0) {
+          this.discount = Number(num);
+        } else {
+          var typeNum = Number(this.discount + num);
+          if (typeNum <= 100) {
+            this.discount = typeNum;
+          } else {
+            this.discount = 100;
+          }
+        }
+        this.calcReduction();
+      } else if (this.mode === 'reduction') {
+        if (this.reduction === 0) {
+          this.reduction = Number(num);
+        } else {
+          var _typeNum = Number(this.reduction + num);
+          if (_typeNum <= this.amount) {
+            this.reduction = _typeNum;
+          } else {
+            this.reduction = this.amount;
+          }
         }
       }
     },
     typeZero: function typeZero(multi) {
-      var payment = this.payment * multi;
-      if (payment < 1000000) {
-        this.payment = payment;
+      if (this.mode === 'discount') {
+        var typeNum = this.discount * multi;
+        if (typeNum < 100) {
+          this.discount = typeNum;
+        } else {
+          this.discount = 100;
+        }
+        this.calcReduction();
+      } else if (this.mode === 'reduction') {
+        var _typeNum2 = this.reduction * multi;
+        if (_typeNum2 < this.amount) {
+          this.reduction = _typeNum2;
+        } else {
+          this.reduction = this.amount;
+        }
       }
     },
     typeBackspace: function typeBackspace() {
-      this.payment = Number(String(this.payment).slice(0, -1));
+      if (this.mode === 'discount') {
+        this.discount = Number(String(this.discount).slice(0, -1));
+        this.calcReduction();
+      } else if (this.mode === 'reduction') {
+        this.reduction = Number(String(this.reduction).slice(0, -1));
+      }
     },
-    typeJust: function typeJust() {
-      this.payment = this.amount;
+    calcReduction: function calcReduction() {
+      this.reduction = Math.floor(this.amount * (this.discount / 100));
     }
   }
 });
@@ -5853,6 +5903,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       total: 0,
       amount: 0,
       // without tax
+      reduction: 0,
       discount: 0,
       payment: 0,
       change: 0
@@ -5915,6 +5966,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
         delete this.orderForSend[clothes.id];
       }
+    },
+    updateDiscount: function updateDiscount(reduction, discount) {
+      this.reduction = reduction;
+      this.discount = discount;
+      this.switchDiscount();
     },
     account: function () {
       var _account = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(payment) {
@@ -6103,27 +6159,18 @@ var render = function render() {
     staticClass: "modal-ac-result-total-label fw-bold"
   }, [_vm._v("合計")]), _vm._v(" "), _c("div", {
     staticClass: "modal-ac-result-total-price position-relative py-2 fw-bold"
-  }, [_vm._v("\n                                        " + _vm._s(_vm.amount.toLocaleString()) + " 円\n                                        "), _c("p", {
-    directives: [{
-      name: "show",
-      rawName: "v-show",
-      value: _vm.payment < 0,
-      expression: "payment < 0"
-    }],
-    staticClass: "text-danger mb-0 position-absolute end-0 fw-normal"
-  }, [_c("span", {
-    staticStyle: {
-      "font-size": "14px"
-    }
-  }, [_vm._v("不足")]), _vm._v(" " + _vm._s((_vm.payment - _vm.amount).toLocaleString()) + " 円")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.amount.toLocaleString()) + " 円\n                                    ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 modal-ac-result-change d-flex justify-content-between p-2"
-  }, [_c("div", {
+  }, [_vm.payment < _vm.amount ? _c("div", {
     staticClass: "modal-ac-result-change-label fw-bold"
-  }, [_vm._v("お釣り")]), _vm._v(" "), _vm.payment < 0 ? _c("div", {
-    staticClass: "modal-ac-result-change-price fw-bold"
-  }, [_vm._v("\n                                        0 円\n                                    ")]) : _c("div", {
-    staticClass: "modal-ac-result-change-price fw-bold"
-  }, [_vm._v("\n                                        " + _vm._s((_vm.payment - _vm.amount).toLocaleString()) + " 円\n                                    ")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("不足")]) : _c("div", {
+    staticClass: "modal-ac-result-change-label fw-bold"
+  }, [_vm._v("お釣り")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-result-change-price fw-bold",
+    "class": {
+      "text-danger": _vm.payment < _vm.amount
+    }
+  }, [_vm._v("\n                                        " + _vm._s(Math.abs(_vm.payment - _vm.amount).toLocaleString()) + " 円\n                                    ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 modal-ac-result-receive d-flex justify-content-between p-2"
   }, [_c("div", {
     staticClass: "modal-ac-result-receive-label fw-bold"
@@ -6136,21 +6183,21 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "modal-ac-keypad-upper"
   }, [_c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("7");
       }
     }
   }, [_vm._v("7")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("8");
       }
     }
   }, [_vm._v("8")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("9");
@@ -6166,21 +6213,21 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fa-solid fa-delete-left"
   })]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("4");
       }
     }
   }, [_vm._v("4")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("5");
       }
     }
   }, [_vm._v("5")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("6");
@@ -6195,42 +6242,42 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "modal-ac-keypad-lower"
   }, [_c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("1");
       }
     }
   }, [_vm._v("1")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("2");
       }
     }
   }, [_vm._v("2")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("3");
       }
     }
   }, [_vm._v("3")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeZero(10);
       }
     }
   }, [_vm._v("0")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeZero(100);
       }
     }
   }, [_vm._v("00")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeZero(1000);
@@ -6346,7 +6393,7 @@ var render = function render() {
     staticClass: "modal-ac-board"
   }, [_c("div", {
     staticClass: "col-11 modal-ac-header mx-auto text-center text-white border-bottom border-white"
-  }, [_vm._v("預り金入力")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("割引・値引入力")]), _vm._v(" "), _c("div", {
     staticClass: "col-12 modal-ac-body d-flex justify-content-between"
   }, [_c("div", {
     staticClass: "col-5 p-3"
@@ -6354,58 +6401,74 @@ var render = function render() {
     staticClass: "col-12 modal-ac-result"
   }, [_c("div", {
     staticClass: "col-12 modal-ac-result-total border-bottom border-secondary d-flex justify-content-between p-2"
-  }, [_c("div", {
+  }, [_vm.mode === "discount" ? _c("div", {
     staticClass: "modal-ac-result-total-label fw-bold"
-  }, [_vm._v("合計")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("割引後合計")]) : _vm._e(), _vm._v(" "), _vm.mode === "reduction" ? _c("div", {
+    staticClass: "modal-ac-result-total-label fw-bold"
+  }, [_vm._v("値引後合計")]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "modal-ac-result-total-price position-relative py-2 fw-bold"
-  }, [_vm._v("\n                                        " + _vm._s(_vm.amount.toLocaleString()) + " 円\n                                        "), _c("p", {
-    directives: [{
-      name: "show",
-      rawName: "v-show",
-      value: _vm.payment < 0,
-      expression: "payment < 0"
-    }],
-    staticClass: "text-danger mb-0 position-absolute end-0 fw-normal"
-  }, [_c("span", {
-    staticStyle: {
-      "font-size": "14px"
-    }
-  }, [_vm._v("不足")]), _vm._v(" " + _vm._s((_vm.payment - _vm.amount).toLocaleString()) + " 円")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s((_vm.amount - _vm.reduction).toLocaleString()) + " 円\n                                    ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 modal-ac-result-change d-flex justify-content-between p-2"
-  }, [_c("div", {
+  }, [_vm.mode === "discount" ? _c("div", {
     staticClass: "modal-ac-result-change-label fw-bold"
-  }, [_vm._v("お釣り")]), _vm._v(" "), _vm.payment < 0 ? _c("div", {
+  }, [_vm._v("割引金額")]) : _vm._e(), _vm._v(" "), _vm.mode === "reduction" ? _c("div", {
+    staticClass: "modal-ac-result-change-label fw-bold"
+  }, [_vm._v("値引金額")]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "modal-ac-result-change-price fw-bold"
-  }, [_vm._v("\n                                        0 円\n                                    ")]) : _c("div", {
-    staticClass: "modal-ac-result-change-price fw-bold"
-  }, [_vm._v("\n                                        " + _vm._s((_vm.payment - _vm.amount).toLocaleString()) + " 円\n                                    ")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.reduction.toLocaleString()) + " 円\n                                    ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 modal-ac-result-receive d-flex justify-content-between p-2"
-  }, [_c("div", {
+  }, [_vm.mode === "discount" ? _c("div", {
     staticClass: "modal-ac-result-receive-label fw-bold"
-  }, [_vm._v("\n                                        預り金額\n                                    ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("割引割合")]) : _vm._e(), _vm._v(" "), _vm.mode === "discount" ? _c("div", {
     staticClass: "modal-ac-result-receive-price fw-bold"
-  }, [_vm._v("\n                                        " + _vm._s(_vm.payment.toLocaleString()) + " 円\n                                    ")])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.discount.toLocaleString()) + " %\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.mode === "reduction" ? _c("div", {
+    staticClass: "modal-ac-result-receive-label fw-bold"
+  }, [_vm._v("値引金額")]) : _vm._e(), _vm._v(" "), _vm.mode === "reduction" ? _c("div", {
+    staticClass: "modal-ac-result-receive-price fw-bold"
+  }, [_vm._v("\n                                        " + _vm._s(_vm.reduction.toLocaleString()) + " 円\n                                    ")]) : _vm._e()]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 mt-5 d-flex justify-content-between text-white"
+  }, [_c("div", {
+    staticClass: "modal-dis-btn text-center border border-white",
+    "class": {
+      "opacity-50": _vm.mode !== "discount"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.switchMode("discount");
+      }
+    }
+  }, [_vm._v("割引")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-dis-btn text-center border border-white",
+    "class": {
+      "opacity-50": _vm.mode !== "reduction"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.switchMode("reduction");
+      }
+    }
+  }, [_vm._v("値引")])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-7 p-3"
   }, [_c("div", {
     staticClass: "modal-ac-keypad position-relative mx-auto text-primary"
   }, [_c("div", {
     staticClass: "modal-ac-keypad-upper"
   }, [_c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("7");
       }
     }
   }, [_vm._v("7")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("8");
       }
     }
   }, [_vm._v("8")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("9");
@@ -6421,21 +6484,21 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fa-solid fa-delete-left"
   })]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("4");
       }
     }
   }, [_vm._v("4")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("5");
       }
     }
   }, [_vm._v("5")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-upper-key",
+    staticClass: "modal-ac-keypad-upper-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("6");
@@ -6450,68 +6513,52 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "modal-ac-keypad-lower"
   }, [_c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("1");
       }
     }
   }, [_vm._v("1")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("2");
       }
     }
   }, [_vm._v("2")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeNumber("3");
       }
     }
   }, [_vm._v("3")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeZero(10);
       }
     }
   }, [_vm._v("0")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
+    staticClass: "modal-ac-keypad-lower-key border border-secondary",
     on: {
       click: function click($event) {
         return _vm.typeZero(100);
       }
     }
   }, [_vm._v("00")]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-key",
-    on: {
-      click: function click($event) {
-        return _vm.typeZero(1000);
-      }
-    }
-  }, [_vm._v("000")])]), _vm._v(" "), _c("div", {
-    staticClass: "modal-ac-keypad-lower-just text-white border border-white",
-    on: {
-      click: function click($event) {
-        return _vm.typeJust();
-      }
-    }
-  }, [_c("i", {
-    staticClass: "fa-solid fa-arrow-down"
-  })])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-lower-key border border-white bg-secondary"
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "modal-ac-keypad-lower-just text-white border border-white bg-secondary"
+  })])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 modal-ac-send bg-primary text-center text-white border border-white",
-    "class": {
-      "bg-primary": _vm.payment >= _vm.amount,
-      "bg-secondary": _vm.payment < _vm.amount
-    },
     on: {
       click: function click($event) {
-        return _vm.$emit("account", _vm.payment);
+        return _vm.$emit("updateDiscount", _vm.reduction, _vm.discount);
       }
     }
-  }, [_vm._v("\n                        お会計\n                    ")])])])])])]);
+  }, [_vm._v("\n                        割引・値引を適用する\n                    ")])])])])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -6649,7 +6696,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "20px"
     }
-  }, [_vm._v("税込")]), _vm._v(" " + _vm._s(Math.trunc(_vm.amount - _vm.discount).toLocaleString()) + " 円\n               ")]), _vm._v(" "), _vm._m(0)])]) : _vm._e(), _vm._v(" "), _vm.step === 2 || _vm.step === 3 || _vm.step === 4 || _vm.step === 5 ? _c("div", {
+  }, [_vm._v("税込")]), _vm._v(" " + _vm._s(Math.trunc(_vm.amount - _vm.reduction).toLocaleString()) + " 円\n               ")]), _vm._v(" "), _vm._m(0)])]) : _vm._e(), _vm._v(" "), _vm.step === 2 || _vm.step === 3 || _vm.step === 4 || _vm.step === 5 ? _c("div", {
     staticClass: "slip-bar col-4 border border-secondary position-relative"
   }, [_c("div", {
     staticClass: "col-12 py-3 px-2 border-bottom border-secondary bg-white d-flex justify-content-between slip-header"
@@ -6682,7 +6729,13 @@ var render = function render() {
     staticClass: "col-6 px-3"
   }, [_vm._v("\n                       小計\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-6 px-3 text-end text-primary"
-  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount - _vm.discount).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _vm._m(1), _vm._v(" "), _vm.step !== 5 ? _c("div", {
+  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount - _vm.reduction).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+  }, [_c("div", {
+    staticClass: "col-6 px-3"
+  }, [_vm._v("\n                       値引・割引\n                   ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 px-3 text-end text-primary"
+  }, [_vm._v("\n                       " + _vm._s(_vm.reduction) + " 円 "), _vm.discount > 0 ? _c("span", [_vm._v("(" + _vm._s(_vm.discount) + "%)")]) : _vm._e()])]), _vm._v(" "), _vm.step !== 5 ? _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row",
     on: {
       click: function click($event) {
@@ -6691,7 +6744,7 @@ var render = function render() {
     }
   }, [_c("div", {
     staticClass: "col-8 px-3"
-  }, [_vm._v("\n                       値引・割引を追加\n                   ")]), _vm._v(" "), _vm._m(2)]) : _vm._e(), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                       値引・割引を追加\n                   ")]), _vm._v(" "), _vm._m(1)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-top border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-4 px-3",
@@ -6700,13 +6753,13 @@ var render = function render() {
     }
   }, [_vm._v("\n                       合計\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-8 px-3 text-end bill-total text-primary"
-  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount - _vm.discount).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _vm.step !== 5 ? _c("div", {
+  }, [_vm._v("\n                       " + _vm._s(Math.trunc(_vm.amount - _vm.reduction).toLocaleString()) + " 円\n                   ")])]), _vm._v(" "), _vm.step !== 5 ? _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-6 px-3 text-secondary"
   }, [_vm._v("\n                       内消費税10%\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-6 px-3 text-end text-secondary"
-  }, [_vm._v("\n                       (" + _vm._s(Math.trunc(_vm.amount - _vm.discount - (_vm.amount - _vm.discount) / _vm.tax).toLocaleString()) + " 円)\n                   ")])]) : _vm._e(), _vm._v(" "), _vm.step === 5 ? _c("div", {
+  }, [_vm._v("\n                       (" + _vm._s(Math.trunc(_vm.amount - _vm.reduction - (_vm.amount - _vm.reduction) / _vm.tax).toLocaleString()) + " 円)\n                   ")])]) : _vm._e(), _vm._v(" "), _vm.step === 5 ? _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-6 px-3"
@@ -6750,14 +6803,17 @@ var render = function render() {
     }
   }, [_vm._v("ホームに戻る")]) : _vm._e()]) : _vm._e(), _vm._v(" "), _vm.showDiscount ? _c("discount-modal", {
     attrs: {
-      amount: _vm.amount
+      amount: _vm.amount,
+      preReduction: _vm.reduction,
+      preDiscount: _vm.discount
     },
     on: {
-      close: _vm.switchDiscount
+      close: _vm.switchDiscount,
+      updateDiscount: _vm.updateDiscount
     }
   }) : _vm._e(), _vm._v(" "), _vm.step === 3 ? _c("accounting-modal", {
     attrs: {
-      amount: _vm.amount - _vm.discount
+      amount: _vm.amount - _vm.reduction
     },
     on: {
       close: _vm.changeStep,
@@ -6785,16 +6841,6 @@ var staticRenderFns = [function () {
   }, [_vm._v("\n                   お会計へ　"), _c("i", {
     staticClass: "fa-solid fa-chevron-right pl-2"
   })]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
-  }, [_c("div", {
-    staticClass: "col-6 px-3"
-  }, [_vm._v("\n                       値引・割引\n                   ")]), _vm._v(" "), _c("div", {
-    staticClass: "col-6 px-3 text-end text-primary"
-  }, [_vm._v("\n                       0 円\n                   ")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;

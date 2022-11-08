@@ -87,6 +87,7 @@ class OrdersController extends Controller
             'discount_raito'     => $order->discount_raito,
             'payment'            => $order->payment,
             'tax'                => $tax,
+            'has_paid'           => $order->has_paid,
         ]);
     }
 

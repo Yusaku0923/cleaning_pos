@@ -84,7 +84,7 @@
                 @click="changeStep(2)"
                 :class="{ 'bg-primary': total !== 0, 'bg-secondary': total === 0 }">
                 <div class="col-8 order-amount">
-                    <span style="font-size:20px;">税込</span> {{ Math.trunc((amount - discount)).toLocaleString() }} 円
+                    <span style="font-size:20px;">税込</span> {{ Math.trunc((amount - reduction)).toLocaleString() }} 円
                 </div>
                 <div class="col-4 text-end to-bill">
                     お会計へ　<i class="fa-solid fa-chevron-right pl-2"></i>
@@ -119,7 +119,7 @@
                         小計
                     </div>
                     <div class="col-6 px-3 text-end text-primary">
-                        {{ Math.trunc((amount - discount)).toLocaleString() }} 円
+                        {{ Math.trunc((amount - reduction)).toLocaleString() }} 円
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
@@ -127,7 +127,7 @@
                         値引・割引
                     </div>
                     <div class="col-6 px-3 text-end text-primary">
-                        0 円
+                        {{ reduction }} 円 <span v-if="discount > 0">({{ discount }}%)</span>
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
@@ -146,7 +146,7 @@
                         合計
                     </div>
                     <div class="col-8 px-3 text-end bill-total text-primary">
-                        {{ Math.trunc((amount - discount)).toLocaleString() }} 円
+                        {{ Math.trunc((amount - reduction)).toLocaleString() }} 円
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step !== 5">
@@ -154,7 +154,7 @@
                         内消費税10%
                     </div>
                     <div class="col-6 px-3 text-end text-secondary">
-                        ({{ Math.trunc((amount - discount) - ((amount - discount) / tax)).toLocaleString() }} 円)
+                        ({{ Math.trunc((amount - reduction) - ((amount - reduction) / tax)).toLocaleString() }} 円)
                     </div>
                 </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step === 5">
@@ -198,14 +198,17 @@
 
         <discount-modal
             @close = "switchDiscount"
+            @updateDiscount = "updateDiscount"
             :amount="amount"
+            :preReduction="reduction"
+            :preDiscount="discount"
             v-if="showDiscount"
         ></discount-modal>
 
         <accounting-modal
             @close = "changeStep"
             @account = "account"
-            :amount="amount - discount"
+            :amount="amount - reduction"
             v-if="step === 3"
         ></accounting-modal>
 
@@ -269,6 +272,7 @@ export default ({
             orderForSend: {},
             total: 0,
             amount: 0, // without tax
+            reduction: 0,
             discount: 0,
             payment: 0,
             change: 0,
@@ -339,6 +343,13 @@ export default ({
                 this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
                 delete this.orderForSend[clothes.id];
             }
+        },
+
+        updateDiscount: function(reduction, discount) {
+            this.reduction = reduction;
+            this.discount = discount;
+
+            this.switchDiscount();
         },
 
         account: async function(payment) {

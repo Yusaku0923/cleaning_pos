@@ -39,6 +39,7 @@ export default ({
             let discount           = receipt['discount'];
             let payment            = receipt['payment'];
             let tax                = receipt['tax'];
+            let has_paid           = receipt['has_paid'];
 
             let printer = null;
             let ePosDev = new epson.ePOSDevice();
@@ -69,7 +70,7 @@ export default ({
                 printer.addFeed();
                 printer.addTextFont(printer.FONT_B);
                 printer.addTextLineSpace(30);
-                printer.addTextLang('ja');
+                printer.addTextLang('mul');
                 printer.addTextSmooth(true);
                 printer.addTextAlign(printer.ALIGN_CENTER);
                 printer.addTextSize(1, 2);

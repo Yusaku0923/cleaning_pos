@@ -18,8 +18,8 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('store_id')->comment('店舗ID');
             $table->unsignedBigInteger('customer_id')->comment('顧客ID');
             $table->bigInteger('amount')->comment('合計金額');
-            $table->bigInteger('discount')->comment('値引き金額');
-            $table->bigInteger('discount_raito')->default(0)->comment('値引き割合');
+            $table->bigInteger('reduction')->comment('値引き金額');
+            $table->bigInteger('discount')->default(0)->comment('値引き割合');
             $table->bigInteger('payment')->comment('お支払い金額');
             $table->boolean('is_registered_as_invoice')->default(false)->comment('請求書フラグ');
             $table->boolean('has_paid')->default(false)->comment('支払い済みフラグ');
