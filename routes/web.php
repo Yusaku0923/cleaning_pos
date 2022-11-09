@@ -6,6 +6,7 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ClothesController;
+use App\Http\Controllers\DailyReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,10 @@ Auth::routes([
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
+
+    Route::prefix('daily_report')->group(function () {
+        Route::get('', [DailyReportController::class, 'index'])->name('daily_report.index');
+    });
 
     Route::prefix('manager')->group(function () {
         Route::post('update', [ManagerController::class, 'update'])->name('manager.update');

@@ -73,6 +73,33 @@ class Order extends Model
         return $orders;
     }
 
+    public function fetchDailyOrders($date) {
+        $orders = Order::select('orders.*', 'customers.name')
+                        ->join('customers', 'orders.customer_id', '=', 'customers.id')
+                        ->where('orders.created_at', '>=', $date . ' 00:00:00')
+                        ->where('orders.created_at', '<=', $date . ' 23:59:59')
+                        ->orderBy('orders.created_at', 'asc')
+                        ->get()->toArray();
+
+        if (empty($orders)) {
+            return [[], 0];
+        }
+
+        foreach ($orders as $key => $order) {
+            $item = OrderClothes::select('order_clothes.*', 'clothes.name', 'clothes.price')
+                                ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
+                                ->where('order_id', $order['id'])
+                                ->get()->toArray();
+            $orders[$key]['items'] = $item;
+        }
+
+        $daily_sum = Order::where('orders.created_at', '>=', $date . ' 00:00:00')
+                    ->where('orders.created_at', '<=', $date . ' 23:59:59')
+                    ->sum('amount');
+
+        return [$orders, $daily_sum];
+    }
+
     public function fetchReciptDetail($order_id) {
         $result = [];
         $list = OrderClothes::join('orders', 'order_clothes.order_id', '=', 'orders.id')
