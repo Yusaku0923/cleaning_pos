@@ -1,0 +1,48 @@
+StartFontMetrics 4.1
+Notice Converted by PHP-font-lib
+Comment https://github.com/PhenX/php-font-lib
+EncodingScheme FontSpecific
+Copyright Typeface: Copyright ©1995 International Typeface Corporation. Data: Copyright © 1995 Microsoft Corportation. All rights reserved.
+FontName Eras Bold ITC
+FontSubfamily Normal
+UniqueID ITC Eras Bold
+FullName Eras Bold ITC
+Version Version 1.01
+PostScriptName ErasITC-Bold
+Trademark ITC Eras is a registered trademark of International Typeface Corporation.
+Weight Medium
+ItalicAngle 0
+IsFixedPitch false
+UnderlineThickness 85
+UnderlinePosition -75
+FontHeightOffset 0
+Ascender 800
+Descender -200
+FontBBox -169 -250 1294 908
+StartCharMetrics 250
+U 32 ; WX 250 ; N uni0020 ; G 3
+U 45 ; WX 267 ; N uni002d ; G 16
+U 67 ; WX 670 ; N uni0043 ; G 38
+U 70 ; WX 614 ; N uni0046 ; G 41
+U 72 ; WX 818 ; N uni0048 ; G 43
+U 76 ; WX 586 ; N uni004c ; G 47
+U 78 ; WX 821 ; N uni004e ; G 49
+U 80 ; WX 638 ; N uni0050 ; G 51
+U 84 ; WX 635 ; N uni0054 ; G 55
+U 85 ; WX 777 ; N uni0055 ; G 56
+U 97 ; WX 605 ; N uni0061 ; G 68
+U 99 ; WX 506 ; N uni0063 ; G 70
+U 101 ; WX 592 ; N uni0065 ; G 72
+U 103 ; WX 659 ; N uni0067 ; G 74
+U 105 ; WX 312 ; N uni0069 ; G 76
+U 108 ; WX 310 ; N uni006c ; G 79
+U 109 ; WX 932 ; N uni006d ; G 80
+U 110 ; WX 680 ; N uni006e ; G 81
+U 111 ; WX 649 ; N uni006f ; G 82
+U 112 ; WX 657 ; N uni0070 ; G 83
+U 114 ; WX 430 ; N uni0072 ; G 85
+U 115 ; WX 483 ; N uni0073 ; G 86
+U 116 ; WX 426 ; N uni0074 ; G 87
+U 119 ; WX 908 ; N uni0077 ; G 90
+EndCharMetrics
+EndFontMetrics

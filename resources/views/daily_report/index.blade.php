@@ -7,7 +7,7 @@
             <p class="dr-earnings-label">日次売上： <span class="border-bottom border-secondary">{{ number_format($daily_sum) }} 円</span></p>
             <p class="dr-earnings-label">月次売上： <span class="border-bottom border-secondary">{{ number_format($monthly_sum) }} 円</span></p>
         </div>
-        <div class="col-4 dr-date text-center">
+        <div class="col-4 dr-date text-center fw-bold">
             <span>{{ $date === date('Y-m-d') ? '本日': date('Y年m月d日', strtotime($date)) }}の日報</span>
         </div>
         <div class="col-4">
@@ -19,7 +19,7 @@
 
     <div class="col-12 dr-body px-5">
         <div class="dr-body-column py-4">
-            <div class="col-10 d-flex mx-auto dr-body-column-inner bg-primary text-white" >
+            <div class="col-10 d-flex mx-0 dr-body-column-inner bg-primary text-white" >
                 <div class="col-2 text-center">伝票番号</div>
                 <div class="col-4 text-center">お名前</div>
                 <div class="col-2 text-center">合計</div>
@@ -29,7 +29,7 @@
         </div>
         @foreach ($daily_orders as $order)
         <input type="checkbox" class="dr-body-toggle d-none" id="{{ 'block-'.$order['id'] }}">
-        <label for="{{ 'block-'.$order['id'] }}" class="card col-10 mx-auto mt-3 dr-body-cards">
+        <label for="{{ 'block-'.$order['id'] }}" class="card col-10 mx-0 mt-3 dr-body-cards">
             <div class="col-12 d-flex dr-body-cards-inner">
                 <div class="col-2 text-center">{{ $order['id'] }}</div>
                 <div class="col-4 text-center">{{ $order['name'] }}</div>
@@ -40,7 +40,7 @@
                 <div class="col-2 text-center">{{ date('H時i分', strtotime($order['created_at'])) }}</div>
             </div>
         </label>
-        <div class="card col-10 mx-auto dr-body-ac">
+        <div class="card col-10 mx-0 dr-body-ac">
             <div class="col-12 d-flex justify-content-center fw-bold">
                 <div class="col-2 text-center">タグ番号</div>
                 <div class="col-4 text-center">商品名</div>
@@ -62,6 +62,10 @@
         </div>
         @endforeach
     </div>
+
+    <a class="dr-pdf" href="{{ route('daily_report.generate', $date) }}">
+        PDF出力
+    </a>
 </div>
 
 @endsection

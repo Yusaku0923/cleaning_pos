@@ -23,4 +23,18 @@ class DailyReportController extends Controller
             'monthly_sum' => $monthly_sum,
         ]);
     }
+
+    public function generate($date) {
+        $model = new Order();
+        list($daily_orders, $daily_sum, $monthly_sum) = $model->fetchDailyOrders($date);
+
+        $pdf = \PDF::loadView('daily_report.pdf', [
+            'date' => $date,
+            'daily_orders' => $daily_orders,
+            'daily_sum' => $daily_sum,
+            'monthly_sum' => $monthly_sum,
+        ]);
+        $pdf->setPaper('A4');
+        return $pdf->stream('日報');
+    }
 }

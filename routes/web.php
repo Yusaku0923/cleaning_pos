@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('daily_report')->group(function () {
         Route::get('', [DailyReportController::class, 'index'])->name('daily_report.index');
+        Route::get('generate/{date}', [DailyReportController::class, 'generate'])->name('daily_report.generate');
     });
 
     Route::prefix('manager')->group(function () {

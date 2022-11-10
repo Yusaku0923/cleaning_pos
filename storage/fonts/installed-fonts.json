@@ -1,0 +1,14 @@
+{
+    "migmix": {
+        "normal": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-regular",
+        "bold": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-regular",
+        "italic": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-regular",
+        "bold_italic": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-regular"
+    },
+    "migmix-bold": {
+        "normal": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-bold",
+        "bold": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-bold",
+        "italic": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-bold",
+        "bold_italic": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-bold"
+    }
+}
