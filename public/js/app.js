@@ -6803,10 +6803,8 @@ var render = function render() {
   }), _vm._v(" 戻る\n               ")]) : _vm._e(), _vm._v(" "), _vm.step === 5 ? _c("div", {
     staticClass: "col-3"
   }) : _vm._e(), _vm._v(" "), _c("div", {
-    staticClass: "col-6 text-center"
-  }, [_vm._v("\n                   " + _vm._s(_vm.customer_name) + " 様\n               ")]), _vm._v(" "), _c("div", {
-    staticClass: "col-3"
-  })]), _vm._v(" "), _c("div", {
+    staticClass: "col-9 text-start"
+  }, [_vm._v("\n                   " + _vm._s(_vm.customer_name) + " 様\n               ")])]), _vm._v(" "), _c("div", {
     staticClass: "bill-detail"
   }, [_c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"

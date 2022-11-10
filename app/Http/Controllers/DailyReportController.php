@@ -11,13 +11,16 @@ class DailyReportController extends Controller
         $date = !empty($request->query('date')) ? $request->date : date('Y-m-d');
         // /?date=2022-03-01
         $model = new Order();
-        list($daily_orders, $daily_sum) = $model->fetchDailyOrders($date);
+        list($daily_orders, $daily_sum, $monthly_sum) = $model->fetchDailyOrders($date);
+
+        // dd($daily_orders);
 
         return view('daily_report.index')->with([
             'title' => '日　報',
             'date' => $date,
             'daily_orders' => $daily_orders,
             'daily_sum' => $daily_sum,
+            'monthly_sum' => $monthly_sum,
         ]);
     }
 }

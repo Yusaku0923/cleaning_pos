@@ -99,10 +99,9 @@
                         <i class="fa-solid fa-chevron-left"></i> 戻る
                 </div>
                 <div class="col-3" v-if="step === 5"></div>
-                <div class="col-6 text-center">
+                <div class="col-9 text-start">
                     {{ customer_name }} 様
                 </div>
-                <div class="col-3"></div>
             </div>
 
             <div class="bill-detail">

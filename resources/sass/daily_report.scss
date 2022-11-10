@@ -1,11 +1,11 @@
 .dr {
     &-header {
-        position: fixed;
+        // position: fixed;
     }
     &-earnings {
         &-label {
-            font-size: 24px;
-            line-height: 50px;
+            font-size: 18px;
+            margin-bottom: 0;
         }
     }
 
@@ -51,6 +51,54 @@
             position: absolute;
             top: 0px;
             right: -15px;
+        }
+    }
+
+    &-body {
+        height: 100%;
+        &-column {
+            position: sticky;
+            height: 50px;
+            z-index: 2;
+            top: 0;
+            background-color: #f8fafc;
+            margin-bottom: 48px;
+            &-inner {
+                font-size: 18px;
+                font-weight: bold;
+                padding: 10px 0;
+                border-radius: 10px;
+            }
+        }
+
+        &-cards {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            transition: all 0.5s;
+            &-inner {
+                font-size: 18px;
+                padding: 10px 0;
+                font-weight: bold;
+            }
+        }
+
+        &-ac {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            transition: all 0.3s;
+            height: 0;
+            overflow: hidden;
+        }
+
+        &-toggle:checked + &-cards + &-ac {
+            height: auto;
+            padding: 1rem ;
+            transition: all .5s;
+        }
+        &-toggle:checked + &-cards::before {
+            transform: rotate(-45deg) !important;
         }
     }
 }

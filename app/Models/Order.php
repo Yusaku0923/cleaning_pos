@@ -81,23 +81,29 @@ class Order extends Model
                         ->orderBy('orders.created_at', 'asc')
                         ->get()->toArray();
 
-        if (empty($orders)) {
-            return [[], 0];
-        }
-
-        foreach ($orders as $key => $order) {
-            $item = OrderClothes::select('order_clothes.*', 'clothes.name', 'clothes.price')
-                                ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
-                                ->where('order_id', $order['id'])
-                                ->get()->toArray();
-            $orders[$key]['items'] = $item;
-        }
-
         $daily_sum = Order::where('orders.created_at', '>=', $date . ' 00:00:00')
-                    ->where('orders.created_at', '<=', $date . ' 23:59:59')
-                    ->sum('amount');
+                        ->where('orders.created_at', '<=', $date . ' 23:59:59')
+                        ->sum('amount');
 
-        return [$orders, $daily_sum];
+        $month_start = date('Y-m-01', strtotime($date));
+        $month_end = date('Y-m-t', strtotime($date));
+        $monthly_sum = Order::where('orders.created_at', '>=', $month_start . ' 00:00:00')
+                            ->where('orders.created_at', '<=', $month_end . ' 23:59:59')
+                            ->sum('amount');
+
+        if (!empty($orders)) {
+            foreach ($orders as $key => $order) {
+                $item = OrderClothes::select('order_clothes.*', 'clothes.name', 'clothes.price')
+                                    ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
+                                    ->where('order_id', $order['id'])
+                                    ->get()->toArray();
+                $orders[$key]['items'] = $item;
+            }
+        } else {
+            $orders = [];
+        }
+
+        return [$orders, $daily_sum, $monthly_sum];
     }
 
     public function fetchReciptDetail($order_id) {

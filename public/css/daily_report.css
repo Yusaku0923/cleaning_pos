@@ -1,6 +1,6 @@
 .dr-earnings-label {
-  font-size: 24px;
-  line-height: 50px;
+  font-size: 18px;
+  margin-bottom: 0;
 }
 .dr-date {
   font-size: 28px;
@@ -41,4 +41,48 @@
   position: absolute;
   top: 0px;
   right: -15px;
+}
+.dr-body {
+  height: 100%;
+}
+.dr-body-column {
+  position: sticky;
+  height: 50px;
+  z-index: 2;
+  top: 0;
+  background-color: #f8fafc;
+  margin-bottom: 48px;
+}
+.dr-body-column-inner {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px 0;
+  border-radius: 10px;
+}
+.dr-body-cards {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  transition: all 0.5s;
+}
+.dr-body-cards-inner {
+  font-size: 18px;
+  padding: 10px 0;
+  font-weight: bold;
+}
+.dr-body-ac {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  transition: all 0.3s;
+  height: 0;
+  overflow: hidden;
+}
+.dr-body-toggle:checked + .dr-body-cards + .dr-body-ac {
+  height: auto;
+  padding: 1rem;
+  transition: all 0.5s;
+}
+.dr-body-toggle:checked + .dr-body-cards::before {
+  transform: rotate(-45deg) !important;
 }
