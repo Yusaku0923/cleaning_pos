@@ -71,7 +71,7 @@ class OrdersController extends Controller
         $tax = Tax::where('store_id', $order->store_id)->value('tax');
 
         $model = new Order;
-        $orders = $model->fetchReciptDetail($order_id);
+        list($orders, $total_count) = $model->fetchReciptDetail($order_id);
 
         return response()->json([
             'store_name'         => $store->name,
@@ -83,7 +83,8 @@ class OrdersController extends Controller
             'manager_name'       => $manager_name,
             'ordered_at'         => date('Y年m月d日 H時i分', strtotime($order->created_at)),
             'order_list'         => $orders,
-            'subtotal'           => $order->amount,
+            'total_count'        => $total_count,
+            'amount'             => $order->amount,
             'discount'           => $order->discount,
             'discount_raito'     => $order->discount_raito,
             'payment'            => $order->payment,

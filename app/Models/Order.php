@@ -108,6 +108,7 @@ class Order extends Model
 
     public function fetchReciptDetail($order_id) {
         $result = [];
+        $total_count = 0;
         $list = OrderClothes::join('orders', 'order_clothes.order_id', '=', 'orders.id')
                             ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
                             ->where('order_id', $order_id)
@@ -127,8 +128,9 @@ class Order extends Model
                 $result[$index]['count']++;
                 $result[$index]['tag_end'] = $row['tag'];
             }
+            $total_count++;
         }
 
-        return $result;
+        return [$result, $total_count];
     }
 }

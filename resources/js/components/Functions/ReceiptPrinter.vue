@@ -29,12 +29,12 @@ export default ({
             let store_tel          = receipt['store_tel'];
             let customer_name_kana = receipt['customer_name_kana'];
             let customer_name      = receipt['customer_name'];
-            let customer_tel       = receipt['customer_tel'];
+            let customer_tel       = receipt['customer_tel'] ?? '';
             let manager_name       = receipt['manager_name'];
             let ordered_at         = receipt['ordered_at'];
             let order_list         = receipt['order_list'];
             let total_count        = receipt['total_count'];
-            let subtotal           = receipt['subtotal'];
+            let amount             = receipt['amount'];
             let discount           = receipt['discount'];
             let payment            = receipt['payment'];
             let tax                = receipt['tax'];
@@ -43,7 +43,7 @@ export default ({
             let printer = null;
             let ePosDev = new epson.ePOSDevice();
             ePosDev.connect('192.168.0.215', 8008, cbConnect);
-            
+
             function cbConnect(data) {
                 if(data == 'OK' || data == 'SSL_CONNECT_OK') {
                     ePosDev.createDevice('local_printer', ePosDev.DEVICE_TYPE_PRINTER,
@@ -69,7 +69,7 @@ export default ({
                 printer.addFeed();
                 printer.addTextFont(printer.FONT_B);
                 printer.addTextLineSpace(30);
-                printer.addTextLang('mul');
+                printer.addTextLang('ja');
                 printer.addTextSmooth(true);
                 printer.addTextAlign(printer.ALIGN_CENTER);
                 printer.addTextSize(1, 2);
@@ -139,7 +139,8 @@ export default ({
                 printer.addFeed();
 
                 // order list
-                for (const order in order_list) {
+                for (const order of order_list) {
+                    console.log(order['count']);
                     if (order['count'] <= 1) {
                         // one line
                         printer.addTextPosition(10);
@@ -189,12 +190,13 @@ export default ({
 
                         // clothes price
                         printer.addText(order['price']);
+
+                        printer.addFeed();
                     }
                 }
 
                 printer.addFeed();
-                printer.addFeed();
-                printer.addHLine(0, 575, printer.LINE_THIN);
+                printer.addHLine(10, 200, printer.LINE_THIN);
                 printer.addFeed();
                 printer.addTextPosition(10);
                 printer.addTextSize(1, 1);
@@ -209,7 +211,7 @@ export default ({
                 printer.addTextPosition(340);
 
                 // subtotal
-                printer.addText(subtotal);
+                printer.addText(amount + discount);
                 printer.addFeed();
                 printer.addHLine(0, 575, printer.LINE_THIN);
                 printer.addFeed();
@@ -225,7 +227,7 @@ export default ({
                 printer.addTextPosition(340);
 
                 // total
-                printer.addText(tatal);
+                printer.addText(amount);
                 printer.addFeed();
                 printer.addFeed();
                 printer.addTextPosition(200);
@@ -245,7 +247,7 @@ export default ({
                     printer.addTextPosition(240);
 
                     // total
-                    printer.addText(tatal);
+                    printer.addText(amount);
                     printer.addFeed();
                     printer.addHLine(0, 575, printer.LINE_THIN);
                     printer.addFeed();
@@ -259,14 +261,15 @@ export default ({
                     printer.addText('お釣り');
                     printer.addTextAlign(printer.ALIGN_RIGHT);
                     printer.addTextPosition(340);
-                    printer.addText(payment - total);
+                    printer.addText(payment - amount);
                 } else {
                     printer.addText('未収額');
                     printer.addTextPosition(240);
-                    printer.addText(total - payment);
+                    printer.addText(amount - payment);
                     printer.addFeed();
                     printer.addHLine(0, 575, printer.LINE_THIN);
                 }
+                printer.addFeed();
                 printer.addFeed();
                 printer.addTextSize(1, 1);
                 printer.addTextPosition(20);

@@ -49,7 +49,7 @@ class OrdersController extends Controller
             'title' => '預　り　入　力',
             'manager_id' => session()->get('manager_id'),
             'customer_id' => session()->get('customer_id'),
-            'customer_name' => json_encode(Customer::find(session()->get('customer_id'))->value('name')),
+            'customer_name' => json_encode(Customer::where('id', session()->get('customer_id'))->value('name')),
             'auth_token' => json_encode($token->plainTextToken),
             'list_json' => json_encode($category_clothes),
             'often_ordered' => json_encode($often_ordered),
