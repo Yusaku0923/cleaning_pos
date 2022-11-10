@@ -26,7 +26,19 @@ class DailyReportController extends Controller
 
     public function generate($date) {
         $model = new Order();
-        list($daily_orders, $daily_sum, $monthly_sum) = $model->fetchDailyOrders($date);
+        list($orders, $daily_sum, $monthly_sum) = $model->fetchDailyOrders($date);
+        $daily_orders = [];
+        foreach ($orders as $order) {
+            foreach ($order['items'] as $item) {
+                $daily_orders[] = [
+                    'tag' => $item['tag'],
+                    'name' => $item['name'],
+                    'price' => $item['price'],
+                    'customer_id' => $order['customer_id'],
+                    'customer_name' => $order['name']
+                ];
+            }
+        }
 
         $pdf = \PDF::loadView('daily_report.pdf', [
             'date' => $date,

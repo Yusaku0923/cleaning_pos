@@ -10,6 +10,7 @@
                 /* font-family: migmix-bold, serif !important; */
                 /* https://blog.websandbag.com/entry/2020/11/23/221039 */
                 line-height: 80%;
+                page-break-inside: avoid;
             }
             .number-font {
                 font-family: Arial, Helvetica, sans-serif !important;
@@ -100,6 +101,7 @@
         </style>
     </head>
     <body>
+        @for($c = 0; $c <= count($daily_orders) + 1; $c += 35)
         <div class="no">
             <div class="no-area">
                 No.<span class="number-font">1</span>
@@ -144,26 +146,36 @@
                     @php
                         $customer_id = '';
                     @endphp
-                    @foreach ($daily_orders as $order)
-                        {{-- @php
-                        $customer_id = 
-                        @endphp --}}
-                        @foreach ($order['items'] as $item)
+                    @for ($i = $c; $i != 0 && 34 % $i == 0; $i++)
+                        @if ($i < count($daily_orders) + 1)
                         <tr>
-                            <td class="number-font text-center">{{ $item['tag'] }}</td>
-                            <td class="item-label"><span class="short-label">{{ $item['name'] }}</span></td>
-                            <td class="number-font text-center">{{ $item['price'] }}</td>
-                            <td class="text-center">{{ $order['customer_id'] }}</td>
-                            <td class="name-label"><span class="short-label">{{ $order['name'] }}</span></td>
+                            <td class="number-font text-center">{{ $daily_orders[$i]['tag'] }}</td>
+                            <td class="item-label"><span class="short-label">{{ $daily_orders[$i]['name'] }}</span></td>
+                            <td class="number-font text-center">{{ $daily_orders[$i]['price'] }}</td>
+                            <td class="text-center">{{ $daily_orders[$i]['customer_id'] }}</td>
+                            <td class="name-label"><span class="short-label">{{ $daily_orders[$i]['customer_name'] }}</span></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
                         </tr>
-                        @endforeach
-                    @endforeach
+                        @else
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        @endif
+                    @endfor
                 </tbody>
             </table>
         </div>
+        @endfor
     </body>
 </html>
