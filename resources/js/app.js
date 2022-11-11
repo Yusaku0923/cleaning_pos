@@ -22,6 +22,8 @@ window.Vue = require('vue').default;
 Vue.component('order-component', require('./components/OrderComponent.vue').default);
 Vue.component('manager-component', require('./components/ManagerComponent.vue').default);
 Vue.component('daily-report-search-component', require('./components/DailyReportSearchComponent.vue').default);
+Vue.component('return-component', require('./components/ReturnComponent.vue').default);
+Vue.component('customer-info-component', require('./components/CustomerInfoComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

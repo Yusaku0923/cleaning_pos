@@ -29,7 +29,7 @@ class HomeController extends Controller
 
             // Orderモデルに取得用クエリを書く
             $model = new Order;
-            $orders = $model->fetchOrder($customer->id);
+            $orders = $model->fetchOrders($customer->id);
             // dd($orders);
         }
 

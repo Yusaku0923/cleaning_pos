@@ -98,13 +98,19 @@
                 max-width: 50px;
                 white-space: nowrap;
             }
+            .page_break {
+                page-break-before: always;
+            }
+            .empty-column {
+                height: 21px;
+            }
         </style>
     </head>
     <body>
-        @for($c = 0; $c <= count($daily_orders) + 1; $c += 35)
+        @for($c = 0; $c <= count($daily_orders) - 1; $c += 35)
         <div class="no">
             <div class="no-area">
-                No.<span class="number-font">1</span>
+                No.<span class="number-font">{{ $c / 35 + 1 }}</span>
             </div>
         </div>
         <div class="title">
@@ -128,6 +134,7 @@
         </div>
 
         <div class="list">
+            {{-- w:185.74mm --}}
             <table class="table" rules="all">
                 <thead>
                     <tr>
@@ -136,7 +143,7 @@
                         <th>値段</th>
                         <th>会員No.</th>
                         <th>氏名</th>
-                        <th><span class="short-label">未収・定</span></th>
+                        <th>未収・定</th>
                         <th>摘要</th>
                         <th>到着日</th>
                         <th>渡し日</th>
@@ -146,8 +153,8 @@
                     @php
                         $customer_id = '';
                     @endphp
-                    @for ($i = $c; $i != 0 && 34 % $i == 0; $i++)
-                        @if ($i < count($daily_orders) + 1)
+                    @for ($i = $c; $i == $c || $i % 35 != 0; $i++)
+                        @if ($i <= count($daily_orders) - 1)
                         <tr>
                             <td class="number-font text-center">{{ $daily_orders[$i]['tag'] }}</td>
                             <td class="item-label"><span class="short-label">{{ $daily_orders[$i]['name'] }}</span></td>
@@ -161,21 +168,24 @@
                         </tr>
                         @else
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td class="empty-column"></td>
+                            <td class="empty-column"></td>
+                            <td class="empty-column"></td>
+                            <td class="empty-column"></td>
+                            <td class="empty-column"></td>
+                            <td class="empty-column"></td>
+                            <td class="empty-column"></td>
+                            <td class="empty-column"></td>
+                            <td class="empty-column"></td>
                         </tr>
                         @endif
                     @endfor
                 </tbody>
             </table>
         </div>
+        @if ($i <= count($daily_orders) - 1)
+        <div class="page_break"></div>
+        @endif
         @endfor
     </body>
 </html>

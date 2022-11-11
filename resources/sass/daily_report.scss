@@ -91,15 +91,18 @@
             transition: all 0.3s;
             height: 0;
             overflow: hidden;
+            display: none;
         }
 
         &-toggle:checked + &-cards + &-ac {
             height: auto;
             padding: 1rem ;
             transition: all .5s;
+            display: block;
         }
         &-toggle:checked + &-cards::before {
             transform: rotate(-45deg) !important;
+            display: none;
         }
     }
 

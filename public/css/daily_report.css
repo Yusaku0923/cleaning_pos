@@ -78,14 +78,17 @@
   transition: all 0.3s;
   height: 0;
   overflow: hidden;
+  display: none;
 }
 .dr-body-toggle:checked + .dr-body-cards + .dr-body-ac {
   height: auto;
   padding: 1rem;
   transition: all 0.5s;
+  display: block;
 }
 .dr-body-toggle:checked + .dr-body-cards::before {
   transform: rotate(-45deg) !important;
+  display: none;
 }
 .dr-pdf {
   position: fixed;

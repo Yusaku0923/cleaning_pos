@@ -1,0 +1,51 @@
+.unhanded-orders {
+  height: 50vh;
+  overflow: scroll;
+  white-space: nowrap;
+}
+.unhanded-orders-column {
+  top: 0;
+  z-index: 2;
+}
+.unhanded-orders-order {
+  font-size: 16px;
+}
+.unhanded-operation {
+  height: 161px;
+}
+.unhanded-operation-btn {
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  border-radius: 10px;
+}
+.unhanded-operation-btn-icon {
+  font-size: 52px;
+  line-height: 70px;
+}
+.unhanded-operation-btn-label {
+  font-size: 18px;
+}
+.unhanded-detail {
+  height: 56.5vh;
+  overflow: scroll;
+  white-space: nowrap;
+}
+.unhanded-detail-column {
+  top: 0;
+  z-index: 2;
+}
+.unhanded-detail-clothes {
+  font-size: 16px;
+}
+.unhanded-selected {
+  border: 3px solid #2dbe5b;
+}
+
+.uh-orange {
+  background-color: #fd7e00;
+}
+
+.uh-green {
+  background-color: #2dbe5b;
+}

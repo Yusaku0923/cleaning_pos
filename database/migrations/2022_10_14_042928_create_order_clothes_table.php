@@ -18,6 +18,7 @@ class CreateOrderClothesTable extends Migration
             $table->unsignedBigInteger('order_id')->comment('注文ID');
             $table->unsignedBigInteger('clothes_id')->comment('商品ID');
             $table->string('tag')->comment('タグ番号');
+            $table->dateTime('handed_at')->nullable()->default(null)->comment('お渡し日時');
             $table->softDeletes();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'))->comment('作成日時');
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'))->comment('更新日時');

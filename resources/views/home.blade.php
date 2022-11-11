@@ -62,7 +62,7 @@
                     </div>
                 </div>
 
-                <div class="card col-12 py-1 px-3 mt-3">担当者：{{ session('manager_name') }}</div>
+                <div class="card col-12 py-1 px-3 mt-3"><span>担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></span></div>
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px">
                     <div class="card col-15 mr-1 text-center lh-leftbtn">直前預り<br>取り消し</div>
                     <button type="button" class="card col-15 mr-1 text-center lh-leftbtn cbtn-blue" data-bs-toggle="modal" data-bs-target="#manager-select-modal"><div class="mx-auto">担当者<br>変更</div></button>
@@ -93,7 +93,7 @@
                     <div class="card col-15 py-3 mx-1 text-center ctl-btn">出金</div>
                     <div class="card col-15 py-3 mx-1 text-center">預かり一覧<br>(未収・未定)</div>
                     <div class="card col-15 py-3 mx-1 text-center ctl-btn">納品検索</div>
-                    <div class="card col-15 py-3 ml-1 text-center ctl-btn">お渡し</div>
+                    <a href="{{ route('return.index') }}" class="card col-15 py-3 ml-1 text-center ctl-btn">お渡し</a>
                 </div>
 
                 <div class="card col-12 py-2 h4 text-center mt-2">

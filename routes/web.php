@@ -7,6 +7,7 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ClothesController;
 use App\Http\Controllers\DailyReportController;
+use App\Http\Controllers\ReturnController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,10 @@ Auth::routes([
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
+
+    Route::prefix('return')->group(function () {
+        Route::get('', [ReturnController::class, 'index'])->name('return.index');
+    });
 
     Route::prefix('daily_report')->group(function () {
         Route::get('', [DailyReportController::class, 'index'])->name('daily_report.index');

@@ -27,6 +27,7 @@
     <link href="{{ asset('css/modal.css') }}" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <link href="{{ asset('css/daily_report.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/return.css') }}" rel="stylesheet">
 
     @livewireStyles
 </head>
@@ -36,7 +37,7 @@
             <div class="col-12 mb-4 px-2 position-sticky">
                 <a href="{{ route('home') }}" class="card py-2 text-decoration-none text-body">
                     <div class="d-flex justify-content-between">
-                        <div class="col-4 px-5 text-start">担当者：{{ session('manager_name') ?? '設定されていません' }}</div>
+                        <div class="col-4 px-5 text-start">担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></div>
                         <div class="col-4 text-center fw-bold">{{ $title ?? 'システム' }}</div>
                         <div class="col-4 px-5 text-end" id="RealtimeClockArea"></div>
                     </div>

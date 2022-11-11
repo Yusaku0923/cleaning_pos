@@ -14,33 +14,47 @@ class Order extends Model
 
     protected $guarded = [];
 
-    public function fetchOrder($customer_id)
+    public function fetchOrders($customer_id, $mode = NULL)
     {
         /**
          * $orders = [
-         *     'items': [
-         *          [
-         *               'clothes.(order_clothes).name',
-         *               'order_clothes.tags': [],
-         *          ]
-         *     ]
-         *     'order.id',
-         *     'COUNT(order.(order_clothes).id) AS total_count',
-         *     'order.amount',
-         *     'order.discount',
-         *     'order.payment',
-         *     'order.is_registered_as_invoice',
-         *     'order.paid_at',
-         *     'order.is_handed_over',
-         *     'order.note',
+         *     [
+         *         'items': [
+         *              [
+         *                   'clothes.(order_clothes).name',
+         *                   'order_clothes.tags': [],
+         *              ]
+         *         ]
+         *         'order.id',
+         *         'COUNT(order.(order_clothes).id) AS total_count',
+         *         'order.amount',
+         *         'order.discount',
+         *         'order.payment',
+         *         'order.is_registered_as_invoice',
+         *         'order.paid_at',
+         *         'order.is_handed_over',
+         *         'order.note',
+         *    ],
+         *   ...
          * ]
          * 
          * ※orderBy DESC created_at
          */
 
-        $orders = Order::where('customer_id', $customer_id)
-                        ->orderBy('created_at', 'desc')
-                        ->get()->toArray();
+        
+        $model = Order::where('customer_id', $customer_id);
+        switch($mode) {
+            case 'unhanded':
+                // 未渡し一覧取得
+                $model->where('handed_at', NULL);
+                $model->orderBy('created_at', 'asc');
+                break;
+            case NULL:
+                // (defaut)全件取得
+                $model->orderBy('created_at', 'desc');
+                break;
+        }
+        $orders = $model->get()->toArray();
 
         if (empty($orders)) {
             return [];
