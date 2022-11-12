@@ -21,10 +21,13 @@
 }
 .unhanded-operation-btn-icon {
   font-size: 52px;
-  line-height: 70px;
+  line-height: 65px;
 }
 .unhanded-operation-btn-label {
   font-size: 18px;
+}
+.unhanded-operation-btn-inactive {
+  opacity: 0.5;
 }
 .unhanded-detail {
   height: 56.5vh;
@@ -38,8 +41,15 @@
 .unhanded-detail-clothes {
   font-size: 16px;
 }
+.unhanded-handed {
+  background-color: gray;
+  color: #fff;
+}
 .unhanded-selected {
   border: 3px solid #2dbe5b;
+}
+.unhanded-unselected {
+  padding: 10px 2px !important;
 }
 
 .uh-orange {

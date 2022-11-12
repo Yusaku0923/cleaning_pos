@@ -48,12 +48,5 @@ class DailyReportController extends Controller
         ]);
         $pdf->setPaper('A4');
         return $pdf->stream('日報');
-
-        return view('daily_report.pdf', [
-            'date' => $date,
-            'daily_orders' => $daily_orders,
-            'daily_sum' => $daily_sum,
-            'monthly_sum' => $monthly_sum,
-        ]);
     }
 }

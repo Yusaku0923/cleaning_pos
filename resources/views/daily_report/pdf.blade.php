@@ -3,9 +3,21 @@
         <title>pdf output test</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <style>
+            @font-face{
+                font-family: migmix;
+                font-style: normal;
+                font-weight: normal;
+                src:url('{{ storage_path('fonts/migmix-2m-regular.ttf')}}');
+            }
+            @font-face{
+                font-family: migmix-bold;
+                font-style: normal;
+                font-weight: normal;
+                src:url('{{ storage_path('fonts/migmix-2m-bold.ttf')}}');
+            }
 
             body {
-                font-family: migmix, serif;
+                font-family: migmix;
                 /* font-family: migmix, serif !important; */
                 /* font-family: migmix-bold, serif !important; */
                 /* https://blog.websandbag.com/entry/2020/11/23/221039 */
@@ -18,6 +30,9 @@
             .text-center {
                 text-align: center;
             }
+            .bold-font {
+                font-family: migmix-bold !important;
+            }
 
 
             .title {
@@ -26,7 +41,7 @@
                 position: relative;
             }
             .title-label {
-                font-family: migmix-bold, serif !important;
+                font-family: migmix-bold !important;
                 font-size: 28px;
             }
             .no {
@@ -84,6 +99,7 @@
             }
             .table {
                 border-collapse: collapse;
+                font-family: migmix;
                 width: 100%
             }
             .short-label {
@@ -137,16 +153,16 @@
             {{-- w:185.74mm --}}
             <table class="table" rules="all">
                 <thead>
-                    <tr>
-                        <th>タグNo.</th>
-                        <th>品名</th>
-                        <th>値段</th>
-                        <th>会員No.</th>
-                        <th>氏名</th>
-                        <th>未収・定</th>
-                        <th>摘要</th>
-                        <th>到着日</th>
-                        <th>渡し日</th>
+                    <tr class="bold-font text-center">
+                        <td>タグNo.</td>
+                        <td>品名</td>
+                        <td>値段</td>
+                        <td>会員No.</td>
+                        <td>氏名</td>
+                        <td>未収・定</td>
+                        <td>摘要</td>
+                        <td>到着日</td>
+                        <td>渡し日</td>
                     </tr>
                 </thead>
                 <tbody>

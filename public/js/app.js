@@ -6130,15 +6130,107 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _CustomerInfoComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CustomerInfoComponent */ "./resources/js/components/CustomerInfoComponent.vue");
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     customer: {
       required: true
+    },
+    orders: {
+      required: true
+    },
+    token: {
+      type: String,
+      required: true
     }
   },
   components: {
     'customer-info-component': _CustomerInfoComponent__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    return {
+      selectedOrder: '',
+      selectedItems: [],
+      items: [],
+      allSelected: false
+    };
+  },
+  methods: {
+    selectOrder: function selectOrder(id) {
+      this.selectedOrder = id;
+      this.selectedItems = [];
+      this.items = [];
+      var _iterator = _createForOfIteratorHelper(this.orders[id].items),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var item = _step.value;
+          this.items.push(item);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    },
+    switchItem: function switchItem(id) {
+      var index = this.selectedItems.indexOf(id);
+      if (index === -1) {
+        this.selectedItems.push(id);
+      } else {
+        this.selectedItems.splice(index, 1);
+      }
+      this.isSelectedAll();
+    },
+    selectAll: function selectAll() {
+      this.selectedItems = [];
+      this.selectedItems = this.orders[this.selectedOrder].items.map(function (item) {
+        if (item.handed_at === null) {
+          return item.id;
+        }
+      }).filter(function (e) {
+        return typeof e !== 'undefined';
+      });
+      this.allSelected = true;
+      console.log('selectAll');
+    },
+    deselection: function deselection() {
+      this.selectedItems = [];
+      this.allSelected = false;
+      console.log('deselection');
+    },
+    isSelectedAll: function isSelectedAll() {
+      var _this = this;
+      var base = this.orders[this.selectedOrder].items.map(function (item) {
+        if (item.handed_at === null) {
+          return item.id;
+        }
+      }).filter(function (e) {
+        return typeof e !== 'undefined';
+      });
+      var diff = base.filter(function (i) {
+        return _this.selectedItems.indexOf(i) == -1;
+      });
+      if (diff.length === 0) {
+        this.allSelected = true;
+      } else {
+        this.allSelected = false;
+      }
+    },
+    send: function send() {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+      axios.post('api/return/update', {
+        items: this.selectedItems
+      }).then(function (response) {
+        location.reload();
+      })["catch"](function (error) {
+        console.log(error);
+        return;
+      });
+    }
   }
 });
 
@@ -7054,7 +7146,7 @@ var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "col-12 px-2"
+    staticClass: "col-12 px-2 d-flex"
   }, [_c("div", {
     staticClass: "col-6 px-4"
   }, [_c("div", {
@@ -7064,10 +7156,195 @@ var render = function render() {
       customer: _vm.customer
     }
   })], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-12 bg-primary mt-3"
-  }, [_vm._v("\n            z\n        ")])])]);
+    staticClass: "col-12 mt-2"
+  }, [_c("div", {
+    staticClass: "card col-12 py-2 h4 text-center"
+  }, [_vm._v("\n                未渡し一覧\n            ")]), _vm._v(" "), _c("div", {
+    staticClass: "card position-relative unhanded-orders"
+  }, [_vm._m(0), _vm._v(" "), _vm._l(_vm.orders, function (order, index) {
+    return _c("div", {
+      key: index,
+      staticClass: "card col-11 mx-auto my-2 py-2 unhanded-orders-order",
+      "class": {
+        "unhanded-selected": index === _vm.selectedOrder,
+        "unhanded-unselected": index !== _vm.selectedOrder
+      },
+      on: {
+        click: function click($event) {
+          return _vm.selectOrder(index);
+        }
+      }
+    }, [_c("div", {
+      staticClass: "d-flex"
+    }, [_c("div", {
+      staticClass: "col-2 text-center"
+    }, [_vm._v(_vm._s(order.id))]), _vm._v(" "), _c("div", {
+      staticClass: "col-3 text-center"
+    }, [_vm._v(_vm._s(order.created_at))]), _vm._v(" "), _c("div", {
+      staticClass: "col-5 text-center"
+    }, [_vm._v(_vm._s(_vm.customer.name))]), _vm._v(" "), _c("div", {
+      staticClass: "col-2 text-center"
+    }, [_c("i", {
+      "class": {
+        "fa-solid fa-check text-success": order.paid_at !== null,
+        "fa-solid fa-xmark text-danger": order.paid_at === null
+      }
+    })])])]);
+  })], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 px-4"
+  }, [_vm._m(1), _vm._v(" "), _c("div", {
+    staticClass: "card col-12 unhanded-operation"
+  }, [_c("div", {
+    staticClass: "card-header text-center fw-bold"
+  }, [_vm._v("\n                操作\n            ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-12"
+  }, [_c("div", {
+    staticClass: "d-flex justify-content-around"
+  }, [_vm._m(2), _vm._v(" "), _c("button", {
+    staticClass: "unhanded-operation-btn text-white mt-2 uh-orange unhanded-operation-btn-inactive",
+    attrs: {
+      disabled: true
+    }
+  }, [_vm._m(3), _vm._v(" "), _c("div", {
+    staticClass: "unhanded-operation-btn-label text-center"
+  }, [_vm._v("\n                            入金\n                        ")])]), _vm._v(" "), _c("button", {
+    staticClass: "unhanded-operation-btn text-white mt-2 uh-green",
+    "class": {
+      "unhanded-operation-btn-inactive": _vm.selectedOrder === ""
+    },
+    attrs: {
+      disabled: _vm.selectedOrder === ""
+    },
+    on: {
+      click: function click($event) {
+        _vm.allSelected ? _vm.deselection() : _vm.selectAll();
+      }
+    }
+  }, [_c("div", {
+    staticClass: "unhanded-operation-btn-icon"
+  }, [_vm.allSelected ? _c("i", {
+    staticClass: "fa-regular fa-square"
+  }) : _c("i", {
+    staticClass: "fa-regular fa-square-check"
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "unhanded-operation-btn-label"
+  }, [_vm._v("\n                            " + _vm._s(_vm.allSelected ? "選択解除" : "全選択") + "\n                        ")])]), _vm._v(" "), _c("button", {
+    staticClass: "unhanded-operation-btn bg-primary text-white mt-2",
+    "class": {
+      "unhanded-operation-btn-inactive": _vm.selectedItems.length === 0
+    },
+    attrs: {
+      disabled: _vm.selectedItems.length === 0
+    },
+    on: {
+      click: function click($event) {
+        return _vm.send();
+      }
+    }
+  }, [_vm._m(4), _vm._v(" "), _c("div", {
+    staticClass: "unhanded-operation-btn-label"
+  }, [_vm._v("\n                            お渡し\n                        ")])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "card position-relative mt-2 unhanded-detail"
+  }, [_vm._m(5), _vm._v(" "), _vm.items !== [] ? _vm._l(_vm.items, function (item) {
+    return _c("div", {
+      key: item.id,
+      staticClass: "card col-11 mx-auto my-2 py-2 unhanded-detail-clothes",
+      "class": {
+        "unhanded-handed": item.handed_at !== null,
+        "unhanded-selected": _vm.selectedItems.indexOf(item.id) !== -1,
+        "unhanded-unselected": _vm.selectedItems.indexOf(item.id) === -1
+      },
+      on: {
+        click: function click($event) {
+          item.handed_at === null ? _vm.switchItem(item.id) : null;
+        }
+      }
+    }, [_c("div", {
+      staticClass: "d-flex"
+    }, [_c("div", {
+      staticClass: "col-3 text-center"
+    }, [_vm._v(_vm._s(item.tag))]), _vm._v(" "), _c("div", {
+      staticClass: "col-7 text-center"
+    }, [_vm._v(_vm._s(item.name))]), _vm._v(" "), _c("div", {
+      staticClass: "col-2 text-center"
+    }, [_vm._v(_vm._s(item.price) + "円")])])]);
+  }) : [_vm._v("\n                never selected order\n            ")]], 2)])]);
 };
-var staticRenderFns = [];
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "col-12 mb-2 bg-white position-sticky unhanded-orders-column pt-3 border border-white"
+  }, [_c("div", {
+    staticClass: "card col-11 mx-auto bg-primary text-white"
+  }, [_c("div", {
+    staticClass: "d-flex"
+  }, [_c("div", {
+    staticClass: "col-2 text-center"
+  }, [_vm._v("伝票No.")]), _vm._v(" "), _c("div", {
+    staticClass: "col-3 text-center"
+  }, [_vm._v("預り日")]), _vm._v(" "), _c("div", {
+    staticClass: "col-5 text-center"
+  }, [_vm._v("顧客名")]), _vm._v(" "), _c("div", {
+    staticClass: "col-2 text-center"
+  }, [_vm._v("支払い済")])])])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "col-12"
+  }, [_c("div", {
+    staticClass: "card col-12 py-2 h4 text-center"
+  }, [_vm._v("\n                伝票詳細\n            ")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("a", {
+    attrs: {
+      href: "/"
+    }
+  }, [_c("button", {
+    staticClass: "unhanded-operation-btn text-white mt-2 bg-secondary"
+  }, [_c("div", {
+    staticClass: "unhanded-operation-btn-icon"
+  }, [_c("i", {
+    staticClass: "fa-solid fa-house"
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "unhanded-operation-btn-label text-center"
+  }, [_vm._v("\n                                戻る\n                            ")])])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "unhanded-operation-btn-icon"
+  }, [_c("i", {
+    staticClass: "fa-solid fa-money-bill"
+  })]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "unhanded-operation-btn-icon"
+  }, [_c("i", {
+    staticClass: "fa-solid fa-shirt"
+  })]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "col-12 mb-2 bg-white position-sticky unhanded-detail-column pt-3 border border-white"
+  }, [_c("div", {
+    staticClass: "card col-11 mx-auto bg-primary text-white"
+  }, [_c("div", {
+    staticClass: "d-flex"
+  }, [_c("div", {
+    staticClass: "col-3 text-center"
+  }, [_vm._v("タグNo.")]), _vm._v(" "), _c("div", {
+    staticClass: "col-7 text-center"
+  }, [_vm._v("商品名")]), _vm._v(" "), _c("div", {
+    staticClass: "col-2 text-center"
+  }, [_vm._v("値段")])])])]);
+}];
 render._withStripped = true;
 
 

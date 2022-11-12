@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('return')->group(function () {
         Route::get('', [ReturnController::class, 'index'])->name('return.index');
+        Route::post('update', [ReturnController::class, 'update'])->name('return.update');
     });
 
     Route::prefix('daily_report')->group(function () {

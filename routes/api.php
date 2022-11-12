@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\OrdersController;
+use App\Http\Controllers\Api\ReturnController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +19,6 @@ use App\Http\Controllers\Api\OrdersController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('order', [OrdersController::class, 'store'])->name('order.store');
     Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
+
+    Route::post('return/update', [ReturnController::class, 'update'])->name('order.update');
 });

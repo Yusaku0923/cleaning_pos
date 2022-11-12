@@ -14,7 +14,7 @@ class Order extends Model
 
     protected $guarded = [];
 
-    public function fetchOrders($customer_id, $mode = NULL)
+    public function fetchOrders($customer_id)
     {
         /**
          * $orders = [
@@ -42,19 +42,9 @@ class Order extends Model
          */
 
         
-        $model = Order::where('customer_id', $customer_id);
-        switch($mode) {
-            case 'unhanded':
-                // 未渡し一覧取得
-                $model->where('handed_at', NULL);
-                $model->orderBy('created_at', 'asc');
-                break;
-            case NULL:
-                // (defaut)全件取得
-                $model->orderBy('created_at', 'desc');
-                break;
-        }
-        $orders = $model->get()->toArray();
+        $orders = Order::where('customer_id', $customer_id)
+                        ->orderBy('created_at', 'desc')
+                        ->get()->toArray();
 
         if (empty($orders)) {
             return [];
@@ -146,5 +136,27 @@ class Order extends Model
         }
 
         return [$result, $total_count];
+    }
+
+    public function fetchUnhandedOrders($customer_id) {
+        $orders = Order::where('customer_id', $customer_id)
+                        ->whereNull('handed_at')
+                        ->orderBy('created_at', 'asc')
+                        ->get()->toArray();
+        
+        if (empty($orders)) {
+            return [];
+        }
+
+        foreach ($orders as $key => $order) {
+            $items = OrderClothes::select('order_clothes.*', 'clothes.name', 'clothes.price')
+                                ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
+                                ->where('order_clothes.order_id', $order['id'])
+                                ->get()->toArray();
+            $orders[$key]['created_at'] = date('Y/m/d', strtotime($order['created_at']));
+            $orders[$key]['items'] = $items;
+        }
+
+        return $orders;
     }
 }

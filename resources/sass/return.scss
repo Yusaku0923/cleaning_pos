@@ -22,11 +22,14 @@
             border-radius: 10px;
             &-icon {
                 font-size: 52px;
-                line-height: 70px;
+                line-height: 65px;
                 
             }
             &-label {
                 font-size: 18px;
+            }
+            &-inactive {
+                opacity: .5;
             }
         }
     }
@@ -45,8 +48,15 @@
         }
     }
 
+    &-handed {
+        background-color: gray;
+        color: #fff;
+    }
     &-selected {
         border: 3px solid #2dbe5b;
+    }
+    &-unselected {
+        padding: 10px 2px !important;
     }
 }
 
