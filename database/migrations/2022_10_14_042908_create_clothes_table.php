@@ -18,8 +18,9 @@ class CreateClothesTable extends Migration
             $table->unsignedBigInteger('store_id')->comment('店舗ID');
             $table->unsignedBigInteger('category_id')->comment('カテゴリID');
             $table->string('name')->comment('商品名');
-            $table->string('short_name')->comment('商品略名');
+            $table->string('name_kana')->comment('商品略名');
             $table->unsignedBigInteger('price')->comment('値段');
+            $table->unsignedInteger('tag_count')->comment('タグ枚数');
             $table->softDeletes();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'))->comment('作成日時');
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'))->comment('更新日時');

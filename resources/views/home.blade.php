@@ -34,31 +34,22 @@
                 <div class="card col-12 p-2 text-start">
                     <div class="card col-12 p-1">名前　{{ isset($customer->name) ? $customer->name . '　様': '' }}</div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="card col-10 p-1">電話番号　{{ isset($customer->phone_number) ? $customer->phone_number: '' }}</div>
-                        <div class="card col-2 p-1 text-center">会員客</div>
+                        <div class="card col-12 p-1">電話番号　{{ isset($customer->phone_number) ? $customer->phone_number: '' }}</div>
+                        
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="card col-6 p-1">誕生日　{{ isset($customer->birth_day) ? date('m月d日', strtotime($customer->birth_day)): '' }}</div>
-                        <div class="card col-6 p-1">性別　</div>
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
                         <div class="card col-6 p-1">累計売上　</div>
                         <div class="card col-6 p-1">来店回数　</div>
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="card col-6 p-1">ポイント　</div>
                         <div class="card col-6 p-1">未収金　</div>
+                        <div class="card col-6 p-1"> 最終来店日　</div>
                     </div>
-                    <div class="col-12 mt-1 d-flex justify-content-between">
-                        <div class="col-7">
-                            <div class="card col-12 p-1">
-                                最終来店日
-                            </div>
-                            <div class="card col-12 p-1 mt-1">
-                                会員有効期限
-                            </div>
-                        </div>
-                        <div class="card col-5  align-middle">会員情報入力</div>
+                    <div class="col-12 mt-3 d-flex justify-content-end">
+                        
+                        <div class="card col-5 customer-edit-btn">会員情報入力</div>
                     </div>
                 </div>
 
@@ -99,10 +90,10 @@
                 <div class="card col-12 py-2 h4 text-center mt-2">
                     来　店　履　歴
                 </div>
-                <div class="card {{ empty($orders) ? 'history-field' : '' }}">
+                <div class="card history-field">
                     <div class="col-12 d-flex py-2 justify-content-around">
                         @foreach ((array_splice($orders, 0, 4)) as $order)
-                        <div class="card col-3 col-3-custom p-2 history-card">
+                        <div class="card col-3 mt-2 col-3-custom p-2 history-card">
                             @foreach (array_splice($order['items'], 0, 2) as $item)
                                 <div class="col-12 text-nowrap overflow-hidden">{{ $item['name'] }}</div>
                             @endforeach
@@ -114,9 +105,6 @@
                         </div>
                         @endforeach
                     </div>
-                    @if (isset($orders))
-                    <div class="card col-11 p-2 mx-auto mb-2 text-end">一覧で見る >></div>
-                    @endif
                 </div>
 
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px;">

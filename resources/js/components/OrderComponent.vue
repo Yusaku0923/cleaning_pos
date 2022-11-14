@@ -284,6 +284,13 @@ export default ({
         'change-modal': ChangeModal,
         'receipt-printer': ReceiptPrinter,
     },
+    mounted() {
+        // ローカルストレージ活用
+        let ePosDev = new epson.ePOSDevice();
+        ePosDev.connect('192.168.0.215', 8008, function() {
+            console.log('printer connected');
+        }, {"eposprint" : true});
+    },
     methods: {
         changeCategory: function (num) {
             this.isActive = num;

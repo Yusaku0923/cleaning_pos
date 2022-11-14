@@ -25,6 +25,9 @@ class CreateDefaultManager extends Seeder
             [
                 'name' => '担当者3',
             ],
+            [
+                'name' => '担当者4',
+            ],
         ];
         foreach ($managers as $arr) {
             $obj = Manager::query()->create([
@@ -34,7 +37,7 @@ class CreateDefaultManager extends Seeder
 
             TagNumber::query()->create([
                 'manager_id' => $obj->id,
-                'tag_number' => 0
+                'tag_number' => 1000
             ]);
         }
     }

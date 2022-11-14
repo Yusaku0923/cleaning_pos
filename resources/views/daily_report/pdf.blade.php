@@ -105,14 +105,29 @@
             .short-label {
                 transform: scale(0.7, 1);
             }
+            .tag-label {
+
+            }
             .item-label {
                 max-width: 50px;
                 /* max-width: 140px; */
                 white-space: nowrap;
             }
+            .price-label {
+
+            }
+            .no-label {
+
+            }
             .name-label {
                 max-width: 50px;
                 white-space: nowrap;
+            }
+            .paid-label {
+                
+            }
+            .summary-label {
+                width: 30%;
             }
             .page_break {
                 page-break-before: always;
@@ -154,15 +169,15 @@
             <table class="table" rules="all">
                 <thead>
                     <tr class="bold-font text-center">
-                        <td>タグNo.</td>
-                        <td>品名</td>
-                        <td>値段</td>
-                        <td>会員No.</td>
-                        <td>氏名</td>
-                        <td>未収・定</td>
-                        <td>摘要</td>
-                        <td>到着日</td>
-                        <td>渡し日</td>
+                        <td class="tag-label">タグNo</td>
+                        <td class="item-label">品名</td>
+                        <td class="price-label">値段</td>
+                        <td class="no-label">会員No</td>
+                        <td class="name-label">氏名</td>
+                        <td class="paid-label">未収</td>
+                        <td class="summary-label">摘要</td>
+                        <td class="arrive-label">到着日</td>
+                        <td class="handed-label">渡し日</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -173,10 +188,10 @@
                         @if ($i <= count($daily_orders) - 1)
                         <tr>
                             <td class="number-font text-center">{{ $daily_orders[$i]['tag'] }}</td>
-                            <td class="item-label"><span class="short-label">{{ $daily_orders[$i]['name'] }}</span></td>
+                            <td class=""><span class="short-label">{{ $daily_orders[$i]['name'] }}</span></td>
                             <td class="number-font text-center">{{ $daily_orders[$i]['price'] }}</td>
                             <td class="text-center">{{ $daily_orders[$i]['customer_id'] }}</td>
-                            <td class="name-label"><span class="short-label">{{ $daily_orders[$i]['customer_name'] }}</span></td>
+                            <td class=""><span class="short-label">{{ $daily_orders[$i]['customer_name'] }}</span></td>
                             <td></td>
                             <td></td>
                             <td></td>

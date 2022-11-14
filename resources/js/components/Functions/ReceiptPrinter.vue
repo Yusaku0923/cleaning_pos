@@ -42,7 +42,7 @@ export default ({
 
             let printer = null;
             let ePosDev = new epson.ePOSDevice();
-            ePosDev.connect('192.168.0.215', 8008, cbConnect);
+            ePosDev.connect('192.168.0.215', 8008, cbConnect, {"eposprint" : true});
 
             function cbConnect(data) {
                 if(data == 'OK' || data == 'SSL_CONNECT_OK') {

@@ -45,8 +45,8 @@ class OrdersController extends Controller
                         $response[$clothes_id] .= '～' . $converted_tag;
                     }
 
-                if ($tag >= 9999) {
-                    $tag = 0;
+                if ($tag >= 10999) {
+                    $tag = 1000;
                 } else {
                     $tag++;
                 }
@@ -96,15 +96,7 @@ class OrdersController extends Controller
     private function convertTagFormat($tag) {
         $formated_tag = '';
 
-        if ($tag < 10) {
-            $formated_tag = '0-00' . (string)$tag;
-        } else if ($tag < 100) {
-            $formated_tag = '0-0' . (string)$tag;
-        } else if ($tag < 1000) {
-            $formated_tag = '0-' . (string)$tag;
-        } else {
-            $formated_tag = substr((string)$tag, 0, 1) . '-' . (string)($tag % 1000);
-        }
+        $formated_tag = substr((string)$tag, 0, 1) . '-' . (string)($tag % 1000);
 
         return $formated_tag;
     }
