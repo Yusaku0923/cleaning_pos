@@ -14,6 +14,18 @@ class Order extends Model
 
     protected $guarded = [];
 
+    public function order_clothes(){
+        return $this->hasMany(OrderClothes::class, 'order_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::deleting(function ($user) {
+            $user->order_clothes()->delete();
+        });
+    }
+
     public function fetchOrders($customer_id)
     {
         /**
@@ -60,6 +72,7 @@ class Order extends Model
                 return $array['clothes_id'];
             }, $clothes);
             foreach ($clothes as $id) {
+                if ($id === 999) continue;
                 $item['name'] = Clothes::where('id', $id)->value('name');
                 $tags = OrderClothes::select('tag')
                                     ->where('order_id', $order['id'])
@@ -69,12 +82,33 @@ class Order extends Model
                 $item['tags'] = array_map(function ($array) {
                     return $array['tag'];
                 }, $tags);
+                Log::debug($item);
 
                 $orders[$key]['items'][] = $item;
             }
         }
 
         return $orders;
+    }
+
+    public function fetchLatestOrder($manager_id) {
+        $order = Order::where('manager_id', $manager_id)
+                        ->orderBy('created_at', 'desc')
+                        ->limit(1)
+                        ->get()->toArray();
+        if (empty($order)) {
+            return [];
+        } else {
+            $order = $order[0];
+        }
+
+        $items = OrderClothes::select('order_clothes.*', 'clothes.name', 'clothes.price')
+                            ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
+                            ->where('order_clothes.order_id', $order['id'])
+                            ->get()->toArray();
+        $order['items'] = $items;
+
+        return $order;
     }
 
     public function fetchDailyOrders($date) {
@@ -122,7 +156,7 @@ class Order extends Model
             if ($index === false) {
                 $result[] = [
                     'id' => $row['clothes_id'],
-                    'name' => $row['name'],
+                    'name' => $row['name_kana'],
                     'tag_start' => $row['tag'],
                     'tag_end' => $row['tag'],
                     'price' => $row['price'],

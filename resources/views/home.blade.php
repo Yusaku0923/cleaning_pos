@@ -35,7 +35,6 @@
                     <div class="card col-12 p-1">名前　{{ isset($customer->name) ? $customer->name . '　様': '' }}</div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
                         <div class="card col-12 p-1">電話番号　{{ isset($customer->phone_number) ? $customer->phone_number: '' }}</div>
-                        
                     </div>
                     <div class="col-12 mt-1 d-flex justify-content-between">
                     </div>
@@ -55,12 +54,21 @@
 
                 <div class="card col-12 py-1 px-3 mt-3"><span>担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></span></div>
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px">
-                    <div class="card col-15 mr-1 text-center lh-leftbtn">直前預り<br>取り消し</div>
+                    <div class="card col-15 mr-1 text-center lh-leftbtn cbtn-red" data-bs-toggle="modal" data-bs-target="#order-cancel-modal">直前預り<br>取り消し</div>
                     <button type="button" class="card col-15 mr-1 text-center lh-leftbtn cbtn-blue" data-bs-toggle="modal" data-bs-target="#manager-select-modal"><div class="mx-auto">担当者<br>変更</div></button>
-                    <div class="card col-15 mr-1 text-center lh-leftbtn">タグ番号<br>0-000</div>
+                    <div class="card col-15 mr-1 text-center lh-leftbtn cbtn-blue" data-bs-toggle="modal" data-bs-target="#tag-edit-modal">タグ番号<br>{{ is_null($tag) ? '0-000': Utility::convertTagFormat($tag) }}</div>
                     <a href="{{ route('daily_report.index') }}" class="card col-15 mr-1 text-center lh-leftbtn-oneline text-decoration-none text-white bg-primary">日報</a>
                     <div class="card col-15 mr-1 text-center lh-leftbtn-oneline">請求書</div>
+
+                    {{-- modals --}}
+                    @if (!empty($latest_order))
+                        @include('modals.cancel_order')
+                    @endempty
                     @include('modals.select_manager')
+                    @if (!is_null($tag))
+                        @include('modals.edit_tag')
+                    @endif
+                    {{-- modals --}}
                 </div>
             </div>
 
@@ -109,7 +117,7 @@
 
                 <div class="col-12 d-flex justify-content-between" style="margin-top: 20px;">
                     <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue">メニュー</a>
-                    <div class="card col-3 col-3-custom lh-rightbtn text-center">両替</div>
+                    <div class="card col-3 col-3-custom lh-rightbtn text-center bg-secondary"></div>
                     <a href="{{ route('customer.clear') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-red">入力クリア</a>
                     <a href="{{ route('order.create') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue">預り入力</a>
                 </div>

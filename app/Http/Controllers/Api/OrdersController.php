@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Clothes;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -13,43 +14,60 @@ use App\Models\Order;
 use App\Models\OrderClothes;
 use App\Models\TagNumber;
 use App\Models\Tax;
+use App\Services\Utility;
 
 class OrdersController extends Controller
 {
     public function store(Request $request) {
+        if ($request->not_paid) {
+            $paid_at = null;
+        } else {
+            $paid_at = date('Y-m-d H:i:s');
+        }
+        Log::debug($request->manager_id);
         $order = Order::query()->create([
             'store_id' => Auth::id(),
+            'manager_id' => $request->manager_id,
             'customer_id' => $request->customer_id,
             'amount' => $request->amount,
             'reduction' => $request->reduction,
             'discount' => $request->discount,
             'payment' => $request->payment,
             'is_registered_as_invoice' => $request->invoice,
-            'paid_at' => date('Y-m-d H:i:s'),
+            'paid_at' => $paid_at,
         ]);
 
         $tag = TagNumber::find($request->manager_id)->value('tag_number');
         $response = [];
         foreach ($request->order as $clothes_id => $count) {
+            $tag_count = Clothes::where('id', $clothes_id)->value('tag_count');
             for ($i = 1; $i <= $count; $i++) {
-                $converted_tag = $this->convertTagFormat($tag);
+                $converted_tag = Utility::convertTagFormat($tag);
                 OrderClothes::query()->create([
                     'order_id' => $order->id,
                     'clothes_id' => $clothes_id,
                     'tag' => $converted_tag
                 ]);
 
+                if ($tag_count > 1) {
+                    for ($j = 1; $j < $tag_count; $j++) {
+                        $tag = $this->addTag($tag);
+                        $converted_tag = Utility::convertTagFormat($tag);
+                        OrderClothes::query()->create([
+                            'order_id' => $order->id,
+                            'clothes_id' => 999,
+                            'tag' => $converted_tag,
+                        ]);
+                    }
+                } else {
                     if (!isset($response[$clothes_id])) {
                         $response[$clothes_id] = $converted_tag;
                     } else if ($i >= 2 && $i === $count) {
                         $response[$clothes_id] .= '～' . $converted_tag;
                     }
-
-                if ($tag >= 10999) {
-                    $tag = 1000;
-                } else {
-                    $tag++;
                 }
+
+                $tag = $this->addTag($tag);
             }
         }
         TagNumber::where('manager_id', $request->manager_id)
@@ -93,11 +111,15 @@ class OrdersController extends Controller
         ]);
     }
 
-    private function convertTagFormat($tag) {
-        $formated_tag = '';
+    private function addTag($tag) {
+        if ($tag >= 10999) {
+            $tag = 1000;
+        } else {
+            $tag++;
+        }
 
-        $formated_tag = substr((string)$tag, 0, 1) . '-' . (string)($tag % 1000);
-
-        return $formated_tag;
+        return $tag;
     }
+
+    
 }

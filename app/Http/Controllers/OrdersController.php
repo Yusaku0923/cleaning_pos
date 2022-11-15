@@ -34,10 +34,11 @@ class OrdersController extends Controller
         if (!session()->has('manager_id') || !session()->has('customer_id')) {
             return redirect()->route('home');
         }
+        $customer = Customer::find(session()->get('customer_id'));
         $category_clothes = Category::with('clothes')->get();
         $model = new Clothes;
-        if (Order::where('customer_id', session()->get('customer_id'))->exists()) {
-            $often_ordered = $model->fetchOftenOrdered(session()->get('customer_id'));
+        if (Order::where('customer_id', $customer->id)->exists()) {
+            $often_ordered = $model->fetchOftenOrdered($customer->id);
         } else {
             $often_ordered = [];
         }
@@ -49,7 +50,8 @@ class OrdersController extends Controller
             'title' => '預　り　入　力',
             'manager_id' => session()->get('manager_id'),
             'customer_id' => session()->get('customer_id'),
-            'customer_name' => Customer::where('id', session()->get('customer_id'))->value('name'),
+            'customer_name' => $customer->name,
+            'is_invoice' => $customer->is_invoice,
             'auth_token' => $token->plainTextToken,
             'list' => $category_clothes,
             'often_ordered' => $often_ordered,
@@ -108,8 +110,10 @@ class OrdersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($order_id)
     {
-        //
+        Order::find($order_id)->delete();
+
+        return redirect()->route('home');
     }
 }

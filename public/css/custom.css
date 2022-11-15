@@ -198,7 +198,7 @@
 }
 
 .clothes-card {
-    height: 100px;
+    height: 80px;
 }
 .slip-bar {
     height: 80vh;
@@ -242,4 +242,19 @@
     font-size: 20px;
     text-align: center;
     line-height: 52px;
+}
+.pay-checkbox {
+    font-size: 20px;
+}
+#tag-head {
+    width: 70px;
+    margin-right: 10px;
+}
+#tag-bar {
+    font-size: 28px;
+    line-height: 1.6;
+}
+#tag-body {
+    width: 140px;
+    margin-left: 10px;
 }

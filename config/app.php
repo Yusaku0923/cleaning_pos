@@ -235,6 +235,9 @@ return [
 
         // PDF出力用
         'PDF' => Barryvdh\DomPDF\Facade::class,
+
+        // Utility
+        'Utility' => App\Services\Utility::class,
     ],
 
 ];

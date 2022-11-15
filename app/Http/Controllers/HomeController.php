@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Manager;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\TagNumber;
 
 class HomeController extends Controller
 {
@@ -17,7 +18,12 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $model = new Order;
         $managers = Manager::where('store_id', Auth::id())->get();
+        if (session()->exists('manager_id')) {
+            $tag = TagNumber::where('manager_id', session()->get('manager_id'))->value('tag_number');
+            $latest_order = $model->fetchLatestOrder(session()->get('manager_id'));
+        }
         if (session()->exists('customer_id')) {
             $customer = Customer::find(session()->get('customer_id'));
 
@@ -27,17 +33,19 @@ class HomeController extends Controller
                 $customer = [];
             }
 
-            // Orderモデルに取得用クエリを書く
-            $model = new Order;
-            $orders = $model->fetchOrders($customer->id);
+            // 改修→汎用性を持たせる
+            // $orders = $model->fetchOrders($customer->id);
             // dd($orders);
         }
+        // dd($latest_order);
 
         return view('home')->with([
             'title' => '顧　客　呼　出',
             'managers' => $managers,
             'customer' => $customer ?? [],
             'orders' => $orders ?? [],
+            'tag' => $tag ?? null,
+            'latest_order' => $latest_order,
         ]);
     }
 

@@ -16,6 +16,7 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('store_id')->comment('店舗ID');
+            $table->unsignedBigInteger('manager_id')->comment('担当者ID');
             $table->unsignedBigInteger('customer_id')->comment('顧客ID');
             $table->bigInteger('amount')->comment('合計金額');
             $table->bigInteger('reduction')->comment('値引き金額');
@@ -30,6 +31,7 @@ class CreateOrdersTable extends Migration
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'))->comment('更新日時');
 
             $table->foreign('store_id')->references('id')->on('stores');
+            $table->foreign('manager_id')->references('id')->on('managers');
             $table->foreign('customer_id')->references('id')->on('customers');
         });
     }

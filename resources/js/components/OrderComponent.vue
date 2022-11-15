@@ -105,6 +105,15 @@
             </div>
 
             <div class="bill-detail">
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+                    v-if="(step === 4 || step === 5)">
+                    <div class="col-6 px-3">
+                        お支払い方法
+                    </div>
+                    <div class="col-6 px-3 text-end text-primary" v-if="isInvoice">請求書払い</div>
+                    <div class="col-6 px-3 text-end text-primary" v-if="notPaid">後払い</div>
+                    <div class="col-6 px-3 text-end text-primary" v-else>現金預かり</div>
+                </div>
                 <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row">
                     <div class="col-6 px-3">
                         数量
@@ -156,7 +165,8 @@
                         ({{ Math.trunc((amount - reduction) - ((amount - reduction) / tax)).toLocaleString() }} 円)
                     </div>
                 </div>
-                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step === 5">
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+                    v-if="step === 5 && !isInvoice && !notPaid">
                     <div class="col-6 px-3">
                         お支払い
                     </div>
@@ -164,7 +174,8 @@
                         {{ payment.toLocaleString() }} 円
                     </div>
                 </div>
-                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row" v-if="step === 5">
+                <div class="col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
+                    v-if="step === 5 && !isInvoice && !notPaid">
                     <div class="col-6 px-3">
                         お釣り
                     </div>
@@ -173,19 +184,40 @@
                     </div>
                 </div>
 
+                <template v-if="step === 2 || step === 3">
+                    <div class="col-12 mt-3">
+                        <div class="col-10 mx-auto pay-checkbox form-check"
+                            v-if="is_invoice">
+                            <input type="checkbox" class="form-check-input" id="is-invoice" v-model="isInvoice" @click="notPaid = true">
+                            <label class="form-check-label" for="is-invoice">請求書払い</label>
+                        </div>
+                        <div class="col-10 mx-auto pay-checkbox form-check"
+                            v-if="!isInvoice">
+                            <input type="checkbox" class="form-check-input" id="not-paid" v-model="notPaid">
+                            <label class="form-check-label" for="not-paid">未収で登録する</label>
+                        </div>
+                    </div>
+
+                </template>
                 <div class="receipt mt-4">
                     <div class="col-11 mx-auto card bg-primary text-white p-3 mt-2"
                         v-show="step === 4 || step === 5"
                         @click="receiptReissue()">
-                        レシート再発行
+                        {{ isInvoice ? 'レシート発行': 'レシート再発行' }}
                     </div>
                 </div>
             </div>
 
             <div class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount"
                 @click="changeStep(3)"
-                v-if="step === 2 || step === 3">
+                v-if="(step === 2 || step === 3) && !isInvoice && !notPaid">
                 預り金入力
+            </div>
+            <div class="col-12 py-4 px-2 text-white position-absolute bottom-0 text-center order-amount"
+                :style="{'background-color': '#2dbe5b'}"
+                @click="issueSlip()"
+                v-if="(step === 2 || step === 3) && (isInvoice || notPaid)">
+                伝票発行
             </div>
             <a class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount text-decoration-none"
                 :href="route"
@@ -239,6 +271,10 @@ export default ({
             type: Number,
             required: true
         },
+        is_invoice: {
+            type: Boolean,
+            required: true
+        },
         customer_name: {
             type: String,
             required: true
@@ -264,12 +300,14 @@ export default ({
             step: 1,
             route: '/',
             isActive: -1,
+            notPaid: this.is_invoice,
+            isInvoice: this.is_invoice,
             showDiscount: false,
             indexes: [],
             order: {},
             orderForSend: {},
             total: 0,
-            amount: 0, // without tax
+            amount: 0, // with tax
             reduction: 0,
             discount: 0,
             payment: 0,
@@ -287,8 +325,12 @@ export default ({
     mounted() {
         // ローカルストレージ活用
         let ePosDev = new epson.ePOSDevice();
-        ePosDev.connect('192.168.0.215', 8008, function() {
-            console.log('printer connected');
+        ePosDev.connect('192.168.0.215', 8008, function(data) {
+            if(data == 'OK' || data == 'SSL_CONNECT_OK') {
+                console.log('printer connected');
+            } else {
+                console.log(data);
+            }
         }, {"eposprint" : true});
     },
     methods: {
@@ -359,6 +401,14 @@ export default ({
             this.switchDiscount();
         },
 
+        issueSlip: async function() {
+            this.order_id = await this.storeOrder();
+            if (this.notPaid && !this.isInvoice) {
+                this.$refs.child.printReceipt(this.order_id);
+            }
+            this.step = 5;
+        },
+
         account: async function(payment) {
             if (payment < Math.trunc((this.amount - this.reduction))) {
                 return;
@@ -389,7 +439,8 @@ export default ({
                 reduction: this.reduction,
                 discount: this.discount,
                 payment: this.payment,
-                invoice: false,
+                not_paid: this.notPaid,
+                invoice: this.isInvoice,
             })
             .then(function (response) {
                 return response.data.order_id;

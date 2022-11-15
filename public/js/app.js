@@ -5675,7 +5675,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 paid_at = receipt['paid_at'];
                 printer = null;
                 ePosDev = new epson.ePOSDevice();
-                ePosDev.connect('192.168.0.215', 8008, cbConnect);
+                ePosDev.connect('192.168.0.215', 8008, cbConnect, {
+                  "eposprint": true
+                });
               case 24:
               case "end":
                 return _context2.stop();
@@ -5933,6 +5935,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       type: Number,
       required: true
     },
+    is_invoice: {
+      type: Boolean,
+      required: true
+    },
     customer_name: {
       type: String,
       required: true
@@ -5958,13 +5964,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       step: 1,
       route: '/',
       isActive: -1,
+      notPaid: this.is_invoice,
+      isInvoice: this.is_invoice,
       showDiscount: false,
       indexes: [],
       order: {},
       orderForSend: {},
       total: 0,
       amount: 0,
-      // without tax
+      // with tax
       reduction: 0,
       discount: 0,
       payment: 0,
@@ -5977,6 +5985,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     'accounting-modal': _Modals_AccountingModalComponent__WEBPACK_IMPORTED_MODULE_1__["default"],
     'change-modal': _Modals_ChangeModalComponent__WEBPACK_IMPORTED_MODULE_2__["default"],
     'receipt-printer': _Functions_ReceiptPrinter__WEBPACK_IMPORTED_MODULE_3__["default"]
+  },
+  mounted: function mounted() {
+    // ローカルストレージ活用
+    var ePosDev = new epson.ePOSDevice();
+    ePosDev.connect('192.168.0.215', 8008, function (data) {
+      if (data == 'OK' || data == 'SSL_CONNECT_OK') {
+        console.log('printer connected');
+      } else {
+        console.log(data);
+      }
+    }, {
+      "eposprint": true
+    });
   },
   methods: {
     changeCategory: function changeCategory(num) {
@@ -6035,37 +6056,63 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.discount = discount;
       this.switchDiscount();
     },
-    account: function () {
-      var _account = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(payment) {
-        var order_id;
+    issueSlip: function () {
+      var _issueSlip = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                _context.next = 2;
+                return this.storeOrder();
+              case 2:
+                this.order_id = _context.sent;
+                if (this.notPaid && !this.isInvoice) {
+                  this.$refs.child.printReceipt(this.order_id);
+                }
+                this.step = 5;
+              case 5:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+      function issueSlip() {
+        return _issueSlip.apply(this, arguments);
+      }
+      return issueSlip;
+    }(),
+    account: function () {
+      var _account = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(payment) {
+        var order_id;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
                 if (!(payment < Math.trunc(this.amount - this.reduction))) {
-                  _context.next = 2;
+                  _context2.next = 2;
                   break;
                 }
-                return _context.abrupt("return");
+                return _context2.abrupt("return");
               case 2:
                 this.step = 4;
                 this.payment = payment;
                 this.change = payment - Math.trunc(this.amount - this.reduction);
 
                 // order登録API
-                _context.next = 7;
+                _context2.next = 7;
                 return this.storeOrder();
               case 7:
-                order_id = _context.sent;
+                order_id = _context2.sent;
                 // レシート発行
                 this.$refs.child.printReceipt(order_id);
                 this.orderId = order_id;
               case 10:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this);
+        }, _callee2, this);
       }));
       function account(_x) {
         return _account.apply(this, arguments);
@@ -6076,13 +6123,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$refs.child.printReceipt(this.orderId);
     },
     storeOrder: function () {
-      var _storeOrder = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      var _storeOrder = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
-                _context2.next = 3;
+                _context3.next = 3;
                 return axios.post('/api/order', {
                   manager_id: this.manager_id,
                   customer_id: this.customer_id,
@@ -6092,7 +6139,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   reduction: this.reduction,
                   discount: this.discount,
                   payment: this.payment,
-                  invoice: false
+                  not_paid: this.notPaid,
+                  invoice: this.isInvoice
                 }).then(function (response) {
                   return response.data.order_id;
                 })["catch"](function (error) {
@@ -6100,13 +6148,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   return;
                 });
               case 3:
-                return _context2.abrupt("return", _context2.sent);
+                return _context3.abrupt("return", _context3.sent);
               case 4:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee3, this);
       }));
       function storeOrder() {
         return _storeOrder.apply(this, arguments);
@@ -6995,7 +7043,17 @@ var render = function render() {
     staticClass: "col-9 text-start"
   }, [_vm._v("\n                   " + _vm._s(_vm.customer_name) + " 様\n               ")])]), _vm._v(" "), _c("div", {
     staticClass: "bill-detail"
+  }, [_vm.step === 4 || _vm.step === 5 ? _c("div", {
+    staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
+    staticClass: "col-6 px-3"
+  }, [_vm._v("\n                       お支払い方法\n                   ")]), _vm._v(" "), _vm.isInvoice ? _c("div", {
+    staticClass: "col-6 px-3 text-end text-primary"
+  }, [_vm._v("請求書払い")]) : _vm._e(), _vm._v(" "), _vm.notPaid ? _c("div", {
+    staticClass: "col-6 px-3 text-end text-primary"
+  }, [_vm._v("後払い")]) : _c("div", {
+    staticClass: "col-6 px-3 text-end text-primary"
+  }, [_vm._v("現金預かり")])]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-6 px-3"
@@ -7037,19 +7095,104 @@ var render = function render() {
     staticClass: "col-6 px-3 text-secondary"
   }, [_vm._v("\n                       内消費税10%\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-6 px-3 text-end text-secondary"
-  }, [_vm._v("\n                       (" + _vm._s(Math.trunc(_vm.amount - _vm.reduction - (_vm.amount - _vm.reduction) / _vm.tax).toLocaleString()) + " 円)\n                   ")])]) : _vm._e(), _vm._v(" "), _vm.step === 5 ? _c("div", {
+  }, [_vm._v("\n                       (" + _vm._s(Math.trunc(_vm.amount - _vm.reduction - (_vm.amount - _vm.reduction) / _vm.tax).toLocaleString()) + " 円)\n                   ")])]) : _vm._e(), _vm._v(" "), _vm.step === 5 && !_vm.isInvoice && !_vm.notPaid ? _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-6 px-3"
   }, [_vm._v("\n                       お支払い\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-6 px-3 text-end text-primary"
-  }, [_vm._v("\n                       " + _vm._s(_vm.payment.toLocaleString()) + " 円\n                   ")])]) : _vm._e(), _vm._v(" "), _vm.step === 5 ? _c("div", {
+  }, [_vm._v("\n                       " + _vm._s(_vm.payment.toLocaleString()) + " 円\n                   ")])]) : _vm._e(), _vm._v(" "), _vm.step === 5 && !_vm.isInvoice && !_vm.notPaid ? _c("div", {
     staticClass: "col-12 py-2 d-flex justify-content-between border-bottom border-1 border-secondary bill-row"
   }, [_c("div", {
     staticClass: "col-6 px-3"
   }, [_vm._v("\n                       お釣り\n                   ")]), _vm._v(" "), _c("div", {
     staticClass: "col-6 px-3 text-end text-primary"
-  }, [_vm._v("\n                       " + _vm._s(_vm.change.toLocaleString()) + " 円\n                   ")])]) : _vm._e(), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                       " + _vm._s(_vm.change.toLocaleString()) + " 円\n                   ")])]) : _vm._e(), _vm._v(" "), _vm.step === 2 || _vm.step === 3 ? [_c("div", {
+    staticClass: "col-12 mt-3"
+  }, [_vm.is_invoice ? _c("div", {
+    staticClass: "col-10 mx-auto pay-checkbox form-check"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.isInvoice,
+      expression: "isInvoice"
+    }],
+    staticClass: "form-check-input",
+    attrs: {
+      type: "checkbox",
+      id: "is-invoice"
+    },
+    domProps: {
+      checked: Array.isArray(_vm.isInvoice) ? _vm._i(_vm.isInvoice, null) > -1 : _vm.isInvoice
+    },
+    on: {
+      click: function click($event) {
+        _vm.notPaid = true;
+      },
+      change: function change($event) {
+        var $$a = _vm.isInvoice,
+          $$el = $event.target,
+          $$c = $$el.checked ? true : false;
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$el.checked) {
+            $$i < 0 && (_vm.isInvoice = $$a.concat([$$v]));
+          } else {
+            $$i > -1 && (_vm.isInvoice = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+          }
+        } else {
+          _vm.isInvoice = $$c;
+        }
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "form-check-label",
+    attrs: {
+      "for": "is-invoice"
+    }
+  }, [_vm._v("請求書払い")])]) : _vm._e(), _vm._v(" "), !_vm.isInvoice ? _c("div", {
+    staticClass: "col-10 mx-auto pay-checkbox form-check"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.notPaid,
+      expression: "notPaid"
+    }],
+    staticClass: "form-check-input",
+    attrs: {
+      type: "checkbox",
+      id: "not-paid"
+    },
+    domProps: {
+      checked: Array.isArray(_vm.notPaid) ? _vm._i(_vm.notPaid, null) > -1 : _vm.notPaid
+    },
+    on: {
+      change: function change($event) {
+        var $$a = _vm.notPaid,
+          $$el = $event.target,
+          $$c = $$el.checked ? true : false;
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$el.checked) {
+            $$i < 0 && (_vm.notPaid = $$a.concat([$$v]));
+          } else {
+            $$i > -1 && (_vm.notPaid = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+          }
+        } else {
+          _vm.notPaid = $$c;
+        }
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "form-check-label",
+    attrs: {
+      "for": "not-paid"
+    }
+  }, [_vm._v("未収で登録する")])]) : _vm._e()])] : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "receipt mt-4"
   }, [_c("div", {
     directives: [{
@@ -7064,14 +7207,24 @@ var render = function render() {
         return _vm.receiptReissue();
       }
     }
-  }, [_vm._v("\n                       レシート再発行\n                   ")])])]), _vm._v(" "), _vm.step === 2 || _vm.step === 3 ? _c("div", {
+  }, [_vm._v("\n                       " + _vm._s(_vm.isInvoice ? "レシート発行" : "レシート再発行") + "\n                   ")])])], 2), _vm._v(" "), (_vm.step === 2 || _vm.step === 3) && !_vm.isInvoice && !_vm.notPaid ? _c("div", {
     staticClass: "col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount",
     on: {
       click: function click($event) {
         return _vm.changeStep(3);
       }
     }
-  }, [_vm._v("\n               預り金入力\n           ")]) : _vm._e(), _vm._v(" "), _vm.step === 4 || _vm.step === 5 ? _c("a", {
+  }, [_vm._v("\n               預り金入力\n           ")]) : _vm._e(), _vm._v(" "), (_vm.step === 2 || _vm.step === 3) && (_vm.isInvoice || _vm.notPaid) ? _c("div", {
+    staticClass: "col-12 py-4 px-2 text-white position-absolute bottom-0 text-center order-amount",
+    style: {
+      "background-color": "#2dbe5b"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.issueSlip();
+      }
+    }
+  }, [_vm._v("\n               伝票発行\n           ")]) : _vm._e(), _vm._v(" "), _vm.step === 4 || _vm.step === 5 ? _c("a", {
     staticClass: "col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount text-decoration-none",
     attrs: {
       href: _vm.route

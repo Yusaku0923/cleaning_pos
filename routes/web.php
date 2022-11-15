@@ -8,7 +8,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ClothesController;
 use App\Http\Controllers\DailyReportController;
 use App\Http\Controllers\ReturnController;
-
+use App\Http\Controllers\TagNumberController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,6 +31,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
 
+    Route::prefix('tag')->group(function () {
+        Route::post('update', [TagNumberController::class, 'update'])->name('tag.update');
+    });
+
     Route::prefix('return')->group(function () {
         Route::get('', [ReturnController::class, 'index'])->name('return.index');
         Route::post('update', [ReturnController::class, 'update'])->name('return.update');
@@ -47,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('order')->group(function () {
         Route::get('create', [OrdersController::class, 'create'])->name('order.create');
+        Route::delete('delete/{order_id}', [OrdersController::class, 'destroy'])->name('order.delete');
     });
 
     Route::prefix('customer')->group(function () {

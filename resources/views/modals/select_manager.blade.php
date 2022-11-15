@@ -3,7 +3,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="manager-select-modal-label">担当者選択</h5>
+                <h5 class="modal-title h3 fw-bold" id="manager-select-modal-label">担当者選択</h5>
                 <button type="button" class="close btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" class="h5">×</span>
                 </button>

@@ -89,6 +89,7 @@ class InsertClothesData extends Command
                 'name_kana' => $row[1],
                 'name' => $row[2],
                 'category_id' => $row[5],
+                'tag_count' => $row[8],
                 'price' => $row[9],
                 'created_at' => date('Y-m-d 00:00:00', strtotime($row[29])),
                 'updated_at' => date('Y-m-d 00:00:00', strtotime($row[30])),

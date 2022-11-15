@@ -22,8 +22,8 @@ class CreateCustomersTable extends Migration
             $table->date('birth_day')->nullable()->comment('生年月日');
             $table->unsignedTinyInteger('sex')->nullable()->comment('性別');
             $table->unsignedBigInteger('point')->nullable()->comment('ポイント');
-            $table->unsignedInteger('cutoff_date')->nullable()->default(Null)->comment('締め日');
-            $table->unsignedInteger('invoice_management_class')->nullable()->default(Null)->comment('締め日');
+            $table->tinyInteger('cutoff_date')->nullable()->default(Null)->comment('締め日');
+            $table->boolean('is_invoice')->efault(false)->comment('請求書フラグ');
             $table->softDeletes();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'))->comment('作成日時');
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'))->comment('更新日時');
