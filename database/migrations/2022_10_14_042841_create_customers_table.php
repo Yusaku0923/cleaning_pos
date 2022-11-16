@@ -23,7 +23,9 @@ class CreateCustomersTable extends Migration
             $table->unsignedTinyInteger('sex')->nullable()->comment('性別');
             $table->unsignedBigInteger('point')->nullable()->comment('ポイント');
             $table->tinyInteger('cutoff_date')->nullable()->default(Null)->comment('締め日');
-            $table->boolean('is_invoice')->efault(false)->comment('請求書フラグ');
+            $table->boolean('is_invoice')->default(false)->comment('請求書フラグ');
+            $table->unsignedBigInteger('total_sales')->default(0)->comment('累計売上');
+            $table->unsignedBigInteger('number_of_visits')->default(0)->comment('来店回数');
             $table->softDeletes();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'))->comment('作成日時');
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'))->comment('更新日時');

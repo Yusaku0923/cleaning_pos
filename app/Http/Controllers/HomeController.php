@@ -37,7 +37,6 @@ class HomeController extends Controller
             // $orders = $model->fetchOrders($customer->id);
             // dd($orders);
         }
-        // dd($latest_order);
 
         return view('home')->with([
             'title' => '顧　客　呼　出',
@@ -45,7 +44,7 @@ class HomeController extends Controller
             'customer' => $customer ?? [],
             'orders' => $orders ?? [],
             'tag' => $tag ?? null,
-            'latest_order' => $latest_order,
+            'latest_order' => $latest_order ?? [],
         ]);
     }
 

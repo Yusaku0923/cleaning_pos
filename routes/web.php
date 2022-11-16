@@ -9,6 +9,7 @@ use App\Http\Controllers\ClothesController;
 use App\Http\Controllers\DailyReportController;
 use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\TagNumberController;
+use App\Http\Controllers\InvoiceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,12 +46,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('generate/{date}', [DailyReportController::class, 'generate'])->name('daily_report.generate');
     });
 
+    Route::prefix('invoice')->group(function () {
+        Route::get('', [InvoiceController::class, 'index'])->name('invoice.index');
+        Route::get('generate/{date}', [DailyReportController::class, 'generate'])->name('daily_report.generate');
+    });
+
     Route::prefix('manager')->group(function () {
         Route::post('update', [ManagerController::class, 'update'])->name('manager.update');
     });
 
     Route::prefix('order')->group(function () {
         Route::get('create', [OrdersController::class, 'create'])->name('order.create');
+        Route::get('list', [OrdersController::class, 'show'])->name('order.show');
         Route::delete('delete/{order_id}', [OrdersController::class, 'destroy'])->name('order.delete');
     });
 

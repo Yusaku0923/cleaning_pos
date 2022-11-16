@@ -113,7 +113,9 @@ class InsertCustomerData extends Command
                 'updated_at' => date('Y-m-d 00:00:00', strtotime($row[25])),
                 'manager_id' => $manager_id,
                 'cutoff_date' => $row[40],
-                'invoice_management_class' => $row[44]
+                'is_invoice' => $row[44],
+                'total_sales' => $row[29],
+                'number_of_visits' => $row[28],
             ]);
         }
     }

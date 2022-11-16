@@ -35,7 +35,7 @@
                 <div class="col-4 text-center">{{ $order['name'] }}</div>
                 <div class="col-2 text-center">{{ number_format($order['amount']) }}円</div>
                 <div class="col-2 text-center">
-                    <i class="{{ !is_null($order['paid_at']) ? 'fa-solid fa-check text-success' : 'fa-solid fa-minus text-secondary' }}"></i>
+                    <i class="{{ !is_null($order['paid_at']) ? 'fa-solid fa-check text-success' : 'fa-solid fa-xmark text-danger' }}"></i>
                 </div>
                 <div class="col-2 text-center">{{ date('H時i分', strtotime($order['created_at'])) }}</div>
             </div>

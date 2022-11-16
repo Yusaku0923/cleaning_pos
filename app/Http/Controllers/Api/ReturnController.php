@@ -14,11 +14,9 @@ class ReturnController extends Controller
         OrderClothes::whereIn('id', $request->items)
                     ->update(['handed_at'=> date('Y-m-d H:i:s')]);
         $order_id = OrderClothes::where('id', $request->items[0])->value('order_id');
-        Log::debug($order_id);
         $is_handed_all = OrderClothes::where('order_id', $order_id)
                                     ->whereNull('handed_at')
                                     ->exists();
-        Log::debug($is_handed_all);
         if (!$is_handed_all) {
             Order::find($order_id)->update([
                 'handed_at' => date('Y-m-d H:i:s')

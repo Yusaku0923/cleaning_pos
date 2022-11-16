@@ -24,7 +24,6 @@ class OrdersController extends Controller
         } else {
             $paid_at = date('Y-m-d H:i:s');
         }
-        Log::debug($request->manager_id);
         $order = Order::query()->create([
             'store_id' => Auth::id(),
             'manager_id' => $request->manager_id,
@@ -74,6 +73,9 @@ class OrdersController extends Controller
                 ->update([
                     'tag_number' => $tag
                 ]);
+        
+        Customer::find($request->customer_id)->increment('total_sales', $request->amount);
+        Customer::find($request->customer_id)->increment('number_of_visits');
 
         return response()->json([
             'order_id' => $order->id
