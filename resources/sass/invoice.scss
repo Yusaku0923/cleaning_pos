@@ -1,0 +1,80 @@
+.iv {
+    &-title {
+        font-size: 28px;
+    }
+
+    &-left {
+        &-search {
+            &-field {
+                font-size: 20px;
+            }
+        }
+
+        &-result {
+            &-field {
+                height: 66vh;
+                &-card {
+                    font-size: 20px;
+                }
+                &-back {
+                    font-size: 24px;
+                }
+                &-list {
+                    height: 44vh;
+                    &-card {
+                        font-size: 20px;
+                    }
+                }
+            }
+        }
+    }
+
+    &-right {
+        &-select {
+            &-label {
+                font-size: 20px;
+            }
+
+            &-field {
+                height: 50vh;
+            }
+        }
+    }
+
+    &-reset {
+        position:fixed;
+        right: 202.5px;
+        bottom: 42px;
+        transition: 1s;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: #fd7e00;
+        text-align: center;
+        font-size: 28px;
+        line-height: 150px;
+        text-decoration: none;
+        color: #fff;
+        &:hover {
+            color: #fff;
+        }
+    }
+    &-pdf {
+        position:fixed;
+        right: 17.5px;
+        bottom: 42px;
+        transition: 1s;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: #fd7e00;
+        text-align: center;
+        font-size: 28px;
+        line-height: 150px;
+        text-decoration: none;
+        color: #fff;
+        &:hover {
+            color: #fff;
+        }
+    }
+}

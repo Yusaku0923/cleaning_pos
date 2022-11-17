@@ -28,6 +28,7 @@
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <link href="{{ asset('css/daily_report.css') }}" rel="stylesheet">
     <link href="{{ asset('css/return.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/invoice.css') }}" rel="stylesheet">
 
     @livewireStyles
 </head>

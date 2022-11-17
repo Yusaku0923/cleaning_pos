@@ -30037,6 +30037,19 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 
+/***/ "./resources/sass/invoice.scss":
+/*!*************************************!*\
+  !*** ./resources/sass/invoice.scss ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./resources/sass/app.scss":
 /*!*********************************!*\
   !*** ./resources/sass/app.scss ***!
@@ -43104,7 +43117,8 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 			"css/app": 0,
 /******/ 			"css/return": 0,
 /******/ 			"css/daily_report": 0,
-/******/ 			"css/modal": 0
+/******/ 			"css/modal": 0,
+/******/ 			"css/invoice": 0
 /******/ 		};
 /******/ 		
 /******/ 		// no chunk on demand loading
@@ -43154,11 +43168,12 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal"], () => (__webpack_require__("./resources/sass/app.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal"], () => (__webpack_require__("./resources/sass/modal.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal"], () => (__webpack_require__("./resources/sass/daily_report.scss")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal"], () => (__webpack_require__("./resources/sass/return.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal","css/invoice"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal","css/invoice"], () => (__webpack_require__("./resources/sass/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal","css/invoice"], () => (__webpack_require__("./resources/sass/modal.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal","css/invoice"], () => (__webpack_require__("./resources/sass/daily_report.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal","css/invoice"], () => (__webpack_require__("./resources/sass/return.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app","css/return","css/daily_report","css/modal","css/invoice"], () => (__webpack_require__("./resources/sass/invoice.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

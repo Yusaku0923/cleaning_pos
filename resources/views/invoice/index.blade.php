@@ -2,14 +2,78 @@
 
 @section('content')
 
-<div class="col-12 d-flex">
-    <div class="col-8 iv-left bg-primary" style="height: 700px;">
-
+<div class="col-12">
+    <div class="col-12 d-flex border-bottom border-2 mt-2 pb-2 dr-header">
+        <div class="col-4 iv-title text-center fw-bold mx-auto">請求書</div>
     </div>
-    <div class="col-4 iv-right bg-success" style="height: 700px;">
+    <div class="col-12 d-flex">
+        <div class="col-8 px-1 iv-left">
+            <div class="col-12 iv-left-search">
+                <div class="card mt-2">
+                    <div class="card-body col-12 p-1 iv-left-search-field d-flex">
+                        <div class="col-2">
+                            <div class="col-10 bg-secondary text-white rounded text-center">表示項目</div>
+                        </div>
+                        <div class="col-2">締日：末日</div>
+                        <div class="col-4">名前：なし</div>
+                        <div class="col-4">対象月：2022/09</div>
+                    </div>
+                    <div class="card-footer p-1 px-3">
+                        <p class="col-12 text-end mb-0">検索項目入力　<i class="fa-solid fa-chevron-down"></i></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 iv-left-result mt-2">
+                <div class="card iv-left-result-field">
+                    <div class="col-11 d-flex mx-auto mt-2 dr-body-column-inner bg-primary text-white" >
+                        <div class="col-4 text-center">お名前</div>
+                        <div class="col-3 text-center">請求対象期間</div>
+                        <div class="col-1 text-center">合計</div>
+                    </div>
+                    <div class="col-12 iv-left-result-field-list">
+                        <div class="col-11 card mx-auto mt-2 py-2 iv-left-result-field-list-card">
+                            <div class="col-12 d-flex">
+                                <div class="col-4 text-center">
+                                    サッポロビール
+                                </div>
+                                <div class="col-3 text-center">
+                                    09/01 ～ 09/30
+                                </div>
+                                <div>
 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4 px-3 iv-right">
+            <div class="col-12 iv-right-select">
+                <div class="card col-12 mx-auto mt-2 p-1 text-center iv-right-select-label">
+                    選択中
+                </div>
+                <div class="card col-12 mx-auto mt-2 p-2 iv-right-select-field">
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                    <div class="card col-12">あああ</div>
+                </div>
+            </div>
+        </div>
     </div>
-    <a class="dr-pdf">
+    <a class="iv-reset">
+        リセット
+    </a>
+    <a class="iv-pdf">
         PDF出力
     </a>
 </div>
