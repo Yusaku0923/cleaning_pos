@@ -77,4 +77,11 @@
             color: #fff;
         }
     }
+
+    &-unselected {
+        padding: 10px 2px !important;
+    }
+    &-selected {
+        border: 3px solid #2dbe5b;
+    }
 }

@@ -2,9 +2,12 @@
 
 @section('content')
 
-<div class="col-12">
+<invoice-component
+    :invoices="{{ json_encode($invoices) }}"
+></invoice-component>
+{{-- <div class="col-12">
     <div class="col-12 d-flex border-bottom border-2 mt-2 pb-2 dr-header">
-        <div class="col-4 iv-title text-center fw-bold mx-auto">請求書</div>
+        <div class="col-4 iv-title text-center fw-bold mx-auto">請求書発行</div>
     </div>
     <div class="col-12 d-flex">
         <div class="col-8 px-1 iv-left">
@@ -70,11 +73,11 @@
         </div>
     </div>
     <a class="iv-reset">
-        リセット
+        全選択
     </a>
     <a class="iv-pdf">
         PDF出力
     </a>
-</div>
+</div> --}}
 
 @endsection

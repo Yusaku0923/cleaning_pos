@@ -21,6 +21,7 @@ class CreateInvoicesTable extends Migration
             $table->date('period_start')->comment('請求対象開始日');
             $table->date('period_end')->comment('請求対象終了日');
             $table->date('paid_at')->nullable()->default(null)->comment('支払い確認日');
+            $table->date('issued_at')->nullable()->default(null)->comment('PDF出力日');
             $table->boolean('has_carried_over')->default(false)->comment('繰り越しフラグ');
             $table->unsignedBigInteger('carried_over_amount')->default(0)->comment('繰り越し金額');
             $table->softDeletes();

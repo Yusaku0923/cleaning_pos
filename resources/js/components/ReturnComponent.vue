@@ -183,12 +183,10 @@ export default ({
                 }
             }).filter(e => typeof e !== 'undefined');
             this.allSelected = true;
-            console.log('selectAll')
         },
         deselection: function () {
             this.selectedItems = [];
             this.allSelected = false;
-            console.log('deselection')
         },
         isSelectedAll: function() {
             let base = this.orders[this.selectedOrder].items.map(function(item) {

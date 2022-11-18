@@ -61,3 +61,9 @@
 .iv-pdf:hover {
   color: #fff;
 }
+.iv-unselected {
+  padding: 10px 2px !important;
+}
+.iv-selected {
+  border: 3px solid #2dbe5b;
+}
