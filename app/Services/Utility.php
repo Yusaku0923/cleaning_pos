@@ -20,4 +20,22 @@ class Utility
 
         return $formated_tag;
     }
+
+    public static function currentInvoicePeriod($cutoff_date) {
+        if ($cutoff_date === 99) {
+            $period_start = date('Y-m-01');
+            $period_end = date('Y-m-t');
+        } else {
+            $today = date('d');
+            if ($cutoff_date < $today) {
+                $period_start = date('Y-m-'. ($cutoff_date + 1));
+                $period_end = date('Y-m-' . ($cutoff_date), strtotime('+1 month'));
+            } else {
+                $period_start = date('Y-m-'. ($cutoff_date + 1), strtotime('-1 month'));
+                $period_end = date('Y-m-' . ($cutoff_date));
+            }
+        }
+
+        return [$period_start, $period_end];
+    }
 }

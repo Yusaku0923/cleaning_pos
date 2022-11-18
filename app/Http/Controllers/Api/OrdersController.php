@@ -14,25 +14,52 @@ use App\Models\Order;
 use App\Models\OrderClothes;
 use App\Models\TagNumber;
 use App\Models\Tax;
+use App\Models\Invoice;
 use App\Services\Utility;
 
 class OrdersController extends Controller
 {
     public function store(Request $request) {
-        if ($request->not_paid) {
-            $paid_at = null;
+        $paid_at = date('Y-m-d H:i:s');
+        $invoice_id = null;
+        if ((boolean)$request->invoice) {
+            $cutoff_date = Customer::find($request->customer_id)->value('cutoff_date');
+            list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date);
+            if ((boolean)Customer::find($request->customer_id)->value('needs_payment_confimation')) {
+                $paid_at = null;
+            } else {
+                $paid_at = $period_end;
+            }
+            $model = new Invoice();
+            $invoice_id = $model->existsTargetInvoice($request->customer_id);
+            if (!is_null($invoice_id)) {
+                $invoice = Invoice::find($invoice_id);
+                $invoice->increment('amount', $request->amount);
+            } else {
+                $invoice = Invoice::query()->create([
+                    'manager_id' => $request->manager_id,
+                    'customer_id' => $request->customer_id,
+                    'amount' => $request->amount,
+                    'period_start' => $period_start,
+                    'period_end' => $period_end,
+                    'paid_at' => $paid_at,
+                ]);
+                $invoice_id = $invoice->id;
+            }
         } else {
-            $paid_at = date('Y-m-d H:i:s');
+            if ($request->not_paid) {
+                $paid_at = null;
+            }
         }
         $order = Order::query()->create([
             'store_id' => Auth::id(),
             'manager_id' => $request->manager_id,
             'customer_id' => $request->customer_id,
+            'invoice_id' => $invoice_id,
             'amount' => $request->amount,
             'reduction' => $request->reduction,
             'discount' => $request->discount,
             'payment' => $request->payment,
-            'is_registered_as_invoice' => $request->invoice,
             'paid_at' => $paid_at,
         ]);
 
@@ -74,8 +101,9 @@ class OrdersController extends Controller
                     'tag_number' => $tag
                 ]);
         
-        Customer::find($request->customer_id)->increment('total_sales', $request->amount);
-        Customer::find($request->customer_id)->increment('number_of_visits');
+        $customer = Customer::find($request->customer_id);
+        $customer->increment('total_sales', $request->amount);
+        $customer->increment('number_of_visits');
 
         return response()->json([
             'order_id' => $order->id
