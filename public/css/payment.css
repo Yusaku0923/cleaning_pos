@@ -1,0 +1,61 @@
+.payment-orders {
+  height: 50vh;
+  overflow: scroll;
+  white-space: nowrap;
+}
+.payment-orders-column {
+  top: 0;
+  z-index: 2;
+}
+.payment-orders-order {
+  font-size: 16px;
+}
+.payment-operation {
+  height: 161px;
+}
+.payment-operation-btn {
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  border-radius: 10px;
+}
+.payment-operation-btn-icon {
+  font-size: 52px;
+  line-height: 65px;
+}
+.payment-operation-btn-label {
+  font-size: 18px;
+}
+.payment-operation-btn-inactive {
+  opacity: 0.5;
+}
+.payment-detail {
+  height: 56.5vh;
+  overflow: scroll;
+  white-space: nowrap;
+}
+.payment-detail-column {
+  top: 0;
+  z-index: 2;
+}
+.payment-detail-clothes {
+  font-size: 16px;
+}
+.payment-handed {
+  background-color: gray;
+  color: #fff;
+}
+.payment-selected {
+  border: 3px solid #2dbe5b;
+}
+.payment-unselected {
+  padding: 10px 2px !important;
+}
+
+.uh-orange {
+  background-color: #fd7e00;
+}
+
+.uh-green {
+  background-color: #2dbe5b;
+}

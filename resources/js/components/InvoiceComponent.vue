@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-12 iv-left-result mt-2">
                     <div class="card iv-left-result-field">
-                        <div class="col-11 d-flex mx-auto mt-2 dr-body-column-inner bg-primary text-white" >
+                        <div class="col-11 d-flex mx-auto mt-2 dr-body-column-inner bg-primary text-white">
                             <div class="col-3 text-center">請求対象期間</div>
                             <div class="col-5 text-center">お名前</div>
                             <div class="col-4 text-center">合計（繰越金）</div>

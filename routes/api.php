@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\ReturnController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('order', [OrdersController::class, 'store'])->name('order.store');
+    Route::post('payment', [OrdersController::class, 'payment'])->name('order.payment');
     Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
 
     Route::post('return/update', [ReturnController::class, 'update'])->name('order.update');

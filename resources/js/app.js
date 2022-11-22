@@ -25,6 +25,7 @@ Vue.component('daily-report-search-component', require('./components/DailyReport
 Vue.component('return-component', require('./components/ReturnComponent.vue').default);
 Vue.component('customer-info-component', require('./components/CustomerInfoComponent.vue').default);
 Vue.component('invoice-component', require('./components/InvoiceComponent.vue').default);
+Vue.component('payment-component', require('./components/PaymentComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

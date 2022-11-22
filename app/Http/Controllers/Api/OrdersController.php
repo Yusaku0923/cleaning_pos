@@ -110,8 +110,20 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function fetchReceiptInfo($order_id) {
+    public function payment(Request $request) {
+        Log::debug($request->order_id);
+        Log::debug($request->payment);
+        Order::where('id', $request->order_id)->update([
+            'payment' => $request->payment,
+            'paid_at' => date('Y-m-d H:i:s')
+        ]);
 
+        return response()->json([
+            'ok' => true
+        ]);
+    }
+
+    public function fetchReceiptInfo($order_id) {
         $order = Order::find($order_id);
         $customer = Customer::find($order->customer_id);
         $store = Store::find($order->store_id);
@@ -150,6 +162,4 @@ class OrdersController extends Controller
 
         return $tag;
     }
-
-    
 }

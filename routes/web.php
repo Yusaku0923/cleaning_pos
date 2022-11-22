@@ -10,6 +10,8 @@ use App\Http\Controllers\DailyReportController;
 use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\TagNumberController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PaymentController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,6 +36,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('tag')->group(function () {
         Route::post('update', [TagNumberController::class, 'update'])->name('tag.update');
+    });
+
+    Route::prefix('payment')->group(function () {
+        Route::get('', [PaymentController::class, 'index'])->name('payment.index');
     });
 
     Route::prefix('return')->group(function () {

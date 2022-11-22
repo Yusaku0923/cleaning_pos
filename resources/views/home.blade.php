@@ -137,7 +137,7 @@
                     </div>
                 </div>
                 <div class="col-12 d-flex justify-content-between mt-2">
-                    <div class="card col-15 py-3 mr-1 text-center ctl-btn">入金</div>
+                    <a href="{{ route('payment.index') }}" class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn cbtn-blue">入金</a>
                     <div class="card col-15 py-3 mx-1 text-center ctl-btn">出金</div>
                     <div class="card col-15 py-3 mx-1 text-center">預かり一覧<br>(未収・未定)</div>
                     <div class="card col-15 py-3 mx-1 text-center ctl-btn">納品検索</div>

@@ -9,23 +9,22 @@ use App\Models\Store;
 use App\Models\Customer;
 use App\Models\Order;
 
-class ReturnController extends Controller
+class PaymentController extends Controller
 {
     public function index() {
         if (!session()->exists('customer_id')) {
             return redirect()->route('home');
         }
-
+        
         $customer = Customer::find(session()->get('customer_id'));
         $model = new Order();
-        $unhanded_orders = $model->fetchUnhandedOrders($customer['id']);
+        $unpaid_orders = $model->fetchUnpaidOrders($customer['id']);
         $store = Store::find(Auth::id());
         $token = $store->createToken(Str::random(10));
         return view('payment.index')->with([
             'customer' => $customer,
-            'orders' => $unhanded_orders,
+            'orders' => $unpaid_orders,
             'token' => $token->plainTextToken,
         ]);
     }
-
 }

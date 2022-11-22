@@ -178,6 +178,29 @@ class Order extends Model
         return [$result, $total_count];
     }
 
+    public function fetchUnpaidOrders($customer_id) {
+        $orders = Order::where('customer_id', $customer_id)
+                        ->whereNull('invoice_id')
+                        ->whereNull('paid_at')
+                        ->orderBy('created_at', 'asc')
+                        ->get()->toArray();
+
+        if (empty($orders)) {
+            return [];
+        }
+
+        foreach ($orders as $key => $order) {
+            $items = OrderClothes::select('order_clothes.*', 'clothes.name', 'clothes.price')
+                                ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
+                                ->where('order_clothes.order_id', $order['id'])
+                                ->get()->toArray();
+            $orders[$key]['created_at'] = date('Y/m/d', strtotime($order['created_at']));
+            $orders[$key]['items'] = $items;
+        }
+
+        return $orders;
+    }
+
     public function fetchUnhandedOrders($customer_id) {
         $orders = Order::where('customer_id', $customer_id)
                         ->whereNull('handed_at')

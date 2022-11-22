@@ -1,0 +1,66 @@
+.payment {
+    &-orders {
+        height: 50vh;
+        overflow: scroll;
+        white-space:nowrap;
+        &-column {
+            top: 0;
+            z-index: 2;
+        }
+
+        &-order {
+            font-size: 16px;
+        }
+    }
+
+    &-operation {
+        height: 161px;
+        &-btn {
+            width: 100px;
+            height: 100px;
+            text-align: center;
+            border-radius: 10px;
+            &-icon {
+                font-size: 52px;
+                line-height: 65px;
+                
+            }
+            &-label {
+                font-size: 18px;
+            }
+            &-inactive {
+                opacity: .5;
+            }
+        }
+    }
+
+    &-detail {
+        height: 56.5vh;
+        overflow: scroll;
+        white-space:nowrap;
+        &-column {
+            top: 0;
+            z-index: 2;
+        }
+
+        &-clothes {
+            font-size: 16px;
+        }
+    }
+
+    &-handed {
+        background-color: gray;
+        color: #fff;
+    }
+    &-selected {
+        border: 3px solid #2dbe5b;
+    }
+    &-unselected {
+        padding: 10px 2px !important;
+    }
+}
+
+
+
+.uh-orange {background-color:#fd7e00;}
+.uh-green {background-color:#2dbe5b;}
