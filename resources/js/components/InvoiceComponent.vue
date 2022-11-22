@@ -31,8 +31,8 @@
                             <div class="col-11 card mx-auto mt-2 py-2 iv-left-result-field-list-card"
                                 v-for="invoice in invoicesList"
                                 :key="invoice.id"
-                                :class="{ 'iv-selected': selectedIndexes.includes(invoice.id), 'iv-unselected': !selectedIndexes.includes(invoice.id) }"
-                                @click="switchSelection(invoice.id)">
+                                :class="{ 'iv-selected': indexes.includes(invoice.id), 'iv-unselected': !indexes.includes(invoice.id) }"
+                                @click="switchSelection(invoice)">
                                 <div class="col-12 d-flex">
                                     <div class="col-3 text-center">
                                         {{ dateFormater(invoice.period_start) }} ～ {{ dateFormater(invoice.period_end) }}
@@ -56,12 +56,13 @@
                         選択中
                     </div>
                     <div class="card col-12 overflow-scroll mx-auto mt-2 p-2 iv-right-select-field">
-                        <div class="card col-12 my-1 py-2 iv-right-select-field-card"
-                            v-for="index in selectedIndexes"
-                            :key="index">
+                        <div class="card col-12 my-1 py-2 iv-right-select-field-card iv-selected-right"
+                            v-for="index in indexes"
+                            :key="index"
+                            @click="switchSelection(selectedInvoices[index])">
                             <div class="col-12 d-flex">
                                 <div class="col-5 text-center">
-                                    {{ dateFormater(selectedInvoices[index].period_start) }} ～ {{ dateFormater(selectedInvoices[index]['period_end']) }}
+                                    {{ dateFormater(selectedInvoices[index].period_start) }} ～ {{ dateFormater(selectedInvoices[index].period_end) }}
                                 </div>
                                 <div class="col-7 text-center">
                                     {{ selectedInvoices[index].name }}
@@ -75,7 +76,9 @@
         <a class="iv-reset">
             全選択
         </a>
-        <a class="iv-pdf">
+        <a class="iv-pdf"
+            :href="'/invoice/generate?ids=' + params"
+            target="_blank" rel="noopener noreferrer">
             PDF出力
         </a>
     </div>
@@ -98,21 +101,23 @@ export default ({
             customerName: '',
             invoicesList: this.invoices,
             selectedInvoices: {},
-            selectedIndexes: [],
+            indexes: [],
+            params: '',
         }
     },
     methods: {
         dateFormater: function(date, format = 'MM/DD') {
             return moment(date).format(format);
         },
-        switchSelection: function(id) {
-            if (this.selectedIndexes.includes(id)) {
-                this.$delete(this.selectedInvoices, id);
-                this.selectedIndexes.splice(this.selectedIndexes.indexOf(id), 1);
+        switchSelection: function(invoice) {
+            if (this.indexes.includes(invoice.id)) {
+                this.$delete(this.selectedInvoices, invoice.id);
+                this.indexes.splice(this.indexes.indexOf(invoice.id), 1);
             } else {
-                this.$set(this.selectedInvoices, id, this.invoicesList[id]);
-                this.selectedIndexes.push(id);
+                this.$set(this.selectedInvoices, invoice.id, invoice);
+                this.indexes.push(invoice.id);
             }
+            this.params = this.indexes.join(',');
         }
     },
 })

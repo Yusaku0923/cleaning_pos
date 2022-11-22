@@ -48,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('invoice')->group(function () {
         Route::get('', [InvoiceController::class, 'index'])->name('invoice.index');
-        Route::get('generate/{date}', [DailyReportController::class, 'generate'])->name('daily_report.generate');
+        Route::get('generate', [InvoiceController::class, 'generate'])->name('invoice.generate');
     });
 
     Route::prefix('manager')->group(function () {

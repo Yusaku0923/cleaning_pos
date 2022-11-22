@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Log;
 
 class Order extends Model
@@ -14,8 +15,13 @@ class Order extends Model
 
     protected $guarded = [];
 
-    public function order_clothes(){
-        return $this->hasMany(OrderClothes::class, 'order_id');
+    // public function order_clothes() {
+    //     return $this->hasMany(OrderClothes::class, 'order_id');
+    // }
+
+    public function clothes(): BelongsToMany {
+        return $this->belongsToMany(Clothes::class)
+                    ->using(OrderClothes::class)->withPivot(['clothes_id']);
     }
 
     protected static function boot()

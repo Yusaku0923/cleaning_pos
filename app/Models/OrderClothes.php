@@ -10,15 +10,17 @@ class OrderClothes extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'order_clothes';
     protected $guarded = [];
+    
+    public function clothes()
+    {
+        return $this->belongsTo(Clothes::class);
+    }
 
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    public function clothes()
-    {
-        return $this->belongsTo(Clothes::class);
-    }
 }

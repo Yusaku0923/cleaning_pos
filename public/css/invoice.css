@@ -27,7 +27,7 @@
 }
 .iv-reset {
   position: fixed;
-  right: 202.5px;
+  right: 18.35%;
   bottom: 42px;
   transition: 1s;
   width: 150px;
@@ -45,7 +45,7 @@
 }
 .iv-pdf {
   position: fixed;
-  right: 17.5px;
+  right: 2.33%;
   bottom: 42px;
   transition: 1s;
   width: 150px;
@@ -66,4 +66,9 @@
 }
 .iv-selected {
   border: 3px solid #2dbe5b;
+}
+.iv-selected-right {
+  background-color: #2dbe5b;
+  color: #fff;
+  font-size: 18px;
 }

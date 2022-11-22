@@ -43,7 +43,9 @@
 
     &-reset {
         position:fixed;
-        right: 202.5px;
+        // right: 226.5px;
+        // right: 216.5px;
+        right: 18.35%;
         bottom: 42px;
         transition: 1s;
         width: 150px;
@@ -61,7 +63,9 @@
     }
     &-pdf {
         position:fixed;
-        right: 17.5px;
+        // right: 17.5px;
+        // right: 27.5px;
+        right: 2.33%;
         bottom: 42px;
         transition: 1s;
         width: 150px;
@@ -83,5 +87,10 @@
     }
     &-selected {
         border: 3px solid #2dbe5b;
+        &-right {
+            background-color: #2dbe5b;
+            color: #fff;
+            font-size: 18px;
+        }
     }
 }

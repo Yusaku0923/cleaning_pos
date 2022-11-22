@@ -63,7 +63,7 @@
         @endforeach
     </div>
 
-    <a class="dr-pdf" href="{{ route('daily_report.generate', $date) }}">
+    <a class="dr-pdf" href="{{ route('daily_report.generate', $date) }}" target="_blank" rel="noopener noreferrer">
         PDF出力
     </a>
 </div>

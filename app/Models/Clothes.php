@@ -18,9 +18,6 @@ class Clothes extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function order_clothes(){
-        return $this->hasMany(OrderClothes::class, 'clothes_id');
-    }
 
     public function fetchOftenOrdered($customer_id, $limit = 12)
     {

@@ -5723,7 +5723,8 @@ __webpack_require__.r(__webpack_exports__);
       customerName: '',
       invoicesList: this.invoices,
       selectedInvoices: {},
-      selectedIndexes: []
+      indexes: [],
+      params: ''
     };
   },
   methods: {
@@ -5731,14 +5732,15 @@ __webpack_require__.r(__webpack_exports__);
       var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'MM/DD';
       return moment__WEBPACK_IMPORTED_MODULE_0___default()(date).format(format);
     },
-    switchSelection: function switchSelection(id) {
-      if (this.selectedIndexes.includes(id)) {
-        this.$delete(this.selectedInvoices, id);
-        this.selectedIndexes.splice(this.selectedIndexes.indexOf(id), 1);
+    switchSelection: function switchSelection(invoice) {
+      if (this.indexes.includes(invoice.id)) {
+        this.$delete(this.selectedInvoices, invoice.id);
+        this.indexes.splice(this.indexes.indexOf(invoice.id), 1);
       } else {
-        this.$set(this.selectedInvoices, id, this.invoicesList[id]);
-        this.selectedIndexes.push(id);
+        this.$set(this.selectedInvoices, invoice.id, invoice);
+        this.indexes.push(invoice.id);
       }
+      this.params = this.indexes.join(',');
     }
   }
 });
@@ -6493,12 +6495,12 @@ var render = function render() {
       key: invoice.id,
       staticClass: "col-11 card mx-auto mt-2 py-2 iv-left-result-field-list-card",
       "class": {
-        "iv-selected": _vm.selectedIndexes.includes(invoice.id),
-        "iv-unselected": !_vm.selectedIndexes.includes(invoice.id)
+        "iv-selected": _vm.indexes.includes(invoice.id),
+        "iv-unselected": !_vm.indexes.includes(invoice.id)
       },
       on: {
         click: function click($event) {
-          return _vm.switchSelection(invoice.id);
+          return _vm.switchSelection(invoice);
         }
       }
     }, [_c("div", {
@@ -6518,21 +6520,31 @@ var render = function render() {
     staticClass: "card col-12 mx-auto mt-2 p-1 text-center iv-right-select-label"
   }, [_vm._v("\n                    選択中\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "card col-12 overflow-scroll mx-auto mt-2 p-2 iv-right-select-field"
-  }, _vm._l(_vm.selectedIndexes, function (index) {
+  }, _vm._l(_vm.indexes, function (index) {
     return _c("div", {
       key: index,
-      staticClass: "card col-12 my-1 py-2 iv-right-select-field-card"
+      staticClass: "card col-12 my-1 py-2 iv-right-select-field-card iv-selected-right",
+      on: {
+        click: function click($event) {
+          return _vm.switchSelection(_vm.selectedInvoices[index]);
+        }
+      }
     }, [_c("div", {
       staticClass: "col-12 d-flex"
     }, [_c("div", {
       staticClass: "col-5 text-center"
-    }, [_vm._v("\n                                " + _vm._s(_vm.dateFormater(_vm.selectedInvoices[index].period_start)) + " ～ " + _vm._s(_vm.dateFormater(_vm.selectedInvoices[index]["period_end"])) + "\n                            ")]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                                " + _vm._s(_vm.dateFormater(_vm.selectedInvoices[index].period_start)) + " ～ " + _vm._s(_vm.dateFormater(_vm.selectedInvoices[index].period_end)) + "\n                            ")]), _vm._v(" "), _c("div", {
       staticClass: "col-7 text-center"
     }, [_vm._v("\n                                " + _vm._s(_vm.selectedInvoices[index].name) + "\n                            ")])])]);
   }), 0)])])]), _vm._v(" "), _c("a", {
     staticClass: "iv-reset"
   }, [_vm._v("\n        全選択\n    ")]), _vm._v(" "), _c("a", {
-    staticClass: "iv-pdf"
+    staticClass: "iv-pdf",
+    attrs: {
+      href: "/invoice/generate?ids=" + _vm.params,
+      target: "_blank",
+      rel: "noopener noreferrer"
+    }
   }, [_vm._v("\n        PDF出力\n    ")])]);
 };
 var staticRenderFns = [function () {
