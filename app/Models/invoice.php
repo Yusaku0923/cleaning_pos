@@ -95,11 +95,12 @@ class Invoice extends Model
                     $row = 0;
                 }
             }
-            $formated[] = $page;
-            $row = 0;
-            $page_count = 1;
+            if ($row !== 0) {
+                $formated[] = $page;
+                $row = 0;
+                $page_count = 1;
+            }
         }
-        // dd(array_count_values(array_column($formated, 'id')));
 
         return $formated;
     }

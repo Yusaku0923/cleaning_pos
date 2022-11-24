@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
 use Illuminate\Http\Request;
-use Laravel\Ui\Presets\React;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use App\Models\Store;
+use App\Models\Customer;
 class CustomerController extends Controller
 {
     /**
@@ -15,7 +16,13 @@ class CustomerController extends Controller
      */
     public function search()
     {
-        return view('customers.search');
+        $store = Store::find(Auth::id());
+        $token = $store->createToken(Str::random(10));
+
+        return view('customers.search')->with([
+            'auth_token' => $token->plainTextToken,
+            'manager_id' => session()->get('manager_id')
+        ]);
     }
 
     public function select($id) {

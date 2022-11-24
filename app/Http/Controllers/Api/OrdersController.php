@@ -111,8 +111,6 @@ class OrdersController extends Controller
     }
 
     public function payment(Request $request) {
-        Log::debug($request->order_id);
-        Log::debug($request->payment);
         Order::where('id', $request->order_id)->update([
             'payment' => $request->payment,
             'paid_at' => date('Y-m-d H:i:s')

@@ -21,7 +21,7 @@ class ReturnController extends Controller
         $unhanded_orders = $model->fetchUnhandedOrders($customer['id']);
         $store = Store::find(Auth::id());
         $token = $store->createToken(Str::random(10));
-        return view('payment.index')->with([
+        return view('return.index')->with([
             'customer' => $customer,
             'orders' => $unhanded_orders,
             'token' => $token->plainTextToken,

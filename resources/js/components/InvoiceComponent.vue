@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <div class="col-4 px-3 iv-right">
+            <div class="col-4 px-3 iv-right position-relative">
                 <div class="col-12 iv-right-select">
                     <div class="card col-12 mx-auto mt-2 p-1 text-center iv-right-select-label">
                         選択中
@@ -72,15 +72,15 @@
                     </div>
                 </div>
             </div>
+            <a class="iv-reset bg-secondary">
+                全選択
+            </a>
+            <a class="iv-pdf"
+                :href="'/invoice/generate?ids=' + params"
+                target="_blank" rel="noopener noreferrer">
+                PDF出力
+            </a>
         </div>
-        <a class="iv-reset">
-            全選択
-        </a>
-        <a class="iv-pdf"
-            :href="'/invoice/generate?ids=' + params"
-            target="_blank" rel="noopener noreferrer">
-            PDF出力
-        </a>
     </div>
 </template>
 
