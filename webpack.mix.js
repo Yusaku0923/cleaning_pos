@@ -13,9 +13,4 @@ const mix = require('laravel-mix');
 
  mix.js('resources/js/app.js', 'public/js')
  .vue()
- .sass('resources/sass/app.scss', 'public/css')
- .sass('resources/sass/modal.scss', 'public/css')
- .sass('resources/sass/daily_report.scss', 'public/css')
- .sass('resources/sass/return.scss', 'public/css')
- .sass('resources/sass/invoice.scss', 'public/css')
- .sass('resources/sass/payment.scss', 'public/css');
+ .sass('resources/sass/app.scss', 'public/css');

@@ -19,7 +19,7 @@
                     <div class="col-3 text-center">最終来店日</div>
                     <div class="col-2 text-center">来店回数</div>
                 </div>
-                <div class="col-12 overflow-scroll" style="height: 380px;font-size: 24px;">
+                <div class="col-12 overflow-scroll fs-24" style="height: 380px;">
 
                     <a class="card col-10 mx-auto my-3 py-3 text-decoration-none text-dark"
                         v-for="customer in customers"

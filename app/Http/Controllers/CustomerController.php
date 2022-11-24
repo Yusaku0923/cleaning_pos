@@ -60,11 +60,10 @@ class CustomerController extends Controller
         $customer = Customer::create([
             'manager_id' => $request->session()->get('manager_id'),
             'name' => $request->name,
-            'name_kana' => $request->name_kana,
+            'name_kana' => mb_convert_kana($request->name_kana, 'rnk'),
             'phone_number' => $request->phone_number,
             'birth_day' => $request->birth_day ?? NULL,
             'sex' => $request->sex ?? NULL,
-            'cutoff_date' => $request->cutoff_date ?? NULL,
         ]);
         // $customer->save();
 

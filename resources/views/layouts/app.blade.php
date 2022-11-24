@@ -13,7 +13,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/clock.js') }}" defer></script>
+    <script src="{{ asset('js/common.js') }}" defer></script>
     <script type="text/javascript" src="{{ asset('js/epos-2.22.0.js') }}"></script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -24,12 +24,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/modal.css') }}" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/daily_report.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/return.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/invoice.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/payment.css') }}" rel="stylesheet">
 
     @livewireStyles
 </head>

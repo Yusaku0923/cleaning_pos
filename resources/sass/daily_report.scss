@@ -61,7 +61,7 @@
             height: 50px;
             z-index: 2;
             top: 0;
-            background-color: #f8fafc;
+            background-color: $body-bg;
             margin-bottom: 48px;
             &-inner {
                 font-size: 18px;
@@ -114,7 +114,7 @@
         width: 150px;
         height: 150px;
         border-radius: 50%;
-        background-color: #fd7e00;
+        background-color: $orange;
         text-align: center;
         font-size: 28px;
         line-height: 150px;
