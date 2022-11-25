@@ -32,68 +32,61 @@ class Order extends Model
         });
     }
 
-    public function fetchOrders($customer_id)
+    public function fetchOrders($customer_id, $limit = 20, $where = [])
     {
-        /**
-         * $orders = [
-         *     [
-         *         'items': [
-         *              [
-         *                   'clothes.(order_clothes).name',
-         *                   'order_clothes.tags': [],
-         *              ]
-         *         ]
-         *         'order.id',
-         *         'COUNT(order.(order_clothes).id) AS total_count',
-         *         'order.amount',
-         *         'order.discount',
-         *         'order.payment',
-         *         'order.is_registered_as_invoice',
-         *         'order.paid_at',
-         *         'order.is_handed_over',
-         *         'order.note',
-         *    ],
-         *   ...
-         * ]
-         * 
-         * ※orderBy DESC created_at
-         */
-
-        
-        $orders = Order::where('customer_id', $customer_id)
-                        ->orderBy('created_at', 'desc')
-                        ->get()->toArray();
-
-        if (empty($orders)) {
-            return [];
-        }
-
-        foreach ($orders as $key => $order) {
-            $orders[$key]['total_count'] = OrderClothes::where('order_id', $order['id'])->count();
-            $clothes = OrderClothes::select('clothes_id')
-                                    ->where('order_id', $order['id'])
-                                    ->groupBy('clothes_id')
-                                    ->get()->toArray();
-            $clothes = array_map(function ($array) {
-                return $array['clothes_id'];
-            }, $clothes);
-            foreach ($clothes as $id) {
-                if ($id === 999) continue;
-                $item['name'] = Clothes::where('id', $id)->value('name');
-                $tags = OrderClothes::select('tag')
-                                    ->where('order_id', $order['id'])
-                                    ->where('clothes_id', $id)
-                                    ->get()->toArray();
-                
-                $item['tags'] = array_map(function ($array) {
-                    return $array['tag'];
-                }, $tags);
-                Log::debug($item);
-
-                $orders[$key]['items'][] = $item;
+        $query = Order::query();
+        $query->where('customer_id', $customer_id);
+        if (!empty($where)) {
+            // period
+            if ($where['before'] !== '') {
+                $query->where('created_at', '<=', $where['before']);
+            }
+            if ($where['after'] !== '') {
+                $query->where('created_at', '>=', $where['after']);
+            }
+            // has paid
+            if ($where['has_paid'] !== '') {
+                if ($where['has_paid']) {
+                    $query->whereNotNull('paid_at');
+                } else {
+                    $query->whereNull('paid_at');
+                }
+            }
+            // has handed
+            if ($where['has_handed'] !== '') {
+                if ($where['has_handed']) {
+                    $query->whereNotNull('handed_at');
+                } else {
+                    $query->whereNull('handed_at');
+                }
+            }
+            // id
+            if ($where['order_id'] !== '') {
+                $query->where('id', $where['order_id']);
+            }
+            // has specified tag item
+            if ($where['tag'] !== '') {
+                $order_id = $this->hasSpecifiedTag($customer_id, $where['tag']);
+                if (is_null($order_id)) {
+                    return [];
+                } else {
+                    $query->where('id', $order_id);
+                }
             }
         }
+        $query->limit($limit);
+        $query->orderBy('orders.created_at', 'desc');
+        $orders = $query->get()->toArray();
 
+        foreach ($orders as $key => $array) {
+            $query = OrderClothes::query();
+            $query->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id');
+            $query->where('order_clothes.order_id', $array['id']);
+            $orders[$key]['items'] = $query->get()->toArray();
+            $orders[$key]['count'] = OrderClothes::where('order_id', $array['id'])->count();
+        }
+
+        dd($orders);
         return $orders;
     }
 
@@ -221,5 +214,14 @@ class Order extends Model
         }
 
         return $orders;
+    }
+
+    public function hasSpecifiedTag($customer_id, $tag) {
+        $query = OrderClothes::select('orders.id');
+        $query->join('orders', 'order_clothes.order_id', '=', 'orders.id');
+        $query->where('orders.customer_id', $customer_id);
+        $query->where('order_clothes.tag', $tag);
+
+        return $query->value('id');
     }
 }

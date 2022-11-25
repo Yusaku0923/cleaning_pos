@@ -78,7 +78,20 @@ class OrdersController extends Controller
      */
     public function show()
     {
-        
+        $where = [
+            'before' => '',
+            'after' => '',
+            'has_paid' => '',
+            'has_handed' => '',
+            'order_id' => '',
+            'tag' => '1-001',
+        ];
+        $model = new Order();
+        $orders = $model->fetchOrders(session()->get('customer_id'), 20, $where);
+        $customer = Customer::find(session()->get('customer_id'));
+        return view('orders.show')->with([
+            'customer' => $customer
+        ]);
     }
 
     /**

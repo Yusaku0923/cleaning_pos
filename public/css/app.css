@@ -21485,6 +21485,27 @@ readers do not read off random characters that represent icons */
   height: 100px;
   text-align: center;
   border-radius: 10px;
+  position: relative;
+  transition: 0.3s ease-in-out;
+  border: 0.2rem solid #543618;
+  box-shadow: 0.2rem 0.2rem 0px 0.1rem #cccccc;
+}
+.payment-operation-btn::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg) translateY(-50%);
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  border-radius: 1px;
+  transition: 0.3s ease-in-out;
+}
+.payment-operation-btn:active {
+  transform: translate3d(0.2rem, 0.2rem, 0);
+  box-shadow: none;
+  opacity: 1;
+  transition: all 0.025s;
 }
 .payment-operation-btn-icon {
   font-size: 52px;
@@ -21547,10 +21568,31 @@ readers do not read off random characters that represent icons */
   height: 100px;
   text-align: center;
   border-radius: 10px;
+  position: relative;
+  transition: 0.3s ease-in-out;
+  border: 0.2rem solid #543618;
+  box-shadow: 0.2rem 0.2rem 0px 0.1rem #cccccc;
+}
+.unhanded-operation-btn::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg) translateY(-50%);
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  border-radius: 1px;
+  transition: 0.3s ease-in-out;
+}
+.unhanded-operation-btn:active {
+  transform: translate3d(0.2rem, 0.2rem, 0);
+  box-shadow: none;
+  opacity: 1;
+  transition: all 0.025s;
 }
 .unhanded-operation-btn-icon {
-  font-size: 52px;
-  line-height: 65px;
+  font-size: 48px;
+  line-height: 58px;
 }
 .unhanded-operation-btn-label {
   font-size: 18px;
@@ -21639,4 +21681,87 @@ readers do not read off random characters that represent icons */
 
 .fs-32 {
   font-size: 32px !important;
+}
+
+.odlist-orders {
+  height: 50vh;
+  overflow: scroll;
+  white-space: nowrap;
+}
+.odlist-orders-column {
+  top: 0;
+  z-index: 2;
+}
+.odlist-orders-order {
+  font-size: 16px;
+}
+.odlist-operation {
+  height: 161px;
+}
+.odlist-operation-btn {
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  border-radius: 10px;
+  position: relative;
+  transition: 0.3s ease-in-out;
+  border: 0.2rem solid #543618;
+  box-shadow: 0.2rem 0.2rem 0px 0.1rem #cccccc;
+}
+.odlist-operation-btn::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg) translateY(-50%);
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  border-radius: 1px;
+  transition: 0.3s ease-in-out;
+}
+.odlist-operation-btn:active {
+  transform: translate3d(0.2rem, 0.2rem, 0);
+  box-shadow: none;
+  opacity: 1;
+  transition: all 0.025s;
+}
+.odlist-operation-btn-icon {
+  font-size: 48px;
+  line-height: 58px;
+}
+.odlist-operation-btn-label {
+  font-size: 18px;
+}
+.odlist-operation-btn-inactive {
+  opacity: 0.5;
+}
+.odlist-detail {
+  height: 56.5vh;
+  overflow: scroll;
+  white-space: nowrap;
+}
+.odlist-detail-column {
+  top: 0;
+  z-index: 2;
+}
+.odlist-detail-clothes {
+  font-size: 16px;
+}
+.odlist-handed {
+  background-color: gray;
+  color: #fff;
+}
+.odlist-selected {
+  border: 3px solid #2dbe5b;
+}
+.odlist-unselected {
+  padding: 10px 2px !important;
+}
+
+.ls-green {
+  background-color: #2dbe5b;
+}
+
+.ls-orange {
+  background-color: #fd7e00;
 }

@@ -63,7 +63,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('order')->group(function () {
         Route::get('create', [OrdersController::class, 'create'])->name('order.create');
-        Route::get('list', [OrdersController::class, 'show'])->name('order.show');
+        Route::get('show', [OrdersController::class, 'show'])->name('order.show');
         Route::delete('delete/{order_id}', [OrdersController::class, 'destroy'])->name('order.delete');
     });
 

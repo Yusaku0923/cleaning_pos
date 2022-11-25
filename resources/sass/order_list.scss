@@ -1,4 +1,4 @@
-.unhanded {
+.odlist {
     &-orders {
         height: 50vh;
         overflow: scroll;
@@ -45,7 +45,6 @@
             &-icon {
                 font-size: 48px;
                 line-height: 58px;
-                
             }
             &-label {
                 font-size: 18px;
@@ -80,9 +79,10 @@
     &-unselected {
         padding: 10px 2px !important;
     }
+
 }
 
 
 
-.uh-orange {background-color:$orange;}
-.uh-green {background-color:#2dbe5b;}
+.ls-green {background-color:#2dbe5b;}
+.ls-orange {background-color:$orange;}

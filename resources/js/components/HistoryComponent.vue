@@ -1,0 +1,134 @@
+<template>
+    <div class="col-12">
+        <div class="col-12 px-2 d-flex">
+            <div class="col-6 px-4">
+                <div class="col-12">
+                    <customer-info-component
+                        :customer="customer"
+                    ></customer-info-component>
+                    <div class="col-12 mt-2">
+                        <div class="card col-12 py-2 h4 text-center">
+                            伝票一覧
+                        </div>
+                    </div>
+                    <div class="card position-relative odlist-orders">
+                        <div class="col-12 mb-2 bg-white position-sticky odlist-orders-column pt-3 border border-white">
+                            <div class="card col-11 mx-auto bg-primary text-white">
+                                <div class="d-flex">
+                                    <div class="col-2 text-center">伝票No.</div>
+                                    <div class="col-3 text-center">預り日</div>
+                                    <div class="col-3 text-center">顧客名</div>
+                                    <div class="col-2 text-center">金額</div>
+                                    <div class="col-2 text-center">支払<span class="px-1">|</span>渡し</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card col-11 mx-auto my-2 py-2 odlist-orders-order">
+                            <div class="d-flex">
+                                <div class="col-2 text-center">2222</div>
+                                <div class="col-3 text-center">2022/05/23</div>
+                                <div class="col-3 text-center">中山友作</div>
+                                <div class="col-2 text-center">10,000円</div>
+                                <div class="col-2 text-center">
+                                    <i class="fa-solid fa-check text-success"></i><span class="px-2">|</span><i class="fa-solid fa-xmark text-danger"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 px-4">
+                <div class="col-12">
+                    <div class="card col-12 py-2 h4 text-center">
+                        伝票詳細
+                    </div>
+                </div>
+                <div class="card col-12 odlist-operation">
+                    <div class="card-header text-center fw-bold">
+                        操作
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex justify-content-around">
+                            <a href="/">
+                                <button class="odlist-operation-btn text-white mt-2 bg-secondary">
+                                    <div class="odlist-operation-btn-icon">
+                                        <i class="fa-solid fa-house"></i>
+                                    </div>
+                                    <div class="odlist-operation-btn-label text-center">
+                                        戻る
+                                    </div>
+                                </button>
+                            </a>
+                            <button class="odlist-operation-btn text-white mt-2 ls-green odlist-operation-btn-active">
+                                <div class="odlist-operation-btn-icon">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </div>
+                                <div class="odlist-operation-btn-label text-center">
+                                    検索
+                                </div>
+                            </button>
+                            <button class="odlist-operation-btn text-white mt-2 uh-orange">
+                                <div class="odlist-operation-btn-icon">
+                                    <i class="fa-solid fa-list"></i>
+                                </div>
+                                <div class="odlist-operation-btn-label">
+                                    詳細
+                                </div>
+                            </button>
+                            <button class="odlist-operation-btn bg-danger text-white mt-2">
+                                <div class="odlist-operation-btn-icon">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </div>
+                                <div class="odlist-operation-btn-label">
+                                    取り消し
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card position-relative mt-2 odlist-detail">
+                    <div class="col-12 mb-2 bg-white position-sticky odlist-detail-column pt-3 border border-white">
+                        <div class="card col-11 mx-auto bg-primary text-white">
+                            <div class="d-flex">
+                                <div class="col-3 text-center">タグNo.</div>
+                                <div class="col-5 text-center">商品名</div>
+                                <div class="col-2 text-center">値段</div>
+                                <div class="col-2 text-center">渡し</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card col-11 mx-auto my-2 py-2 odlist-detail-clothes">
+                        <div class="d-flex">
+                            <div class="col-3 text-center">10-222</div>
+                            <div class="col-5 text-center">Tシャツ</div>
+                            <div class="col-2 text-center">2,000円</div>
+                            <div class="col-2 text-center">
+                                <i class="fa-solid fa-check text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+
+export default ({
+    props: {
+        customer: {
+            required: true
+        },
+    },
+    data() {
+        return {
+
+        }
+    },
+    methods: {
+
+    }
+})
+</script>
