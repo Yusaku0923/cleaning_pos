@@ -86,7 +86,6 @@ class Order extends Model
             $orders[$key]['count'] = OrderClothes::where('order_id', $array['id'])->count();
         }
 
-        dd($orders);
         return $orders;
     }
 

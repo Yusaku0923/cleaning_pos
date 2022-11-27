@@ -59,7 +59,8 @@
                                     </div>
                                 </button>
                             </a>
-                            <button class="odlist-operation-btn text-white mt-2 ls-green odlist-operation-btn-active">
+                            <button class="odlist-operation-btn text-white mt-2 ls-green odlist-operation-btn-active"
+                                @click="dispSearch = true">
                                 <div class="odlist-operation-btn-icon">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </div>
@@ -111,10 +112,15 @@
                 </div>
             </div>
         </div>
+        <search-modal
+            @close="close"
+            v-if="dispSearch"
+        ></search-modal>
     </div>
 </template>
 
 <script>
+import SearchModal from './Modals/HistorySearchModalComponent';
 
 export default ({
     props: {
@@ -124,11 +130,19 @@ export default ({
     },
     data() {
         return {
-
+            dispSearch: false,
+            dispDetail: false,
         }
     },
+    components: {
+        'search-modal': SearchModal,
+        // 'accounting-modal': AccountingModal,
+    },
     methods: {
-
+        close: function() {
+            this.dispSearch = false;
+            this.dispDetail = false;
+        }
     }
 })
 </script>

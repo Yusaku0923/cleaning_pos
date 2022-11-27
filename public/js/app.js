@@ -5858,6 +5858,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _Modals_HistorySearchModalComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Modals/HistorySearchModalComponent */ "./resources/js/components/Modals/HistorySearchModalComponent.vue");
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     customer: {
@@ -5865,9 +5867,22 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   data: function data() {
-    return {};
+    return {
+      dispSearch: false,
+      dispDetail: false
+    };
   },
-  methods: {}
+  components: {
+    'search-modal': _Modals_HistorySearchModalComponent__WEBPACK_IMPORTED_MODULE_0__["default"]
+    // 'accounting-modal': AccountingModal,
+  },
+
+  methods: {
+    close: function close() {
+      this.dispSearch = false;
+      this.dispDetail = false;
+    }
+  }
 });
 
 /***/ }),
@@ -6126,6 +6141,33 @@ __webpack_require__.r(__webpack_exports__);
     calcReduction: function calcReduction() {
       this.reduction = Math.floor(this.amount * (this.discount / 100));
     }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {},
+  data: function data() {
+    return {
+      order_id: '',
+      before: '',
+      after: '',
+      tag: '',
+      has_paid: 'neither',
+      has_handed: 'neither'
+    };
   }
 });
 
@@ -6991,7 +7033,30 @@ var render = function render() {
     attrs: {
       customer: _vm.customer
     }
-  }), _vm._v(" "), _vm._m(0), _vm._v(" "), _vm._m(1)], 1)]), _vm._v(" "), _vm._m(2)])]);
+  }), _vm._v(" "), _vm._m(0), _vm._v(" "), _vm._m(1)], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 px-4"
+  }, [_vm._m(2), _vm._v(" "), _c("div", {
+    staticClass: "card col-12 odlist-operation"
+  }, [_c("div", {
+    staticClass: "card-header text-center fw-bold"
+  }, [_vm._v("\n                    操作\n                ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-12"
+  }, [_c("div", {
+    staticClass: "d-flex justify-content-around"
+  }, [_vm._m(3), _vm._v(" "), _c("button", {
+    staticClass: "odlist-operation-btn text-white mt-2 ls-green odlist-operation-btn-active",
+    on: {
+      click: function click($event) {
+        _vm.dispSearch = true;
+      }
+    }
+  }, [_vm._m(4), _vm._v(" "), _c("div", {
+    staticClass: "odlist-operation-btn-label text-center"
+  }, [_vm._v("\n                                検索\n                            ")])]), _vm._v(" "), _vm._m(5), _vm._v(" "), _vm._m(6)])])]), _vm._v(" "), _vm._m(7)])]), _vm._v(" "), _vm.dispSearch ? _c("search-modal", {
+    on: {
+      close: _vm.close
+    }
+  }) : _vm._e()], 1);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -7049,20 +7114,14 @@ var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "col-6 px-4"
-  }, [_c("div", {
     staticClass: "col-12"
   }, [_c("div", {
     staticClass: "card col-12 py-2 h4 text-center"
-  }, [_vm._v("\n                    伝票詳細\n                ")])]), _vm._v(" "), _c("div", {
-    staticClass: "card col-12 odlist-operation"
-  }, [_c("div", {
-    staticClass: "card-header text-center fw-bold"
-  }, [_vm._v("\n                    操作\n                ")]), _vm._v(" "), _c("div", {
-    staticClass: "col-12"
-  }, [_c("div", {
-    staticClass: "d-flex justify-content-around"
-  }, [_c("a", {
+  }, [_vm._v("\n                    伝票詳細\n                ")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("a", {
     attrs: {
       href: "/"
     }
@@ -7074,15 +7133,19 @@ var staticRenderFns = [function () {
     staticClass: "fa-solid fa-house"
   })]), _vm._v(" "), _c("div", {
     staticClass: "odlist-operation-btn-label text-center"
-  }, [_vm._v("\n                                    戻る\n                                ")])])]), _vm._v(" "), _c("button", {
-    staticClass: "odlist-operation-btn text-white mt-2 ls-green odlist-operation-btn-active"
-  }, [_c("div", {
+  }, [_vm._v("\n                                    戻る\n                                ")])])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
     staticClass: "odlist-operation-btn-icon"
   }, [_c("i", {
     staticClass: "fa-solid fa-magnifying-glass"
-  })]), _vm._v(" "), _c("div", {
-    staticClass: "odlist-operation-btn-label text-center"
-  }, [_vm._v("\n                                検索\n                            ")])]), _vm._v(" "), _c("button", {
+  })]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("button", {
     staticClass: "odlist-operation-btn text-white mt-2 uh-orange"
   }, [_c("div", {
     staticClass: "odlist-operation-btn-icon"
@@ -7090,7 +7153,11 @@ var staticRenderFns = [function () {
     staticClass: "fa-solid fa-list"
   })]), _vm._v(" "), _c("div", {
     staticClass: "odlist-operation-btn-label"
-  }, [_vm._v("\n                                詳細\n                            ")])]), _vm._v(" "), _c("button", {
+  }, [_vm._v("\n                                詳細\n                            ")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("button", {
     staticClass: "odlist-operation-btn bg-danger text-white mt-2"
   }, [_c("div", {
     staticClass: "odlist-operation-btn-icon"
@@ -7098,7 +7165,11 @@ var staticRenderFns = [function () {
     staticClass: "fa-solid fa-trash-can"
   })]), _vm._v(" "), _c("div", {
     staticClass: "odlist-operation-btn-label"
-  }, [_vm._v("\n                                取り消し\n                            ")])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                取り消し\n                            ")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
     staticClass: "card position-relative mt-2 odlist-detail"
   }, [_c("div", {
     staticClass: "col-12 mb-2 bg-white position-sticky odlist-detail-column pt-3 border border-white"
@@ -7128,7 +7199,7 @@ var staticRenderFns = [function () {
     staticClass: "col-2 text-center"
   }, [_c("i", {
     staticClass: "fa-solid fa-check text-success"
-  })])])])])]);
+  })])])])]);
 }];
 render._withStripped = true;
 
@@ -7761,6 +7832,404 @@ var render = function render() {
       }
     }
   }, [_vm._v("\n                        割引・値引を適用する\n                    ")])])])])])]);
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=template&id=ef920ba4&":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=template&id=ef920ba4& ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("transition", {
+    attrs: {
+      name: "modal",
+      appear: ""
+    }
+  }, [_c("div", {
+    staticClass: "modal modal-overlay",
+    on: {
+      click: function click($event) {
+        if ($event.target !== $event.currentTarget) return null;
+        return _vm.$emit("close");
+      }
+    }
+  }, [_c("div", {
+    staticClass: "modal-window"
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_c("div", {
+    staticClass: "card modal-cs p-3"
+  }, [_c("div", {
+    staticClass: "card-header col-12 modal-cs-label"
+  }, [_vm._v("検索")]), _vm._v(" "), _c("div", {
+    staticClass: "card-header col-12 modal-cs-current d-flex"
+  }, [_c("div", {
+    staticClass: "col-4 fw-bold"
+  }, [_vm._v("\n                            現在の検索項目\n                        ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8"
+  }, [_c("div", {
+    staticClass: "col-12 d-flex"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_vm._v("伝票番号")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8"
+  }, [_vm._v("20222")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 d-flex"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_vm._v("期間")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8"
+  }, [_vm._v("2022/09/23 〜 2022/10/10")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 d-flex"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_vm._v("タグ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8"
+  }, [_vm._v("10-100")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 d-flex"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_vm._v("お支払い済み")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8"
+  }, [_vm._v("はい")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 d-flex"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_vm._v("お渡し済み")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8"
+  }, [_vm._v("はい")])])])]), _vm._v(" "), _c("div", {
+    staticClass: "card-body col-12 modal-cs-search"
+  }, [_c("div", {
+    staticClass: "col-12 input-group d-flex mb-3"
+  }, [_c("label", {
+    staticClass: "col-4 fw-bold modal-cs-search-label",
+    attrs: {
+      "for": "order_id"
+    }
+  }, [_vm._v("伝票番号")]), _vm._v(" "), _c("div", {
+    staticClass: "col-3"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.order_id,
+      expression: "order_id"
+    }],
+    attrs: {
+      type: "number",
+      name: "order_id",
+      id: "order_id"
+    },
+    domProps: {
+      value: _vm.order_id
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.order_id = $event.target.value;
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 input-group d-flex mb-3"
+  }, [_c("label", {
+    staticClass: "col-4 fw-bold modal-cs-search-label",
+    attrs: {
+      "for": "before"
+    }
+  }, [_vm._v("期間")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.before,
+      expression: "before"
+    }],
+    attrs: {
+      type: "date",
+      name: "before",
+      id: "before"
+    },
+    domProps: {
+      value: _vm.before
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.before = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _c("span", {
+    staticClass: "px-2"
+  }, [_vm._v("〜")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.after,
+      expression: "after"
+    }],
+    attrs: {
+      type: "date",
+      name: "after",
+      id: "after"
+    },
+    domProps: {
+      value: _vm.after
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.after = $event.target.value;
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 input-group d-flex mb-3 modal-cs-search-label"
+  }, [_c("label", {
+    staticClass: "col-4 fw-bold",
+    attrs: {
+      "for": "tag"
+    }
+  }, [_vm._v("タグ")]), _vm._v(" "), _c("div", {
+    staticClass: "col-4 d-flex"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.tag_head,
+      expression: "tag_head"
+    }],
+    staticClass: "col-4",
+    attrs: {
+      type: "number",
+      name: "tag",
+      id: "tag",
+      min: "1",
+      max: "10"
+    },
+    domProps: {
+      value: _vm.tag_head
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.tag_head = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _c("span", {
+    staticClass: "px-2"
+  }, [_vm._v("-")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.tag_body,
+      expression: "tag_body"
+    }],
+    staticClass: "col-7",
+    attrs: {
+      type: "number",
+      name: "tag",
+      id: "tag",
+      min: "0",
+      max: "999"
+    },
+    domProps: {
+      value: _vm.tag_body
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.tag_body = $event.target.value;
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 input-group d-flex mb-3 modal-cs-search-label"
+  }, [_c("label", {
+    staticClass: "col-4 fw-bold",
+    attrs: {
+      "for": "has_paid"
+    }
+  }, [_vm._v("お支払い済み")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8 d-flex"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.has_paid,
+      expression: "has_paid"
+    }],
+    attrs: {
+      type: "radio",
+      id: "has_paid_none",
+      value: "neither"
+    },
+    domProps: {
+      checked: _vm._q(_vm.has_paid, "neither")
+    },
+    on: {
+      change: function change($event) {
+        _vm.has_paid = "neither";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    attrs: {
+      "for": "has_paid_none"
+    }
+  }, [_vm._v("指定なし")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.has_paid,
+      expression: "has_paid"
+    }],
+    attrs: {
+      type: "radio",
+      id: "has_paid_false",
+      value: "unpaid"
+    },
+    domProps: {
+      checked: _vm._q(_vm.has_paid, "unpaid")
+    },
+    on: {
+      change: function change($event) {
+        _vm.has_paid = "unpaid";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    attrs: {
+      "for": "has_paid_false"
+    }
+  }, [_vm._v("未収")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.has_paid,
+      expression: "has_paid"
+    }],
+    attrs: {
+      type: "radio",
+      id: "has_paid_true",
+      value: "paid"
+    },
+    domProps: {
+      checked: _vm._q(_vm.has_paid, "paid")
+    },
+    on: {
+      change: function change($event) {
+        _vm.has_paid = "paid";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    attrs: {
+      "for": "has_paid_true"
+    }
+  }, [_vm._v("お支払済み")])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 input-group d-flex mb-3 modal-cs-search-label"
+  }, [_c("label", {
+    staticClass: "col-4 fw-bold",
+    attrs: {
+      "for": "has_handed"
+    }
+  }, [_vm._v("お渡し済み")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8 d-flex"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.has_handed,
+      expression: "has_handed"
+    }],
+    attrs: {
+      type: "radio",
+      id: "has_handed_none",
+      value: "neither"
+    },
+    domProps: {
+      checked: _vm._q(_vm.has_handed, "neither")
+    },
+    on: {
+      change: function change($event) {
+        _vm.has_handed = "neither";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    attrs: {
+      "for": "has_handed_none"
+    }
+  }, [_vm._v("指定なし")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.has_handed,
+      expression: "has_handed"
+    }],
+    attrs: {
+      type: "radio",
+      id: "has_handed_false",
+      value: "unhanded"
+    },
+    domProps: {
+      checked: _vm._q(_vm.has_handed, "unhanded")
+    },
+    on: {
+      change: function change($event) {
+        _vm.has_handed = "unhanded";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    attrs: {
+      "for": "has_handed_false"
+    }
+  }, [_vm._v("未渡し")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.has_handed,
+      expression: "has_handed"
+    }],
+    attrs: {
+      type: "radio",
+      id: "has_handed_true",
+      value: "handed"
+    },
+    domProps: {
+      checked: _vm._q(_vm.has_handed, "handed")
+    },
+    on: {
+      change: function change($event) {
+        _vm.has_handed = "handed";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    attrs: {
+      "for": "has_handed_true"
+    }
+  }, [_vm._v("お渡し済")])])])])])])])])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -53329,6 +53798,45 @@ component.options.__file = "resources/js/components/Modals/DiscountModalComponen
 
 /***/ }),
 
+/***/ "./resources/js/components/Modals/HistorySearchModalComponent.vue":
+/*!************************************************************************!*\
+  !*** ./resources/js/components/Modals/HistorySearchModalComponent.vue ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _HistorySearchModalComponent_vue_vue_type_template_id_ef920ba4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./HistorySearchModalComponent.vue?vue&type=template&id=ef920ba4& */ "./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=template&id=ef920ba4&");
+/* harmony import */ var _HistorySearchModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./HistorySearchModalComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _HistorySearchModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _HistorySearchModalComponent_vue_vue_type_template_id_ef920ba4___WEBPACK_IMPORTED_MODULE_0__.render,
+  _HistorySearchModalComponent_vue_vue_type_template_id_ef920ba4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Modals/HistorySearchModalComponent.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/OrderComponent.vue":
 /*!****************************************************!*\
   !*** ./resources/js/components/OrderComponent.vue ***!
@@ -53622,6 +54130,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************!*\
+  !*** ./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_HistorySearchModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./HistorySearchModalComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_HistorySearchModalComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/OrderComponent.vue?vue&type=script&lang=js&":
 /*!*****************************************************************************!*\
   !*** ./resources/js/components/OrderComponent.vue?vue&type=script&lang=js& ***!
@@ -53853,6 +54377,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DiscountModalComponent_vue_vue_type_template_id_cadcd402___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DiscountModalComponent_vue_vue_type_template_id_cadcd402___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DiscountModalComponent.vue?vue&type=template&id=cadcd402& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/DiscountModalComponent.vue?vue&type=template&id=cadcd402&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=template&id=ef920ba4&":
+/*!*******************************************************************************************************!*\
+  !*** ./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=template&id=ef920ba4& ***!
+  \*******************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_HistorySearchModalComponent_vue_vue_type_template_id_ef920ba4___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_HistorySearchModalComponent_vue_vue_type_template_id_ef920ba4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_HistorySearchModalComponent_vue_vue_type_template_id_ef920ba4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./HistorySearchModalComponent.vue?vue&type=template&id=ef920ba4& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Modals/HistorySearchModalComponent.vue?vue&type=template&id=ef920ba4&");
 
 
 /***/ }),
