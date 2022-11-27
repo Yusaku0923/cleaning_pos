@@ -7997,9 +7997,9 @@ var render = function render() {
       }
     }
   })])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 input-group d-flex mb-3 modal-cs-search-label"
+    staticClass: "col-12 input-group d-flex mb-3"
   }, [_c("label", {
-    staticClass: "col-4 fw-bold",
+    staticClass: "col-4 fw-bold modal-cs-search-label",
     attrs: {
       "for": "tag"
     }
@@ -8229,7 +8229,17 @@ var render = function render() {
     attrs: {
       "for": "has_handed_true"
     }
-  }, [_vm._v("お渡し済")])])])])])])])])])]);
+  }, [_vm._v("お渡し済")])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 modal-cs-btn card-footer pt-4 d-flex justify-content-end"
+  }, [_c("div", {
+    staticClass: "col-2 text-end"
+  }, [_c("button", {
+    staticClass: "btn px-3 py-1 modal-cs-btn-back"
+  }, [_vm._v("戻る")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-2 text-end"
+  }, [_c("button", {
+    staticClass: "btn px-3 py-1 modal-cs-btn-send"
+  }, [_vm._v("送信")])])])])])])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;

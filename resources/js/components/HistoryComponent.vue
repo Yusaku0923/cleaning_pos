@@ -127,6 +127,9 @@ export default ({
         customer: {
             required: true
         },
+        orders:  {
+            required: true
+        }
     },
     data() {
         return {
@@ -142,7 +145,8 @@ export default ({
         close: function() {
             this.dispSearch = false;
             this.dispDetail = false;
-        }
+        },
+        
     }
 })
 </script>

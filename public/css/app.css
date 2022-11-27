@@ -21483,6 +21483,16 @@ readers do not read off random characters that represent icons */
 .modal-cs-search-label {
   line-height: 32px;
 }
+.modal-cs-btn-back {
+  font-size: 22px;
+  color: #fff;
+  background-color: #6c757d;
+}
+.modal-cs-btn-send {
+  font-size: 22px;
+  color: #fff;
+  background-color: #2dbe5b;
+}
 
 .payment-orders {
   height: 50vh;

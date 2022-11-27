@@ -214,4 +214,16 @@
             line-height: 32px;
         }
     }
+    &-btn {
+        &-back {
+            font-size: 22px;
+            color: #fff;
+            background-color: $secondary;
+        }
+        &-send {
+            font-size: 22px;
+            color: #fff;
+            background-color: $green;
+        }
+    }
 }

@@ -47,8 +47,8 @@
                                     <input type="date" name="after" id="after" v-model="after">
                                 </div>
                             </div>
-                            <div class="col-12 input-group d-flex mb-3 modal-cs-search-label">
-                                <label for="tag" class="col-4 fw-bold">タグ</label>
+                            <div class="col-12 input-group d-flex mb-3">
+                                <label for="tag" class="col-4 fw-bold modal-cs-search-label">タグ</label>
                                 <div class="col-4 d-flex">
                                     <input class="col-4" type="number" name="tag" id="tag" v-model="tag_head" min="1"  max="10">
                                     <span class="px-2">-</span>
@@ -90,8 +90,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="">
-
+                        <div class="col-12 modal-cs-btn card-footer pt-4 d-flex justify-content-end">
+                            <div class="col-2 text-end">
+                                <button class="btn px-3 py-1 modal-cs-btn-back">戻る</button>
+                            </div>
+                            <div class="col-2 text-end">
+                                <button class="btn px-3 py-1 modal-cs-btn-send" @click="send()">送信</button>
+                            </div>
                         </div>
                     </div>
                     <!-- タグ番号のリストとか作るとよいかも -->
@@ -115,6 +120,13 @@ export default ({
             tag: '',
             has_paid: 'neither',
             has_handed: 'neither',
+        }
+    },
+    method: {
+        send: async function() {
+
+        },
+        search: async function() {
 
         }
     }
