@@ -19,7 +19,8 @@ use App\Http\Controllers\Api\CustomerController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('customer/search', [CustomerController::class, 'search'])->name('order.search');
-    Route::post('order', [OrdersController::class, 'store'])->name('order.store');
+    Route::post('order/store', [OrdersController::class, 'store'])->name('order.store');
+    Route::post('order/search', [OrdersController::class, 'search'])->name('order.search');
     Route::post('payment', [OrdersController::class, 'payment'])->name('order.payment');
     Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
 

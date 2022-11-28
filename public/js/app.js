@@ -5858,30 +5858,116 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _Modals_HistorySearchModalComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Modals/HistorySearchModalComponent */ "./resources/js/components/Modals/HistorySearchModalComponent.vue");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Modals_HistorySearchModalComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Modals/HistorySearchModalComponent */ "./resources/js/components/Modals/HistorySearchModalComponent.vue");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     customer: {
+      required: true
+    },
+    initial_orders: {
+      required: true
+    },
+    token: {
+      Type: String,
       required: true
     }
   },
   data: function data() {
     return {
       dispSearch: false,
-      dispDetail: false
+      dispDetail: false,
+      orders: this.initial_orders,
+      items: [],
+      conditions: [],
+      selectedId: ''
     };
   },
   components: {
-    'search-modal': _Modals_HistorySearchModalComponent__WEBPACK_IMPORTED_MODULE_0__["default"]
+    'search-modal': _Modals_HistorySearchModalComponent__WEBPACK_IMPORTED_MODULE_1__["default"]
     // 'accounting-modal': AccountingModal,
   },
 
   methods: {
+    dateFormater: function dateFormater(date) {
+      var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'MM/DD';
+      return moment__WEBPACK_IMPORTED_MODULE_0___default()(date).format(format);
+    },
     close: function close() {
       this.dispSearch = false;
       this.dispDetail = false;
-    }
+    },
+    select: function select(index) {
+      this.items = this.orders[index]['items'];
+      this.items.splice();
+      this.selectedId = this.orders[index].id;
+    },
+    displaySearchResult: function () {
+      var _displaySearchResult = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(conditions) {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return this.search(conditions);
+              case 2:
+                result = _context.sent;
+                this.orders = result.orders;
+                this.conditions = result.conditions;
+                this.selectedId = '';
+                this.items = [];
+                this.close();
+              case 8:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+      function displaySearchResult(_x) {
+        return _displaySearchResult.apply(this, arguments);
+      }
+      return displaySearchResult;
+    }(),
+    search: function () {
+      var _search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(conditions) {
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+                _context2.next = 3;
+                return axios.post('/api/order/search', {
+                  customer_id: this.customer.id,
+                  conditions: conditions
+                }).then(function (response) {
+                  return response.data;
+                })["catch"](function (error) {
+                  console.log(error);
+                  return;
+                });
+              case 3:
+                return _context2.abrupt("return", _context2.sent);
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+      function search(_x2) {
+        return _search.apply(this, arguments);
+      }
+      return search;
+    }()
   }
 });
 
@@ -6158,16 +6244,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {},
+  props: {
+    conditions: {
+      require: true
+    }
+  },
   data: function data() {
     return {
       order_id: '',
-      before: '',
       after: '',
-      tag: '',
+      before: '',
+      tag_head: '',
+      tag_body: '',
       has_paid: 'neither',
-      has_handed: 'neither'
+      has_handed: 'neither',
+      columnJp: {
+        'order_id': '伝票番号',
+        'term': '期間',
+        'tag': 'タグ',
+        'has_paid': 'お支払い済み',
+        'has_handed': 'お渡し済み'
+      }
     };
+  },
+  methods: {
+    send: function send() {
+      var tag = '';
+      if (this.tag_head !== '' && this.tag_body !== '') {
+        tag = this.tag_head + '-' + ('000' + this.tag_body).slice(-3);
+      }
+      var condition = {
+        'order_id': this.order_id,
+        'after': this.after,
+        'before': this.before,
+        'tag': tag,
+        'has_paid': this.has_paid,
+        'has_handed': this.has_handed
+      };
+      this.$emit('search', condition);
+    }
   }
 });
 
@@ -6401,12 +6516,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
                 _context3.next = 3;
-                return axios.post('/api/order', {
+                return axios.post('/api/order/store', {
                   manager_id: this.manager_id,
                   customer_id: this.customer_id,
                   order: this.orderForSend,
                   amount: this.amount - this.reduction,
-                  // with tax
                   reduction: this.reduction,
                   discount: this.discount,
                   payment: this.payment,
@@ -7033,7 +7147,45 @@ var render = function render() {
     attrs: {
       customer: _vm.customer
     }
-  }), _vm._v(" "), _vm._m(0), _vm._v(" "), _vm._m(1)], 1)]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _vm._m(0), _vm._v(" "), _c("div", {
+    staticClass: "card position-relative odlist-orders"
+  }, [_vm._m(1), _vm._v(" "), _vm._l(_vm.orders, function (order, index) {
+    return _c("div", {
+      key: order.id,
+      staticClass: "card col-11 mx-auto my-2 py-2 odlist-orders-order",
+      "class": {
+        "odlist-unselected": order.id !== _vm.selectedId,
+        "odlist-selected": order.id === _vm.selectedId
+      },
+      on: {
+        click: function click($event) {
+          return _vm.select(index);
+        }
+      }
+    }, [_c("div", {
+      staticClass: "d-flex"
+    }, [_c("div", {
+      staticClass: "col-2 text-center"
+    }, [_vm._v(_vm._s(order.id))]), _vm._v(" "), _c("div", {
+      staticClass: "col-3 text-center"
+    }, [_vm._v(_vm._s(_vm.dateFormater(order.created_at, "YYYYMM/DD")))]), _vm._v(" "), _c("div", {
+      staticClass: "col-3 text-center"
+    }, [_vm._v(_vm._s(_vm.customer.name))]), _vm._v(" "), _c("div", {
+      staticClass: "col-2 text-center"
+    }, [_vm._v(_vm._s(order.amount.toLocaleString()) + "円")]), _vm._v(" "), _c("div", {
+      staticClass: "col-2 text-center"
+    }, [order.paid_at !== null ? _c("i", {
+      staticClass: "fa-solid fa-check text-success col-5"
+    }) : _c("i", {
+      staticClass: "fa-solid fa-xmark text-danger col-5"
+    }), _vm._v(" "), _c("span", {
+      staticClass: "col-2 text-center"
+    }, [_vm._v("|")]), _vm._v(" "), order.handed_at !== null ? _c("i", {
+      staticClass: "fa-solid fa-check text-success col-5"
+    }) : _c("i", {
+      staticClass: "fa-solid fa-xmark text-danger col-5"
+    })])])]);
+  })], 2)], 1)]), _vm._v(" "), _c("div", {
     staticClass: "col-6 px-4"
   }, [_vm._m(2), _vm._v(" "), _c("div", {
     staticClass: "card col-12 odlist-operation"
@@ -7052,9 +7204,34 @@ var render = function render() {
     }
   }, [_vm._m(4), _vm._v(" "), _c("div", {
     staticClass: "odlist-operation-btn-label text-center"
-  }, [_vm._v("\n                                検索\n                            ")])]), _vm._v(" "), _vm._m(5), _vm._v(" "), _vm._m(6)])])]), _vm._v(" "), _vm._m(7)])]), _vm._v(" "), _vm.dispSearch ? _c("search-modal", {
+  }, [_vm._v("\n                                検索\n                            ")])]), _vm._v(" "), _vm._m(5), _vm._v(" "), _vm._m(6)])])]), _vm._v(" "), _c("div", {
+    staticClass: "card position-relative mt-2 odlist-detail"
+  }, [_vm._m(7), _vm._v(" "), _vm._l(_vm.items, function (item) {
+    return _c("div", {
+      key: item.id,
+      staticClass: "card col-11 mx-auto my-2 py-2 odlist-detail-clothes"
+    }, [_c("div", {
+      staticClass: "d-flex"
+    }, [_c("div", {
+      staticClass: "col-3 text-center"
+    }, [_vm._v(_vm._s(item.tag))]), _vm._v(" "), _c("div", {
+      staticClass: "col-5 text-center"
+    }, [_vm._v(_vm._s(item.name))]), _vm._v(" "), _c("div", {
+      staticClass: "col-2 text-center"
+    }, [_vm._v(_vm._s(item.price.toLocaleString()) + "円")]), _vm._v(" "), _c("div", {
+      staticClass: "col-2 text-center"
+    }, [item.handed_at !== null ? _c("i", {
+      staticClass: "fa-solid fa-check text-success"
+    }) : _vm._e(), _vm._v(" "), _c("i", {
+      staticClass: "fa-solid fa-xmark text-danger"
+    })])])]);
+  })], 2)])]), _vm._v(" "), _vm.dispSearch ? _c("search-modal", {
+    attrs: {
+      conditions: _vm.conditions
+    },
     on: {
-      close: _vm.close
+      close: _vm.close,
+      search: _vm.displaySearchResult
     }
   }) : _vm._e()], 1);
 };
@@ -7070,8 +7247,6 @@ var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "card position-relative odlist-orders"
-  }, [_c("div", {
     staticClass: "col-12 mb-2 bg-white position-sticky odlist-orders-column pt-3 border border-white"
   }, [_c("div", {
     staticClass: "card col-11 mx-auto bg-primary text-white"
@@ -7089,27 +7264,7 @@ var staticRenderFns = [function () {
     staticClass: "col-2 text-center"
   }, [_vm._v("支払"), _c("span", {
     staticClass: "px-1"
-  }, [_vm._v("|")]), _vm._v("渡し")])])])]), _vm._v(" "), _c("div", {
-    staticClass: "card col-11 mx-auto my-2 py-2 odlist-orders-order"
-  }, [_c("div", {
-    staticClass: "d-flex"
-  }, [_c("div", {
-    staticClass: "col-2 text-center"
-  }, [_vm._v("2222")]), _vm._v(" "), _c("div", {
-    staticClass: "col-3 text-center"
-  }, [_vm._v("2022/05/23")]), _vm._v(" "), _c("div", {
-    staticClass: "col-3 text-center"
-  }, [_vm._v("中山友作")]), _vm._v(" "), _c("div", {
-    staticClass: "col-2 text-center"
-  }, [_vm._v("10,000円")]), _vm._v(" "), _c("div", {
-    staticClass: "col-2 text-center"
-  }, [_c("i", {
-    staticClass: "fa-solid fa-check text-success"
-  }), _c("span", {
-    staticClass: "px-2"
-  }, [_vm._v("|")]), _c("i", {
-    staticClass: "fa-solid fa-xmark text-danger"
-  })])])])]);
+  }, [_vm._v("|")]), _vm._v("渡し")])])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -7170,8 +7325,6 @@ var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "card position-relative mt-2 odlist-detail"
-  }, [_c("div", {
     staticClass: "col-12 mb-2 bg-white position-sticky odlist-detail-column pt-3 border border-white"
   }, [_c("div", {
     staticClass: "card col-11 mx-auto bg-primary text-white"
@@ -7185,21 +7338,7 @@ var staticRenderFns = [function () {
     staticClass: "col-2 text-center"
   }, [_vm._v("値段")]), _vm._v(" "), _c("div", {
     staticClass: "col-2 text-center"
-  }, [_vm._v("渡し")])])])]), _vm._v(" "), _c("div", {
-    staticClass: "card col-11 mx-auto my-2 py-2 odlist-detail-clothes"
-  }, [_c("div", {
-    staticClass: "d-flex"
-  }, [_c("div", {
-    staticClass: "col-3 text-center"
-  }, [_vm._v("10-222")]), _vm._v(" "), _c("div", {
-    staticClass: "col-5 text-center"
-  }, [_vm._v("Tシャツ")]), _vm._v(" "), _c("div", {
-    staticClass: "col-2 text-center"
-  }, [_vm._v("2,000円")]), _vm._v(" "), _c("div", {
-    staticClass: "col-2 text-center"
-  }, [_c("i", {
-    staticClass: "fa-solid fa-check text-success"
-  })])])])]);
+  }, [_vm._v("渡し")])])])]);
 }];
 render._withStripped = true;
 
@@ -7868,60 +8007,45 @@ var render = function render() {
       }
     }
   }, [_c("div", {
-    staticClass: "modal-window"
+    staticClass: "modal-window border border-4 border-dark"
   }, [_c("div", {
     staticClass: "modal-content"
   }, [_c("div", {
-    staticClass: "card modal-cs p-3"
+    staticClass: "card modal-cs"
   }, [_c("div", {
     staticClass: "card-header col-12 modal-cs-label"
   }, [_vm._v("検索")]), _vm._v(" "), _c("div", {
     staticClass: "card-header col-12 modal-cs-current d-flex"
   }, [_c("div", {
     staticClass: "col-4 fw-bold"
-  }, [_vm._v("\n                            現在の検索項目\n                        ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                            現在の検索項目\n                        ")]), _vm._v(" "), _vm.conditions.length !== 0 ? _c("div", {
+    staticClass: "col-8"
+  }, _vm._l(_vm.conditions, function (condition, name, _) {
+    return _c("div", {
+      key: name,
+      staticClass: "col-12 d-flex"
+    }, [_c("div", {
+      staticClass: "col-4"
+    }, [_vm._v(_vm._s(_vm.columnJp[name]) + " ")]), _vm._v(" "), _c("div", {
+      staticClass: "col-8"
+    }, [_vm._v(_vm._s(condition))])]);
+  }), 0) : _c("div", {
     staticClass: "col-8"
   }, [_c("div", {
-    staticClass: "col-12 d-flex"
-  }, [_c("div", {
-    staticClass: "col-4"
-  }, [_vm._v("伝票番号")]), _vm._v(" "), _c("div", {
-    staticClass: "col-8"
-  }, [_vm._v("20222")])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 d-flex"
-  }, [_c("div", {
-    staticClass: "col-4"
-  }, [_vm._v("期間")]), _vm._v(" "), _c("div", {
-    staticClass: "col-8"
-  }, [_vm._v("2022/09/23 〜 2022/10/10")])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 d-flex"
-  }, [_c("div", {
-    staticClass: "col-4"
-  }, [_vm._v("タグ")]), _vm._v(" "), _c("div", {
-    staticClass: "col-8"
-  }, [_vm._v("10-100")])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 d-flex"
+    staticClass: "col-12"
   }, [_c("div", {
     staticClass: "col-4"
-  }, [_vm._v("お支払い済み")]), _vm._v(" "), _c("div", {
-    staticClass: "col-8"
-  }, [_vm._v("はい")])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 d-flex"
-  }, [_c("div", {
-    staticClass: "col-4"
-  }, [_vm._v("お渡し済み")]), _vm._v(" "), _c("div", {
-    staticClass: "col-8"
-  }, [_vm._v("はい")])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("なし")])])])]), _vm._v(" "), _c("div", {
     staticClass: "card-body col-12 modal-cs-search"
   }, [_c("div", {
-    staticClass: "col-12 input-group d-flex mb-3"
+    staticClass: "col-12 input-group d-flex my-3"
   }, [_c("label", {
-    staticClass: "col-4 fw-bold modal-cs-search-label",
+    staticClass: "col-4 fw-bold modal-cs-search-label-i",
     attrs: {
       "for": "order_id"
     }
   }, [_vm._v("伝票番号")]), _vm._v(" "), _c("div", {
-    staticClass: "col-3"
+    staticClass: "col-3 px-1"
   }, [_c("input", {
     directives: [{
       name: "model",
@@ -7929,6 +8053,7 @@ var render = function render() {
       value: _vm.order_id,
       expression: "order_id"
     }],
+    staticClass: "w-100",
     attrs: {
       type: "number",
       name: "order_id",
@@ -7944,38 +8069,15 @@ var render = function render() {
       }
     }
   })])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 input-group d-flex mb-3"
+    staticClass: "col-12 input-group d-flex my-3"
   }, [_c("label", {
     staticClass: "col-4 fw-bold modal-cs-search-label",
     attrs: {
       "for": "before"
     }
   }, [_vm._v("期間")]), _vm._v(" "), _c("div", {
-    staticClass: "col-8"
+    staticClass: "col-8 px-1"
   }, [_c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.before,
-      expression: "before"
-    }],
-    attrs: {
-      type: "date",
-      name: "before",
-      id: "before"
-    },
-    domProps: {
-      value: _vm.before
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.before = $event.target.value;
-      }
-    }
-  }), _vm._v(" "), _c("span", {
-    staticClass: "px-2"
-  }, [_vm._v("〜")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -7996,15 +8098,38 @@ var render = function render() {
         _vm.after = $event.target.value;
       }
     }
+  }), _vm._v(" "), _c("span", {
+    staticClass: "px-2"
+  }, [_vm._v("〜")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.before,
+      expression: "before"
+    }],
+    attrs: {
+      type: "date",
+      name: "before",
+      id: "before"
+    },
+    domProps: {
+      value: _vm.before
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.before = $event.target.value;
+      }
+    }
   })])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 input-group d-flex mb-3"
+    staticClass: "col-12 input-group d-flex my-3"
   }, [_c("label", {
-    staticClass: "col-4 fw-bold modal-cs-search-label",
+    staticClass: "col-4 fw-bold modal-cs-search-label-i",
     attrs: {
       "for": "tag"
     }
   }, [_vm._v("タグ")]), _vm._v(" "), _c("div", {
-    staticClass: "col-4 d-flex"
+    staticClass: "col-4 d-flex px-1"
   }, [_c("input", {
     directives: [{
       name: "model",
@@ -8056,14 +8181,14 @@ var render = function render() {
       }
     }
   })])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 input-group d-flex mb-3 modal-cs-search-label"
+    staticClass: "col-12 input-group d-flex my-3"
   }, [_c("label", {
-    staticClass: "col-4 fw-bold",
+    staticClass: "col-4 fw-bold modal-cs-search-label",
     attrs: {
       "for": "has_paid"
     }
   }, [_vm._v("お支払い済み")]), _vm._v(" "), _c("div", {
-    staticClass: "col-8 d-flex"
+    staticClass: "col-8 d-flex px-1"
   }, [_c("div", {
     staticClass: "col-4"
   }, [_c("input", {
@@ -8143,14 +8268,14 @@ var render = function render() {
       "for": "has_paid_true"
     }
   }, [_vm._v("お支払済み")])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 input-group d-flex mb-3 modal-cs-search-label"
+    staticClass: "col-12 input-group d-flex my-3"
   }, [_c("label", {
-    staticClass: "col-4 fw-bold",
+    staticClass: "col-4 fw-bold modal-cs-search-label",
     attrs: {
       "for": "has_handed"
     }
   }, [_vm._v("お渡し済み")]), _vm._v(" "), _c("div", {
-    staticClass: "col-8 d-flex"
+    staticClass: "col-8 d-flex px-1"
   }, [_c("div", {
     staticClass: "col-4"
   }, [_c("input", {
@@ -8229,17 +8354,27 @@ var render = function render() {
     attrs: {
       "for": "has_handed_true"
     }
-  }, [_vm._v("お渡し済")])])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 modal-cs-btn card-footer pt-4 d-flex justify-content-end"
+  }, [_vm._v("お渡し済み")])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 card-footer py-3 d-flex justify-content-end"
   }, [_c("div", {
+    staticClass: "col-3 text-end"
+  }, [_c("button", {
+    staticClass: "px-3 py-1 modal-cs-btn modal-cs-btn-back",
+    on: {
+      click: function click($event) {
+        return _vm.$emit("close");
+      }
+    }
+  }, [_vm._v("閉じる")])]), _vm._v(" "), _c("div", {
     staticClass: "col-2 text-end"
   }, [_c("button", {
-    staticClass: "btn px-3 py-1 modal-cs-btn-back"
-  }, [_vm._v("戻る")])]), _vm._v(" "), _c("div", {
-    staticClass: "col-2 text-end"
-  }, [_c("button", {
-    staticClass: "btn px-3 py-1 modal-cs-btn-send"
-  }, [_vm._v("送信")])])])])])])])]);
+    staticClass: "px-3 py-1 modal-cs-btn modal-cs-btn-send",
+    on: {
+      click: function click($event) {
+        return _vm.send();
+      }
+    }
+  }, [_vm._v("検索")])])])])])])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;

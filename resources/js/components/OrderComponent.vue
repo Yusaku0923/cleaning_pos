@@ -431,11 +431,11 @@ export default ({
 
         storeOrder: async function() {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
-            return await axios.post('/api/order', {
+            return await axios.post('/api/order/store', {
                 manager_id: this.manager_id,
                 customer_id: this.customer_id,
                 order: this.orderForSend,
-                amount: this.amount - this.reduction, // with tax
+                amount: this.amount - this.reduction,
                 reduction: this.reduction,
                 discount: this.discount,
                 payment: this.payment,

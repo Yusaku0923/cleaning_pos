@@ -21483,6 +21483,33 @@ readers do not read off random characters that represent icons */
 .modal-cs-search-label {
   line-height: 32px;
 }
+.modal-cs-search-label-i {
+  line-height: 34px;
+}
+.modal-cs-btn {
+  border-radius: 10px;
+  position: relative;
+  transition: 0.3s ease-in-out;
+  border: 0.2rem solid #543618;
+  box-shadow: 0.2rem 0.2rem 0px 0.1rem #cccccc;
+}
+.modal-cs-btn::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg) translateY(-50%);
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  border-radius: 1px;
+  transition: 0.3s ease-in-out;
+}
+.modal-cs-btn:active {
+  transform: translate3d(0.2rem, 0.2rem, 0);
+  box-shadow: none;
+  opacity: 1;
+  transition: all 0.025s;
+}
 .modal-cs-btn-back {
   font-size: 22px;
   color: #fff;

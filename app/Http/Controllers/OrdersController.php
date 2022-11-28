@@ -89,9 +89,12 @@ class OrdersController extends Controller
         $model = new Order();
         $orders = $model->fetchOrders(session()->get('customer_id'), 20);
         $customer = Customer::find(session()->get('customer_id'));
+        $store = Store::find(Auth::id());
+        $token = $store->createToken(Str::random(10));
         return view('orders.show')->with([
             'customer' => $customer,
             'orders' => $orders,
+            'token' => $token->plainTextToken,
         ]);
     }
 

@@ -38,34 +38,35 @@ class Order extends Model
         $query->where('customer_id', $customer_id);
         if (!empty($where)) {
             // period
-            if ($where['before'] !== '') {
-                $query->where('created_at', '<=', $where['before']);
+            if (!empty($where['after'])) {
+                $query->where('created_at', '>=', date('Y/m/d 00:00:00', strtotime($where['after'])));
             }
-            if ($where['after'] !== '') {
-                $query->where('created_at', '>=', $where['after']);
+            if (!empty($where['before'])) {
+                $query->where('created_at', '<=', date('Y/m/d 23:59:59', strtotime($where['before'])));
             }
             // has paid
-            if ($where['has_paid'] !== '') {
-                if ($where['has_paid']) {
+            if (!empty($where['has_paid']) && $where['has_paid'] !== 'neither') {
+                Log::debug($where['has_paid']);
+                if ($where['has_paid'] === 'paid') {
                     $query->whereNotNull('paid_at');
-                } else {
+                } else if ($where['has_paid'] === 'unpaid') {
                     $query->whereNull('paid_at');
                 }
             }
             // has handed
-            if ($where['has_handed'] !== '') {
-                if ($where['has_handed']) {
+            if (!empty($where['has_handed']) && $where['has_handed'] !== 'neither') {
+                if ($where['has_handed'] === 'handed') {
                     $query->whereNotNull('handed_at');
-                } else {
+                } else if ($where['has_handed'] === 'unhanded') {
                     $query->whereNull('handed_at');
                 }
             }
             // id
-            if ($where['order_id'] !== '') {
+            if (!empty($where['order_id'])) {
                 $query->where('id', $where['order_id']);
             }
             // has specified tag item
-            if ($where['tag'] !== '') {
+            if (!empty($where['tag'])) {
                 $order_id = $this->hasSpecifiedTag($customer_id, $where['tag']);
                 if (is_null($order_id)) {
                     return [];
@@ -80,6 +81,7 @@ class Order extends Model
 
         foreach ($orders as $key => $array) {
             $query = OrderClothes::query();
+            $query->select('order_clothes.*', 'clothes.name', 'clothes.name_kana', 'clothes.price', 'clothes.tag_count');
             $query->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id');
             $query->where('order_clothes.order_id', $array['id']);
             $orders[$key]['items'] = $query->get()->toArray();

@@ -204,6 +204,7 @@
         text-align: center;
         color: #fff;
         background-color: $green;
+        
     }
     &-current {
         font-size: 18px;
@@ -212,9 +213,34 @@
         font-size: 18px;
         &-label {
             line-height: 32px;
+            &-i {
+                line-height: 34px;
+            }
         }
     }
     &-btn {
+        border-radius: 10px;
+        position: relative;
+        transition: 0.3s ease-in-out;
+        border: 0.2rem solid #543618;
+        box-shadow: 0.2rem 0.2rem 0px 0.1rem #cccccc;
+        &::after {
+            content: '';
+            width: 5px;
+            height: 5px;
+            transform: rotate(45deg) translateY(-50%);
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            border-radius: 1px;
+            transition: 0.3s ease-in-out;
+        }
+        &:active {
+            transform: translate3d(0.2rem, 0.2rem, 0);
+            box-shadow: none;
+            opacity: 1;
+            transition: all .025s;
+        }
         &-back {
             font-size: 22px;
             color: #fff;

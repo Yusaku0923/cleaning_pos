@@ -19,6 +19,13 @@ use App\Services\Utility;
 
 class OrdersController extends Controller
 {
+    const COLUMN_JP = [
+        'neither' => '指定しない',
+        'paid' => 'はい',
+        'unpaid' => 'いいえ',
+        'handed' => 'はい',
+        'unhanded' => 'いいえ',
+    ];
     public function store(Request $request) {
         $paid_at = date('Y-m-d H:i:s');
         $invoice_id = null;
@@ -107,6 +114,41 @@ class OrdersController extends Controller
 
         return response()->json([
             'order_id' => $order->id
+        ]);
+    }
+
+    public function search(Request $request, Order $model) {
+        $orders = $model->fetchOrders($request->customer_id, 20, $request->conditions);
+        $conditions = [];
+        foreach ($request->conditions as $key => $val) {
+            switch ($key) {
+                case 'has_paid':
+                case 'has_handed':
+                    if (!empty($val) && $val !== 'neither') {
+                        $conditions[$key] = $this::COLUMN_JP[$val];
+                    }
+                    break;
+                case 'after':
+                    if (!empty($request->conditions['after']) || !empty($request->conditions['before'])) {
+                        $conditions['term'] = empty($request->conditions['after']) ? 'なし ～ ': date('Y/m/d', strtotime($request->conditions['after'])). ' ～ ';
+                    }
+                    break;
+                case 'before':
+                    if (!empty($request->conditions['after']) || !empty($request->conditions['before'])) {
+                        $conditions['term'] .= empty($request->conditions['before']) ? 'なし': date('Y/m/d', strtotime($request->conditions['before']));
+                    }
+                    break;
+                default:
+                    if (!empty($val)) {
+                        $conditions[$key] = $val;
+                    }
+                    break;
+            }
+        }
+        Log::debug($conditions);
+        return response()->json([
+            'orders' => $orders,
+            'conditions' => $conditions
         ]);
     }
 
