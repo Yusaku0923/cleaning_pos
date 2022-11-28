@@ -19,7 +19,14 @@ use App\Services\Utility;
 
 class OrdersController extends Controller
 {
-    const COLUMN_JP = [
+    const CONDITION_KEY_JP = [
+        'order_id' => '伝票番号',
+        'term' => '期間',
+        'tag' => 'タグ',
+        'has_paid' => 'お支払い済み',
+        'has_handed' => 'お渡し済み',
+    ];
+    const CONDITION_VALUE_JP = [
         'neither' => '指定しない',
         'paid' => 'はい',
         'unpaid' => 'いいえ',
@@ -125,22 +132,22 @@ class OrdersController extends Controller
                 case 'has_paid':
                 case 'has_handed':
                     if (!empty($val) && $val !== 'neither') {
-                        $conditions[$key] = $this::COLUMN_JP[$val];
+                        $conditions[$this::CONDITION_KEY_JP[$key]] = $this::CONDITION_VALUE_JP[$val];
                     }
                     break;
                 case 'after':
                     if (!empty($request->conditions['after']) || !empty($request->conditions['before'])) {
-                        $conditions['term'] = empty($request->conditions['after']) ? 'なし ～ ': date('Y/m/d', strtotime($request->conditions['after'])). ' ～ ';
+                        $conditions['期間'] = empty($request->conditions['after']) ? 'なし ～ ': date('Y/m/d', strtotime($request->conditions['after'])). ' ～ ';
                     }
                     break;
                 case 'before':
                     if (!empty($request->conditions['after']) || !empty($request->conditions['before'])) {
-                        $conditions['term'] .= empty($request->conditions['before']) ? 'なし': date('Y/m/d', strtotime($request->conditions['before']));
+                        $conditions['期間'] .= empty($request->conditions['before']) ? 'なし': date('Y/m/d', strtotime($request->conditions['before']));
                     }
                     break;
                 default:
                     if (!empty($val)) {
-                        $conditions[$key] = $val;
+                        $conditions[$this::CONDITION_KEY_JP[$key]] = $val;
                     }
                     break;
             }

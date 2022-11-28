@@ -13,25 +13,9 @@
                                 <div class="col-12 d-flex"
                                     v-for="(condition, name, _) in conditions"
                                     :key="name">
-                                    <div class="col-4">{{ columnJp[name] }} </div>
+                                    <div class="col-4">{{ name }} </div>
                                     <div class="col-8">{{ condition }}</div>
                                 </div>
-                                <!-- <div class="col-12 d-flex">
-                                    <div class="col-4">期間</div>
-                                    <div class="col-8">2022/09/23 〜 2022/10/10</div>
-                                </div>
-                                <div class="col-12 d-flex">
-                                    <div class="col-4">タグ</div>
-                                    <div class="col-8">10-100</div>
-                                </div>
-                                <div class="col-12 d-flex">
-                                    <div class="col-4">お支払い済み</div>
-                                    <div class="col-8">はい</div>
-                                </div>
-                                <div class="col-12 d-flex">
-                                    <div class="col-4">お渡し済み</div>
-                                    <div class="col-8">はい</div>
-                                </div> -->
                             </div>
                             <div class="col-8" v-else>
                                 <div class="col-12">

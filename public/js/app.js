@@ -8026,7 +8026,7 @@ var render = function render() {
       staticClass: "col-12 d-flex"
     }, [_c("div", {
       staticClass: "col-4"
-    }, [_vm._v(_vm._s(_vm.columnJp[name]) + " ")]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(name) + " ")]), _vm._v(" "), _c("div", {
       staticClass: "col-8"
     }, [_vm._v(_vm._s(condition))])]);
   }), 0) : _c("div", {

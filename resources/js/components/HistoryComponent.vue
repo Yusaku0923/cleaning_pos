@@ -30,7 +30,7 @@
                             :class="{ 'odlist-unselected': order.id !== selectedId, 'odlist-selected': order.id === selectedId }">
                             <div class="d-flex">
                                 <div class="col-2 text-center">{{ order.id }}</div>
-                                <div class="col-3 text-center">{{ dateFormater(order.created_at, 'YYYYMM/DD') }}</div>
+                                <div class="col-3 text-center">{{ dateFormater(order.created_at, 'YYYY/MM/DD') }}</div>
                                 <div class="col-3 text-center">{{ customer.name }}</div>
                                 <div class="col-2 text-center">{{ order.amount.toLocaleString() }}円</div>
                                 <div class="col-2 text-center">

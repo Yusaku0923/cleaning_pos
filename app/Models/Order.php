@@ -32,10 +32,12 @@ class Order extends Model
         });
     }
 
-    public function fetchOrders($customer_id, $limit = 20, $where = [])
+    public function fetchOrders($customer_id = null, $limit = 20, $where = [])
     {
         $query = Order::query();
-        $query->where('customer_id', $customer_id);
+        if (!is_null($customer_id)) {
+            $query->where('customer_id', $customer_id);
+        }
         if (!empty($where)) {
             // period
             if (!empty($where['after'])) {
