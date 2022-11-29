@@ -43,8 +43,9 @@
                                 <div class="col-4 fw-bold">お渡し日時</div>
                                 <div class="col-8">{{ dateFormater(order.handed_at, 'YYYY年MM月DD日 HH時mm分') }}</div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 d-flex justify-content-between">
                                 <div class="col-4 fw-bold">預り一覧</div>
+                                <div class="col-4 fw-bold text-end px-3">全{{ order.count }}点</div>
                             </div>
                             <div class="col-12 mt-2 position-relative card modal-cd-list fs-18">
                                 <div class="col-12 mb-2 position-sticky modal-cd-list-column pt-3">

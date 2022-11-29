@@ -139,7 +139,7 @@
                 <div class="col-12 d-flex justify-content-between mt-2">
                     <a href="{{ route('payment.index') }}" class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn cbtn-blue">入金</a>
                     <div class="card col-15 py-3 mx-1 text-center ctl-btn">出金</div>
-                    <a href="{{ route('order.show') }}" class="card col-15 py-3 mx-1 text-center">預かり一覧<br>(未収・未定)</a>
+                    <a href="{{ route('order.show') }}" class="card col-15 py-3 ml-1 text-center text-decoration-none ctl-btn cbtn-blue">預かり一覧</a>
                     <div class="card col-15 py-3 mx-1 text-center ctl-btn">納品検索</div>
                     <a href="{{ route('return.index') }}" class="card col-15 py-3 ml-1 text-center text-decoration-none ctl-btn cbtn-blue">お渡し</a>
                 </div>
@@ -149,17 +149,11 @@
                 </div>
                 <div class="card history-field">
                     <div class="col-12 d-flex py-2 justify-content-around">
-                        @foreach ((array_splice($orders, 0, 4)) as $order)
-                        <div class="card col-3 mt-2 col-3-custom p-2 history-card">
-                            @foreach (array_splice($order['items'], 0, 2) as $item)
-                                <div class="col-12 text-nowrap overflow-hidden">{{ $item['name'] }}</div>
-                            @endforeach
-                            全{{ $order['total_count'] }}
-                            <br>
-                            {{ number_format($order['amount']) }}円
-                            <br>
-                            {{ is_null($order['handed_at']) ? '未渡し': 'お渡し済' }}
-                        </div>
+                        @foreach ($orders as $order)
+                        <history-card-component
+                            :customer="{{ json_encode($customer) }}"
+                            :order="{{ json_encode($order) }}"
+                        ></history-card-component>
                         @endforeach
                     </div>
                 </div>

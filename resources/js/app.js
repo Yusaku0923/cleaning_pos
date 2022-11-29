@@ -29,6 +29,7 @@ Vue.component('payment-component', require('./components/PaymentComponent.vue').
 Vue.component('customer-create-component', require('./components/CustomerCreateComponent.vue').default);
 Vue.component('customer-search-component', require('./components/CustomerSearchComponent.vue').default);
 Vue.component('history-component', require('./components/HistoryComponent.vue').default);
+Vue.component('history-card-component', require('./components/HistoryCardComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

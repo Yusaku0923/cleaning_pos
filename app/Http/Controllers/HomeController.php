@@ -33,9 +33,7 @@ class HomeController extends Controller
                 $customer = [];
             }
 
-            // 改修→汎用性を持たせる
-            // $orders = $model->fetchOrders($customer->id);
-            // dd($orders);
+            $orders = $model->fetchOrders($customer->id, 4);
         }
 
         return view('home')->with([
