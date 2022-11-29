@@ -21521,6 +21521,92 @@ readers do not read off random characters that represent icons */
   background-color: #2dbe5b;
 }
 
+.modal-cd {
+  width: 600px;
+}
+.modal-cd-label {
+  font-size: 24px;
+  text-align: center;
+  color: #fff;
+  background-color: #fd7e00;
+}
+.modal-cd-current {
+  font-size: 18px;
+}
+.modal-cd-detail-invoice {
+  background-color: #2dbe5b;
+  color: #fff;
+  border-radius: 5px;
+  padding: 0 10px;
+}
+.modal-cd-detail-later {
+  background-color: #dc3545;
+  color: #fff;
+  border-radius: 5px;
+  padding: 0 10px;
+}
+.modal-cd-detail-cash {
+  background-color: #0d6efd;
+  color: #fff;
+  border-radius: 5px;
+  padding: 0 10px;
+}
+.modal-cd-detail-pycheck {
+  background-color: #fd7e00;
+  color: #fff;
+  border-radius: 5px;
+  padding: 0 10px;
+}
+.modal-cd-list {
+  height: 30vh;
+  overflow: scroll;
+  white-space: nowrap;
+}
+.modal-cd-list-column {
+  top: 0;
+  z-index: 2;
+  background-color: #fff;
+  border: 3px solid #fff;
+}
+.modal-cd-list-column-bar {
+  background-color: #fd7e00;
+  color: #fff;
+}
+.modal-cd-btn {
+  border-radius: 10px;
+  position: relative;
+  transition: 0.3s ease-in-out;
+  border: 0.2rem solid #543618;
+  box-shadow: 0.2rem 0.2rem 0px 0.1rem #cccccc;
+}
+.modal-cd-btn::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg) translateY(-50%);
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  border-radius: 1px;
+  transition: 0.3s ease-in-out;
+}
+.modal-cd-btn:active {
+  transform: translate3d(0.2rem, 0.2rem, 0);
+  box-shadow: none;
+  opacity: 1;
+  transition: all 0.025s;
+}
+.modal-cd-btn-back {
+  font-size: 22px;
+  color: #fff;
+  background-color: #6c757d;
+}
+.modal-cd-btn-send {
+  font-size: 22px;
+  color: #fff;
+  background-color: #2dbe5b;
+}
+
 .payment-orders {
   height: 50vh;
   overflow: scroll;
@@ -21640,11 +21726,14 @@ readers do not read off random characters that represent icons */
   border-radius: 1px;
   transition: 0.3s ease-in-out;
 }
-.unhanded-operation-btn:active {
+.unhanded-operation-btn-active:active {
   transform: translate3d(0.2rem, 0.2rem, 0);
   box-shadow: none;
   opacity: 1;
   transition: all 0.025s;
+}
+.unhanded-operation-btn-inactive {
+  opacity: 0.5;
 }
 .unhanded-operation-btn-icon {
   font-size: 48px;
@@ -21775,11 +21864,14 @@ readers do not read off random characters that represent icons */
   border-radius: 1px;
   transition: 0.3s ease-in-out;
 }
-.odlist-operation-btn:active {
+.odlist-operation-btn-active:active {
   transform: translate3d(0.2rem, 0.2rem, 0);
   box-shadow: none;
   opacity: 1;
   transition: all 0.025s;
+}
+.odlist-operation-btn-inactive {
+  opacity: 0.5;
 }
 .odlist-operation-btn-icon {
   font-size: 48px;

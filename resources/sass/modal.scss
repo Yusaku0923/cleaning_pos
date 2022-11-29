@@ -253,3 +253,91 @@
         }
     }
 }
+
+.modal-cd {
+    width: 600px;
+    &-label {
+        font-size: 24px;
+        text-align: center;
+        color: #fff;
+        background-color: $orange;
+    }
+    &-current {
+        font-size: 18px;
+    }
+    &-detail {
+        &-invoice {
+            background-color: $green;
+            color: #fff;
+            border-radius: 5px;
+            padding: 0 10px;
+        }
+        &-later {
+            background-color: $danger;
+            color: #fff;
+            border-radius: 5px;
+            padding: 0 10px;
+        }
+        &-cash {
+            background-color: $primary;
+            color: #fff;
+            border-radius: 5px;
+            padding: 0 10px;
+        }
+        &-pycheck {
+            background-color: $orange;
+            color: #fff;
+            border-radius: 5px;
+            padding: 0 10px;
+        }
+    }
+    &-list {
+        height: 30vh;
+        overflow: scroll;
+        white-space:nowrap;
+        &-column {
+            top: 0;
+            z-index: 2;
+            background-color: #fff;
+            border: 3px solid #fff;
+            &-bar {
+                background-color: $orange;
+                color: #fff;
+            }
+        }
+    }
+    &-btn {
+        border-radius: 10px;
+        position: relative;
+        transition: 0.3s ease-in-out;
+        border: 0.2rem solid #543618;
+        box-shadow: 0.2rem 0.2rem 0px 0.1rem #cccccc;
+        &::after {
+            content: '';
+            width: 5px;
+            height: 5px;
+            transform: rotate(45deg) translateY(-50%);
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            border-radius: 1px;
+            transition: 0.3s ease-in-out;
+        }
+        &:active {
+            transform: translate3d(0.2rem, 0.2rem, 0);
+            box-shadow: none;
+            opacity: 1;
+            transition: all .025s;
+        }
+        &-back {
+            font-size: 22px;
+            color: #fff;
+            background-color: $secondary;
+        }
+        &-send {
+            font-size: 22px;
+            color: #fff;
+            background-color: $green;
+        }
+    }
+}

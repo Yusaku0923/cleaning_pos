@@ -76,7 +76,10 @@
                                     検索
                                 </div>
                             </button>
-                            <button class="odlist-operation-btn text-white mt-2 uh-orange">
+                            <button class="odlist-operation-btn text-white mt-2 uh-orange"
+                                :class="{ 'odlist-operation-btn-inactive': selectedId === '', 'odlist-operation-btn-active': selectedId !== '' }"
+                                :disabled="selectedId === ''"
+                                @click="dispDetail = true">
                                 <div class="odlist-operation-btn-icon">
                                     <i class="fa-solid fa-list"></i>
                                 </div>
@@ -84,7 +87,10 @@
                                     詳細
                                 </div>
                             </button>
-                            <button class="odlist-operation-btn bg-danger text-white mt-2">
+                            <button class="odlist-operation-btn bg-danger text-white mt-2 odlist-operation-btn-inactive"
+                                :class="{ 'odlist-operation-btn-inactive': selectedId === ''}"
+                                :disabled="selectedId === ''"
+                                >
                                 <div class="odlist-operation-btn-icon">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </div>
@@ -116,7 +122,7 @@
                             <div class="col-2 text-center">{{ item.price.toLocaleString() }}円</div>
                             <div class="col-2 text-center">
                                 <i class="fa-solid fa-check text-success" v-if="item.handed_at !== null"></i>
-                                <i class="fa-solid fa-xmark text-danger"></i>
+                                <i class="fa-solid fa-xmark text-danger" v-else></i>
                             </div>
                         </div>
                     </div>
@@ -129,12 +135,19 @@
             :conditions="conditions"
             v-if="dispSearch"
         ></search-modal>
+        <detail-modal
+            @close="close"
+            :customer="customer"
+            :order="selectedOrder"
+            v-if="dispDetail"
+        ></detail-modal>
     </div>
 </template>
 
 <script>
 import moment from "moment";
 import SearchModal from './Modals/HistorySearchModalComponent';
+import DetailModal from './Modals/HistoryDetailModalComponent';
 
 export default ({
     props: {
@@ -157,11 +170,12 @@ export default ({
             items: [],
             conditions: [],
             selectedId: '',
+            selectedOrder: [],
         }
     },
     components: {
         'search-modal': SearchModal,
-        // 'accounting-modal': AccountingModal,
+        'detail-modal': DetailModal,
     },
     methods: {
         dateFormater: function(date, format = 'MM/DD') {
@@ -175,12 +189,14 @@ export default ({
             this.items = this.orders[index]['items'];
             this.items.splice();
             this.selectedId = this.orders[index].id;
+            this.selectedOrder = this.orders[index];
         },
         displaySearchResult: async function(conditions) {
             let result = await this.search(conditions);
             this.orders = result.orders;
             this.conditions = result.conditions;
             this.selectedId = '';
+            this.selectedOrder = [];
             this.items = [];
             this.close();
         },

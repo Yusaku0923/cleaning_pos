@@ -33,13 +33,15 @@ class OrdersController extends Controller
         'handed' => 'はい',
         'unhanded' => 'いいえ',
     ];
+
     public function store(Request $request) {
         $paid_at = date('Y-m-d H:i:s');
         $invoice_id = null;
         if ((boolean)$request->invoice) {
-            $cutoff_date = Customer::find($request->customer_id)->value('cutoff_date');
+            $cutoff_date = Customer::where('id', $request->customer_id)->value('cutoff_date');
             list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date);
-            if ((boolean)Customer::find($request->customer_id)->value('needs_payment_confimation')) {
+            // 入金確認が必要なお客様は「paid_at」を埋めない
+            if ((boolean)Customer::where('id', $request->customer_id)->value('needs_payment_confimation')) {
                 $paid_at = null;
             } else {
                 $paid_at = $period_end;

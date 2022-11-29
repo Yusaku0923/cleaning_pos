@@ -36,11 +36,14 @@
                 border-radius: 1px;
                 transition: 0.3s ease-in-out;
             }
-            &:active {
+            &-active:active {
                 transform: translate3d(0.2rem, 0.2rem, 0);
                 box-shadow: none;
                 opacity: 1;
                 transition: all .025s;
+            }
+            &-inactive {
+                opacity: .5;
             }
             &-icon {
                 font-size: 48px;

@@ -71,7 +71,7 @@
                         </button>
                         <button class="unhanded-operation-btn text-white mt-2 uh-green"
                             @click="allSelected ? deselection(): selectAll()"
-                            :class="{ 'unhanded-operation-btn-inactive': selectedOrder === '' }"
+                            :class="{ 'unhanded-operation-btn-inactive': selectedOrder === '', 'unhanded-operation-btn-active': selectedOrder !== '' }"
                             :disabled="selectedOrder === ''">
                             <div class="unhanded-operation-btn-icon">
                                 <i class="fa-regular fa-square" v-if="allSelected"></i>
@@ -83,7 +83,7 @@
                         </button>
                         <button class="unhanded-operation-btn bg-primary text-white mt-2"
                             @click="send()"
-                            :class="{ 'unhanded-operation-btn-inactive': selectedItems.length === 0 }"
+                            :class="{ 'unhanded-operation-btn-inactive': selectedItems.length === 0, 'unhanded-operation-btn-active': selectedItems.length !== 0 }"
                             :disabled="selectedItems.length === 0">
                             <div class="unhanded-operation-btn-icon">
                                 <i class="fa-solid fa-shirt"></i>
@@ -159,6 +159,7 @@ export default ({
     },
     methods: {
         selectOrder: function(id) {
+            this.allSelected = false;
             this.selectedOrder = id;
             this.selectedItems = [];
             this.items = [];
