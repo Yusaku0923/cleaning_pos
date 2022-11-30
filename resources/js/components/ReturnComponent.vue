@@ -51,16 +51,14 @@
                 </div>
                 <div class="col-12">
                     <div class="d-flex justify-content-around">
-                        <a href="/">
-                            <button class="unhanded-operation-btn text-white mt-2 bg-secondary" >
-                                <div class="unhanded-operation-btn-icon">
-                                    <i class="fa-solid fa-house"></i>
-                                </div>
-                                <div class="unhanded-operation-btn-label text-center">
-                                    戻る
-                                </div>
-                            </button>
-                        </a>
+                        <button class="unhanded-operation-btn text-white mt-2 bg-secondary unhanded-operation-btn-active" onclick="location.href='/'">
+                            <div class="unhanded-operation-btn-icon">
+                                <i class="fa-solid fa-house"></i>
+                            </div>
+                            <div class="unhanded-operation-btn-label text-center">
+                                戻る
+                            </div>
+                        </button>
                         <button class="unhanded-operation-btn text-white mt-2 uh-orange unhanded-operation-btn-inactive" :disabled="true">
                             <div class="unhanded-operation-btn-icon">
                                 <i class="fa-solid fa-money-bill"></i>

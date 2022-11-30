@@ -49,16 +49,14 @@
                 </div>
                 <div class="col-12">
                     <div class="d-flex justify-content-around">
-                        <a href="/">
-                            <button class="payment-operation-btn text-white mt-2 bg-secondary" >
-                                <div class="payment-operation-btn-icon">
-                                    <i class="fa-solid fa-house"></i>
-                                </div>
-                                <div class="payment-operation-btn-label text-center">
-                                    戻る
-                                </div>
-                            </button>
-                        </a>
+                        <button class="payment-operation-btn payment-operation-btn-active text-white mt-2 bg-secondary" onclick="location.href='/'">
+                            <div class="payment-operation-btn-icon">
+                                <i class="fa-solid fa-house"></i>
+                            </div>
+                            <div class="payment-operation-btn-label text-center">
+                                戻る
+                            </div>
+                        </button>
                         <button class="payment-operation-btn text-white mt-2 uh-orange"
                             :disabled="selectedOrder === ''"
                             :class="{ 'payment-operation-btn-inactive': selectedOrder === '' }"

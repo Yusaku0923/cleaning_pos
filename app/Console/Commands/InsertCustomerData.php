@@ -100,8 +100,10 @@ class InsertCustomerData extends Command
                 case 13:
                     $manager_id = 4;
                     break;
-
+                default:
+                    
             }
+            if ($manager_id === 0) $manager_id = 1;
             Customer::create([
                 'id' => $row[0],
                 'name_kana' => $row[3],
@@ -113,7 +115,8 @@ class InsertCustomerData extends Command
                 'updated_at' => date('Y-m-d 00:00:00', strtotime($row[25])),
                 'manager_id' => $manager_id,
                 'cutoff_date' => $row[40],
-                'is_invoice' => $row[44],
+                'is_invoice' => $manager_id === 1 ? false: true,
+                'needs_payment_confimation' => $row[44],
                 'total_sales' => $row[29],
                 'number_of_visits' => $row[28],
             ]);

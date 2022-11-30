@@ -57,16 +57,14 @@
                     </div>
                     <div class="col-12">
                         <div class="d-flex justify-content-around">
-                            <a href="/">
-                                <button class="odlist-operation-btn text-white mt-2 bg-secondary">
-                                    <div class="odlist-operation-btn-icon">
-                                        <i class="fa-solid fa-house"></i>
-                                    </div>
-                                    <div class="odlist-operation-btn-label text-center">
-                                        戻る
-                                    </div>
-                                </button>
-                            </a>
+                            <button class="odlist-operation-btn odlist-operation-btn-active text-white mt-2 bg-secondary" onclick="location.href='/'">
+                                <div class="odlist-operation-btn-icon">
+                                    <i class="fa-solid fa-house"></i>
+                                </div>
+                                <div class="odlist-operation-btn-label text-center">
+                                    戻る
+                                </div>
+                            </button>
                             <button class="odlist-operation-btn text-white mt-2 ls-green odlist-operation-btn-active"
                                 @click="dispSearch = true">
                                 <div class="odlist-operation-btn-icon">

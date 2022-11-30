@@ -78,7 +78,7 @@
                     </div>
                     <div class="col-12 mt-1 d-flex">
                         <div class="col-6">
-                            @if ((boolean)$customer->is_invoice)
+                            @if (!empty($customer) && (boolean)$customer->is_invoice)
                             <div class="card col-12 p-1">
                                 <p class="mb-0 d-flex">
                                     <span class="d-inline-block col-4">入金管理</span>

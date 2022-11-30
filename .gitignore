@@ -16,3 +16,5 @@ yarn-error.log
 vendor
 import
 vetur.config.js
+public/js/app.js
+public/css/app.css
