@@ -251,30 +251,30 @@ class CreateSampleCategories extends Seeder
             ]
         ];
 
-        foreach ($list as $key => $arr) {
-            $obj = Category::query()->create([
-                'store_id' => 1,
-                'name' => $key
-            ]);
-
-            foreach ($arr as $_key => $_arr) {
-                Clothes::query()->create([
-                    'store_id' => 1,
-                    'category_id' => $obj->id,
-                    'name' => $_arr['name'],
-                    'name_kana' => $_arr['name_kana'],
-                    'price' => $_arr['price'],
-                ]);
-            }
-        }
-
-
-        // for ($i = 1; $i <= 26; $i++) {
-        //     Category::create([
+        // foreach ($list as $key => $arr) {
+        //     $obj = Category::query()->create([
         //         'store_id' => 1,
-        //         'name' => 'カテゴリ' . $i
+        //         'name' => $key
         //     ]);
+
+        //     foreach ($arr as $_key => $_arr) {
+        //         Clothes::query()->create([
+        //             'store_id' => 1,
+        //             'category_id' => $obj->id,
+        //             'name' => $_arr['name'],
+        //             'name_kana' => $_arr['name_kana'],
+        //             'price' => $_arr['price'],
+        //         ]);
+        //     }
         // }
+
+
+        for ($i = 1; $i <= 26; $i++) {
+            Category::create([
+                'store_id' => 1,
+                'name' => 'カテゴリ' . $i
+            ]);
+        }
 
         // system 
         $system = [
