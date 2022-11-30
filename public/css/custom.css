@@ -130,6 +130,11 @@
 }
 .history-card {
     height: 140px;
+    background-color: #fd7e00;
+    color: #fff;
+}
+.history-card-uh {
+    background-color: #ffbf80 !important;
 }
 .category-label-field {
     width: 100%;

@@ -34,6 +34,7 @@ class HomeController extends Controller
             }
 
             $orders = $model->fetchOrders($customer->id, 4);
+            // dd($orders);
         }
 
         return view('home')->with([

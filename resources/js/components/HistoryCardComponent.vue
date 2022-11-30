@@ -1,14 +1,16 @@
 <template>
-    <div class="col-3 mt-2 col-3-custom px-1">
-        <div class="card  history-card"
-            @click="dispDetail = true">
+    <div class="col-3 mt-2 col-3-custom">
+        <div class="card px-2 history-card"
+            @click="dispDetail = true"
+            :class="{ 'history-card-uh': order.handed_at === null }">
             <div class="col-12 text-nowrap overflow-hidden"
                 v-for="item in limit"
                 :key="item.key"
             >{{ item.name }}</div>
-            <div class="col-12 text-nowrap overflow-hidden">全4点</div>
-            <div class="col-12 text-nowrap overflow-hidden">3000円</div>
-            <div class="col-12 text-nowrap overflow-hidden">未渡し</div>
+            <div class="col-12 text-nowrap overflow-hidden">全{{ order.count }}点</div>
+            <div class="col-12 text-nowrap overflow-hidden">{{ order.amount.toLocaleString() }}円</div>
+            <div class="col-12 text-nowrap overflow-hidden" v-if="order.handed_at === null">未渡し</div>
+            <div class="col-12 text-nowrap overflow-hidden" v-else>お渡し済み</div>
         </div>
         <detail-modal
             @close="close"

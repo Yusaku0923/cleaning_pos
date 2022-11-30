@@ -6304,7 +6304,10 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   data: function data() {
-    return {};
+    return {
+      openAC: false,
+      hideUpper: false
+    };
   },
   methods: {
     dateFormater: function dateFormater(date) {
@@ -6328,6 +6331,9 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         return false;
       }
+    },
+    toggleAC: function toggleAC() {
+      this.openAC = !this.openAC;
     }
   }
 });
@@ -7239,9 +7245,12 @@ var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "col-3 mt-2 col-3-custom px-1"
+    staticClass: "col-3 mt-2 col-3-custom"
   }, [_c("div", {
-    staticClass: "card history-card",
+    staticClass: "card px-2 history-card",
+    "class": {
+      "history-card-uh": _vm.order.handed_at === null
+    },
     on: {
       click: function click($event) {
         _vm.dispDetail = true;
@@ -7254,11 +7263,13 @@ var render = function render() {
     }, [_vm._v(_vm._s(item.name))]);
   }), _vm._v(" "), _c("div", {
     staticClass: "col-12 text-nowrap overflow-hidden"
-  }, [_vm._v("全4点")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("全" + _vm._s(_vm.order.count) + "点")]), _vm._v(" "), _c("div", {
     staticClass: "col-12 text-nowrap overflow-hidden"
-  }, [_vm._v("3000円")]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.order.amount.toLocaleString()) + "円")]), _vm._v(" "), _vm.order.handed_at === null ? _c("div", {
     staticClass: "col-12 text-nowrap overflow-hidden"
-  }, [_vm._v("未渡し")])], 2), _vm._v(" "), _vm.dispDetail ? _c("detail-modal", {
+  }, [_vm._v("未渡し")]) : _c("div", {
+    staticClass: "col-12 text-nowrap overflow-hidden"
+  }, [_vm._v("お渡し済み")])], 2), _vm._v(" "), _vm.dispDetail ? _c("detail-modal", {
     attrs: {
       customer: _vm.customer,
       order: _vm.order
@@ -8191,12 +8202,22 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "modal-content"
   }, [_c("div", {
-    staticClass: "card modal-cs"
+    staticClass: "card modal-cd"
   }, [_c("div", {
     staticClass: "card-header col-12 modal-cd-label"
   }, [_vm._v("伝票詳細")]), _vm._v(" "), _c("div", {
-    staticClass: "card-body col-12 modal-cd-detail fs-24"
+    staticClass: "card-body col-12 modal-cd-detail fs-24 position-relative"
+  }, [!_vm.openAC ? _c("div", {
+    staticStyle: {
+      height: "38vh"
+    }
   }, [_c("div", {
+    staticClass: "col-12 d-flex my-1"
+  }, [_c("div", {
+    staticClass: "col-4 fw-bold"
+  }, [_vm._v("伝票番号")]), _vm._v(" "), _c("div", {
+    staticClass: "col-8"
+  }, [_vm._v(_vm._s(_vm.order.id))])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 d-flex my-1"
   }, [_c("div", {
     staticClass: "col-4 fw-bold"
@@ -8208,13 +8229,17 @@ var render = function render() {
     staticClass: "col-4 fw-bold"
   }, [_vm._v("合計金額")]), _vm._v(" "), _c("div", {
     staticClass: "col-8"
-  }, [_vm._v(_vm._s(_vm.order.amount.toLocaleString()) + "円")])]), _vm._v(" "), _vm.order.discount !== 0 ? _c("div", {
+  }, [_vm._v(_vm._s(_vm.order.amount.toLocaleString()) + "円")])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 d-flex my-1"
   }, [_c("div", {
     staticClass: "col-4 fw-bold"
-  }, [_vm._v("割引金額")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("割引金額")]), _vm._v(" "), _vm.order.reduction !== 0 ? _c("div", {
     staticClass: "col-8"
-  }, [_vm._v(_vm._s(_vm.order.reduction.toLocaleString()) + "円")])]) : _vm._e(), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.order.reduction.toLocaleString()) + "円\n                                    "), _vm.order.discount !== 0 ? _c("span", [_vm._v("(" + _vm._s(_vm.order.discount) + "%引き)")]) : _vm._e()]) : _c("div", {
+    staticClass: "col-8"
+  }, [_c("i", {
+    staticClass: "fa-solid fa-minus"
+  })])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 d-flex my-1"
   }, [_c("div", {
     staticClass: "col-4 fw-bold"
@@ -8270,14 +8295,39 @@ var render = function render() {
     staticClass: "col-4 fw-bold"
   }, [_vm._v("お渡し日時")]), _vm._v(" "), _c("div", {
     staticClass: "col-8"
-  }, [_vm._v(_vm._s(_vm.dateFormater(_vm.order.handed_at, "YYYY年MM月DD日 HH時mm分")))])]) : _vm._e(), _vm._v(" "), _c("div", {
-    staticClass: "col-12 d-flex justify-content-between"
+  }, [_vm._v(_vm._s(_vm.dateFormater(_vm.order.handed_at, "YYYY年MM月DD日 HH時mm分")))])]) : _vm._e()]) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "col-12 position-absolute modal-cd-bottoms"
   }, [_c("div", {
-    staticClass: "col-4 fw-bold"
-  }, [_vm._v("預り一覧")]), _vm._v(" "), _c("div", {
-    staticClass: "col-4 fw-bold text-end px-3"
-  }, [_vm._v("全" + _vm._s(_vm.order.count) + "点")])]), _vm._v(" "), _c("div", {
-    staticClass: "col-12 mt-2 position-relative card modal-cd-list fs-18"
+    staticClass: "col-12 d-flex justify-content-between px-3"
+  }, [_c("div", {
+    staticClass: "col-8 fw-bold"
+  }, [_vm._v("預り一覧（全" + _vm._s(_vm.order.count) + "点）")]), _vm._v(" "), !_vm.openAC ? _c("div", {
+    staticClass: "col-4 text-end px-3"
+  }, [_c("span", {
+    staticClass: "px-2 modal-cd-list-toggle-o",
+    on: {
+      click: function click($event) {
+        return _vm.toggleAC();
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fa-solid fa-angle-up pe-2"
+  }), _vm._v("開く")])]) : _c("div", {
+    staticClass: "col-4 text-end px-3"
+  }, [_c("span", {
+    staticClass: "px-2 modal-cd-list-toggle-c",
+    on: {
+      click: function click($event) {
+        return _vm.toggleAC();
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fa-solid fa-angle-down pe-2"
+  }), _vm._v("閉じる")])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-12 mt-2 position-relative card modal-cd-list fs-18",
+    "class": {
+      "modal-cd-list-open": _vm.openAC
+    }
   }, [_c("div", {
     staticClass: "col-12 mb-2 position-sticky modal-cd-list-column pt-3"
   }, [_c("div", {
@@ -8311,7 +8361,7 @@ var render = function render() {
     }) : _c("i", {
       staticClass: "fa-solid fa-xmark text-danger"
     })])])]);
-  })], 2)]), _vm._v(" "), _c("div", {
+  })], 2)])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 card-footer py-3 d-flex justify-content-end"
   }, [_c("div", {
     staticClass: "col-3 text-end"

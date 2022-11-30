@@ -21523,6 +21523,7 @@ readers do not read off random characters that represent icons */
 
 .modal-cd {
   width: 600px;
+  height: 90vh;
 }
 .modal-cd-label {
   font-size: 24px;
@@ -21557,10 +21558,25 @@ readers do not read off random characters that represent icons */
   border-radius: 5px;
   padding: 0 10px;
 }
+.modal-cd-bottoms {
+  bottom: 0;
+  left: 0;
+}
 .modal-cd-list {
-  height: 30vh;
+  height: 20vh;
   overflow: scroll;
   white-space: nowrap;
+  transition: height 0.3s linear;
+}
+.modal-cd-list-toggle-o {
+  background-color: #fd7e00;
+  color: #fff;
+  border-radius: 5px;
+}
+.modal-cd-list-toggle-c {
+  background-color: #dc3545;
+  color: #fff;
+  border-radius: 5px;
 }
 .modal-cd-list-column {
   top: 0;
@@ -21571,6 +21587,11 @@ readers do not read off random characters that represent icons */
 .modal-cd-list-column-bar {
   background-color: #fd7e00;
   color: #fff;
+}
+.modal-cd-list-open {
+  height: 63vh !important;
+  transition: height 0.3s linear;
+  z-index: 5;
 }
 .modal-cd-btn {
   border-radius: 10px;

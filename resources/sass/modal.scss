@@ -256,6 +256,7 @@
 
 .modal-cd {
     width: 600px;
+    height: 90vh;
     &-label {
         font-size: 24px;
         text-align: center;
@@ -291,10 +292,25 @@
             padding: 0 10px;
         }
     }
+    &-bottoms {
+        bottom: 0;
+        left: 0;
+    }
     &-list {
-        height: 30vh;
+        height: 20vh;
         overflow: scroll;
         white-space:nowrap;
+        transition: height 0.3s linear;
+        &-toggle-o {
+            background-color: $orange;
+            color: #fff;
+            border-radius: 5px;
+        }
+        &-toggle-c {
+            background-color: $danger;
+            color: #fff;
+            border-radius: 5px;
+        }
         &-column {
             top: 0;
             z-index: 2;
@@ -304,6 +320,11 @@
                 background-color: $orange;
                 color: #fff;
             }
+        }
+        &-open {
+            height: 63vh !important;
+            transition: height 0.3s linear;
+            z-index: 5;
         }
     }
     &-btn {
