@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Store;
 use App\Models\Customer;
+
+use Illuminate\Support\Facades\Log;
 class CustomerController extends Controller
 {
     /**
@@ -103,7 +105,16 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $customer = Customer::find($id);
+        $customer->name = $request->name;
+        $customer->name_kana = mb_convert_kana($request->name_kana, 'rnk');
+        $customer->phone_number = $request->phone_number;
+        $customer->is_invoice = (boolean)$request->is_invoice;
+        $customer->needs_payment_confimation = (boolean)$request->check_payment;
+        $customer->cutoff_date = $request->cutoff_date;
+        $customer->save();
+
+        return redirect()->route('home');
     }
 
     /**

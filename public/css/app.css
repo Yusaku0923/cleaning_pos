@@ -21563,20 +21563,10 @@ readers do not read off random characters that represent icons */
   left: 0;
 }
 .modal-cd-list {
-  height: 20vh;
+  height: 15vh;
   overflow: scroll;
   white-space: nowrap;
   transition: height 0.3s linear;
-}
-.modal-cd-list-toggle-o {
-  background-color: #fd7e00;
-  color: #fff;
-  border-radius: 5px;
-}
-.modal-cd-list-toggle-c {
-  background-color: #dc3545;
-  color: #fff;
-  border-radius: 5px;
 }
 .modal-cd-list-column {
   top: 0;
@@ -21626,6 +21616,14 @@ readers do not read off random characters that represent icons */
   font-size: 22px;
   color: #fff;
   background-color: #2dbe5b;
+}
+.modal-cd-btn-toggle-o {
+  background-color: #fd7e00;
+  color: #fff;
+}
+.modal-cd-btn-toggle-c {
+  background-color: #dc3545;
+  color: #fff;
 }
 
 .payment-orders {

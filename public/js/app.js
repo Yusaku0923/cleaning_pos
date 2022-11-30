@@ -8300,11 +8300,14 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "col-12 d-flex justify-content-between px-3"
   }, [_c("div", {
-    staticClass: "col-8 fw-bold"
+    staticClass: "col-8 fw-bold",
+    staticStyle: {
+      "line-height": "46px"
+    }
   }, [_vm._v("預り一覧（全" + _vm._s(_vm.order.count) + "点）")]), _vm._v(" "), !_vm.openAC ? _c("div", {
     staticClass: "col-4 text-end px-3"
-  }, [_c("span", {
-    staticClass: "px-2 modal-cd-list-toggle-o",
+  }, [_c("button", {
+    staticClass: "px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-o",
     on: {
       click: function click($event) {
         return _vm.toggleAC();
@@ -8314,8 +8317,8 @@ var render = function render() {
     staticClass: "fa-solid fa-angle-up pe-2"
   }), _vm._v("開く")])]) : _c("div", {
     staticClass: "col-4 text-end px-3"
-  }, [_c("span", {
-    staticClass: "px-2 modal-cd-list-toggle-c",
+  }, [_c("button", {
+    staticClass: "px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-c",
     on: {
       click: function click($event) {
         return _vm.toggleAC();

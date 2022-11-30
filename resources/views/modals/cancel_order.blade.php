@@ -38,8 +38,8 @@
                     
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                    <button type="submit" class="btn btn-danger">削除</button>
+                    <button type="button" class="btn btn-secondary fs-20" data-bs-dismiss="modal">閉じる</button>
+                    <button type="submit" class="btn btn-danger fs-20">削除</button>
                 </div>
             </form>
         </div>

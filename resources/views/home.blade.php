@@ -78,11 +78,12 @@
                     </div>
                     <div class="col-12 mt-1 d-flex">
                         <div class="col-6">
+                            @if ((boolean)$customer->is_invoice)
                             <div class="card col-12 p-1">
                                 <p class="mb-0 d-flex">
                                     <span class="d-inline-block col-4">入金管理</span>
-                                    @if (isset($customer->is_invoice))
-                                    <span class="d-inline-block col-8">{{ (boolean)$customer->is_invoice ? 'する': 'しない' }}</span>
+                                    @if (isset($customer->needs_payment_confimation))
+                                    <span class="d-inline-block col-8">{{ (boolean)$customer->needs_payment_confimation ? 'する': 'しない' }}</span>
                                     @endif
                                 </p>
                             </div>
@@ -94,9 +95,10 @@
                                     @endif
                                 </p>
                             </div>
+                            @endif
                         </div>
                         <div class="col-6 d-flex justify-content-end">
-                            <div class="col-11 mt-3 customer-edit-btn"><i class="fa-solid fa-wrench" style="line-height: 52px;margin-right: 10px;"></i>会員情報編集</div>
+                            <div class="col-11 mt-3 customer-edit-btn" data-bs-toggle="modal" data-bs-target="#customer-edit-modal"><i class="fa-solid fa-wrench" style="line-height: 52px;margin-right: 10px;"></i>顧客情報編集</div>
                         </div>
                     </div>
                 </div>
@@ -110,9 +112,12 @@
                     <a href="{{ route('invoice.index') }}" class="card col-15 mr-1 text-center lh-leftbtn-oneline text-decoration-none cbtn-blue">請求書</a>
 
                     {{-- modals --}}
+                    @if (!empty($customer))
+                        @include('modals.edit_customer')
+                    @endif
                     @if (!empty($latest_order))
                         @include('modals.cancel_order')
-                    @endempty
+                    @endif
                     @include('modals.select_manager')
                     @if (!is_null($tag))
                         @include('modals.edit_tag')

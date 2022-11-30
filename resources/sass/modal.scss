@@ -297,20 +297,11 @@
         left: 0;
     }
     &-list {
-        height: 20vh;
+        height: 15vh;
         overflow: scroll;
         white-space:nowrap;
         transition: height 0.3s linear;
-        &-toggle-o {
-            background-color: $orange;
-            color: #fff;
-            border-radius: 5px;
-        }
-        &-toggle-c {
-            background-color: $danger;
-            color: #fff;
-            border-radius: 5px;
-        }
+        
         &-column {
             top: 0;
             z-index: 2;
@@ -359,6 +350,14 @@
             font-size: 22px;
             color: #fff;
             background-color: $green;
+        }
+        &-toggle-o {
+            background-color: $orange;
+            color: #fff;
+        }
+        &-toggle-c {
+            background-color: $danger;
+            color: #fff;
         }
     }
 }
