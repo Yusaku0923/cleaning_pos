@@ -4,7 +4,7 @@
         <div class="category-bar col-3 border-top border-bottom border-secondary">
             <div class="card py-5 px-2 border border-secondary" 
                 @click="changeCategory(-1)"
-                v-bind:class="{'active': isActive === -1}"
+                :class="{'odcreate-category-active': isActive === -1}"
             >
                 よく注文される項目
             </div>
@@ -13,7 +13,7 @@
                 v-for="(category, index) in categories"
                 :key="category.id"
                 @click="changeCategory(index)"
-                v-bind:class="{'active': isActive === index}"
+                :class="{'odcreate-category-active': isActive === index}"
             >
                 {{ category.name }}
             </div>

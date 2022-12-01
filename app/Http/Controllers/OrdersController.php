@@ -34,8 +34,9 @@ class OrdersController extends Controller
         if (!session()->has('manager_id') || !session()->has('customer_id')) {
             return redirect()->route('home');
         }
+
         $customer = Customer::find(session()->get('customer_id'));
-        $category_clothes = Category::with('clothes')->get();
+        $category_clothes = Category::with('clothes')->where('id', '!=',  1)->get();
         $model = new Clothes;
         if (Order::where('customer_id', $customer->id)->exists()) {
             $often_ordered = $model->fetchOftenOrdered($customer->id);
@@ -78,20 +79,17 @@ class OrdersController extends Controller
      */
     public function show()
     {
-        // $where = [
-        //     'before' => '',
-        //     'after' => '',
-        //     'has_paid' => '',
-        //     'has_handed' => '',
-        //     'order_id' => '',
-        //     'tag' => '',
-        // ];
+        if (!session()->has('manager_id') || !session()->has('customer_id')) {
+            return redirect()->route('home');
+        }
+
         $model = new Order();
         $orders = $model->fetchOrders(session()->get('customer_id'), 20);
         $customer = Customer::find(session()->get('customer_id'));
         $store = Store::find(Auth::id());
         $token = $store->createToken(Str::random(10));
         return view('orders.show')->with([
+            'title' => '預　り　一　覧',
             'customer' => $customer,
             'orders' => $orders,
             'token' => $token->plainTextToken,

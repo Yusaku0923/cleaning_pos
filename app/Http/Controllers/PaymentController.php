@@ -22,6 +22,7 @@ class PaymentController extends Controller
         $store = Store::find(Auth::id());
         $token = $store->createToken(Str::random(10));
         return view('payment.index')->with([
+            'title' => '入　金',
             'customer' => $customer,
             'orders' => $unpaid_orders,
             'token' => $token->plainTextToken,

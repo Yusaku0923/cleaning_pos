@@ -22,6 +22,7 @@ class ReturnController extends Controller
         $store = Store::find(Auth::id());
         $token = $store->createToken(Str::random(10));
         return view('return.index')->with([
+            'title' => 'お　渡　し',
             'customer' => $customer,
             'orders' => $unhanded_orders,
             'token' => $token->plainTextToken,

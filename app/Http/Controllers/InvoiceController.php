@@ -14,6 +14,7 @@ class InvoiceController extends Controller
         $model = new Invoice();
         $invoices = $model->fetchInvoices(session()->get('manager_id'));
         return view('invoice.index')->with([
+            'title' => '請　求　書　発　行',
             'invoices' => $invoices
         ]);
     }
