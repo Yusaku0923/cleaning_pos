@@ -8,6 +8,9 @@ use App\Models\Order;
 class DailyReportController extends Controller
 {
     public function index(Request $request) {
+        if (!session()->exists('manager_id')) {
+            return redirect()->route('home');
+        }
         $date = !empty($request->query('date')) ? $request->date : date('Y-m-d');
         // /?date=2022-03-01
         $model = new Order();
