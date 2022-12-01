@@ -31,10 +31,9 @@ class HomeController extends Controller
             if (!session()->exists('manager_id') || session()->get('manager_id') !== $customer->manager_id) {
                 session()->forget('customer_id');
                 $customer = [];
+            } else {
+                $orders = $model->fetchOrders($customer->id, 4);
             }
-
-            $orders = $model->fetchOrders($customer->id, 4);
-            // dd($orders);
         }
 
         return view('home')->with([
