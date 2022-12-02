@@ -118,7 +118,7 @@ export default ({
     },
     data() {
         return {
-            openAC: false,
+            openAC: true,
             hideUpper: false
         }
     },

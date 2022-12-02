@@ -1,7 +1,8 @@
 <template>
     <div>
-        <div class="card col-12 py-2 h4 text-center" v-if="('name' in customer)">
-            {{ customer['name'] + '　様' }}
+        <div class="card col-12 py-2 h4 text-center position-relative" v-if="('name' in customer)">
+            {{ customer.name + '　様' }}
+            <div class="position-absolute ci-invoice-mark" v-if="Boolean(customer.is_invoice)">請</div>
         </div>
         <div class="card col-12 py-2 h4 text-center" v-else>
             顧客情報が選択されていません
@@ -33,6 +34,5 @@ export default ({
             required: true
         }
     },
-    
 })
 </script>

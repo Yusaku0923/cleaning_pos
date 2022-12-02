@@ -30,6 +30,9 @@
             .text-center {
                 text-align: center;
             }
+            .nowrap {
+                white-space: nowrap;
+            }
             .bold-font {
                 font-family: migmix-bold !important;
             }
@@ -135,6 +138,9 @@
             .empty-column {
                 height: 21px;
             }
+            .bold-border {
+                border-top: 2px solid #000000 ;
+            }
         </style>
     </head>
     <body>
@@ -183,20 +189,49 @@
                 <tbody>
                     @php
                         $customer_id = '';
+                        $prev_clothes = '';
+                        $prev_order = '';
+                        $disp_clothes = true;
+                        $disp_customer = true;
                     @endphp
                     @for ($i = $c; $i == $c || $i % 35 != 0; $i++)
                         @if ($i <= count($daily_orders) - 1)
-                        <tr>
+                        @php
+                            if ($prev_order === $daily_orders[$i]['order_id']) {
+                                $disp_customer = false;
+                                if ($prev_clothes === $daily_orders[$i]['clothes_id'] || $daily_orders[$i]['clothes_id'] === 999) {
+                                    $disp_clothes = false;
+                                } else {
+                                    $disp_clothes = true;
+                                }
+                            } else {
+                                $disp_customer = true;
+                                $disp_clothes = true;
+                            }
+                        @endphp
+                        <tr class="{{ $i % 35 !== 0 && $disp_customer ? 'bold-border': '' }}">
                             <td class="number-font text-center">{{ $daily_orders[$i]['tag'] }}</td>
-                            <td class=""><span class="short-label">{{ $daily_orders[$i]['name'] }}</span></td>
+                            @if ($disp_clothes)
+                                <td class=""><span class="short-label nowrap">{{ $daily_orders[$i]['name'] }}</span></td>
+                            @else
+                                <td class="empty-column"></td>
+                            @endif
                             <td class="number-font text-center">{{ $daily_orders[$i]['price'] }}</td>
-                            <td class="text-center">{{ $daily_orders[$i]['customer_id'] }}</td>
-                            <td class=""><span class="short-label">{{ $daily_orders[$i]['customer_name'] }}</span></td>
+                            <td class="number-font text-center">{{ $daily_orders[$i]['customer_id'] }}</td>
+                            @if ($disp_customer)
+                                <td style="width: 20%;"><span class="short-label nowrap">{{ $daily_orders[$i]['customer_name'] }}</span></td>
+                            @else
+                                <td class="empty-column"></td>
+                            @endif
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
                         </tr>
+                        @php
+                            $prev_clothes = $daily_orders[$i]['clothes_id'];
+                            $prev_order = $daily_orders[$i]['order_id'];
+                        @endphp
                         @else
                         <tr>
                             <td class="empty-column"></td>

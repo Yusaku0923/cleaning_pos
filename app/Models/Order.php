@@ -134,7 +134,7 @@ class Order extends Model
 
         if (!empty($orders)) {
             foreach ($orders as $key => $order) {
-                $item = OrderClothes::select('order_clothes.*', 'clothes.name', 'clothes.price')
+                $item = OrderClothes::select('order_clothes.*', 'clothes.id as clothes_id', 'clothes.name', 'clothes.price')
                                     ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
                                     ->where('order_id', $order['id'])
                                     ->get()->toArray();

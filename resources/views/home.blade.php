@@ -6,27 +6,9 @@
         <div class="col-12 row justify-content-between">
             {{-- Left Block --}}
             <div class="col-6 left-block">
-                <div class="card col-12 py-2 h4 text-center">
-                    {{ isset($customer->name) ? $customer->name . '　様': '顧客情報が選択されていません' }}
-                </div>
-                <div class="card col-12 text-center">
-                    <table class="table h-100 csinfo-table">
-                        <thead>
-                            <tr>
-                                <th>CS情報</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{-- <li>でもいいかも --}}
-                            <tr><td>Line1</td></tr>
-                            <tr><td>Line2</td></tr>
-                            <tr><td>Line3</td></tr>
-                            <tr><td>Line4</td></tr>
-                            <tr><td>Line5</td></tr>
-                            <tr><td>Line6</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                <customer-info-component
+                    :customer="{{ json_encode($customer) }}"
+                ></customer-info-component>
 
                 <div class="card col-12 py-2 mt-2 h4 text-center">
                     顧　客　情　報

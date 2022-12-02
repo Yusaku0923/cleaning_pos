@@ -16,8 +16,6 @@ class DailyReportController extends Controller
         $model = new Order();
         list($daily_orders, $daily_sum, $monthly_sum) = $model->fetchDailyOrders($date);
 
-        // dd($daily_orders);
-
         return view('daily_report.index')->with([
             'title' => '日　報',
             'date' => $date,
@@ -34,6 +32,8 @@ class DailyReportController extends Controller
         foreach ($orders as $order) {
             foreach ($order['items'] as $item) {
                 $daily_orders[] = [
+                    'order_id' => $order['id'],
+                    'clothes_id' => $item['clothes_id'],
                     'tag' => $item['tag'],
                     'name' => $item['name'],
                     'price' => $item['price'],

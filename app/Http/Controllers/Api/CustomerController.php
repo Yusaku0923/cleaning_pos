@@ -23,8 +23,8 @@ class CustomerController extends Controller
             $customers->leftJoinSub($sub_query, 'visits', 'customers.id', 'visits.customer_id');
             $customers->where(function ($query) use ($request) {
                 $query->where('customers.name', 'like', '%'.$request['keyword'].'%')
-                ->orWhere('customers.name_kana', 'like', '%'.$request['keyword'].'%')
-                ->orWhere('customers.phone_number', 'like', '%'.$request['keyword'].'%');
+                ->orWhere('customers.name_kana', 'like', $request['keyword'].'%')
+                ->orWhere('customers.phone_number', 'like', $request['keyword'].'%');
             })->where('customers.manager_id', $request['manager_id']);
             $customers->orderBy('visits.latest_visit', 'desc');
             $customers->orderBy('customers.number_of_visits', 'desc');

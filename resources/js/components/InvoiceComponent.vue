@@ -78,7 +78,7 @@
             <a class="iv-pdf"
                 :href="'/invoice/generate?ids=' + params"
                 target="_blank" rel="noopener noreferrer">
-                PDF出力
+                印刷
             </a>
         </div>
     </div>

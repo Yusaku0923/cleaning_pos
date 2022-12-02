@@ -79,7 +79,7 @@ class OrdersController extends Controller
             'paid_at' => $paid_at,
         ]);
 
-        $tag = TagNumber::find($request->manager_id)->value('tag_number');
+        $tag = TagNumber::where('manager_id', $request->manager_id)->value('tag_number');
         $response = [];
         foreach ($request->order as $clothes_id => $count) {
             $tag_count = Clothes::where('id', $clothes_id)->value('tag_count');

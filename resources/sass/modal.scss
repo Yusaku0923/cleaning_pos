@@ -256,7 +256,7 @@
 
 .modal-cd {
     width: 600px;
-    height: 90vh;
+    height: 75vh;
     &-label {
         font-size: 24px;
         text-align: center;
@@ -297,7 +297,7 @@
         left: 0;
     }
     &-list {
-        height: 15vh;
+        height: 0;
         overflow: scroll;
         white-space:nowrap;
         transition: height 0.3s linear;
@@ -313,7 +313,7 @@
             }
         }
         &-open {
-            height: 63vh !important;
+            height: 48vh !important;
             transition: height 0.3s linear;
             z-index: 5;
         }

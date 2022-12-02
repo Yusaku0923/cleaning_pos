@@ -42,11 +42,11 @@
     }
 
     &-reset {
-        position:fixed;
+        position:absolute;
         // right: 226.5px;
         // right: 216.5px;
         right: 18.35%;
-        bottom: 42px;
+        bottom: 24px;
         transition: 1s;
         width: 150px;
         height: 150px;
@@ -62,11 +62,11 @@
         }
     }
     &-pdf {
-        position:fixed;
+        position:absolute;
         // right: 17.5px;
         // right: 27.5px;
         right: 2.33%;
-        bottom: 42px;
+        bottom: 24px;
         transition: 1s;
         width: 150px;
         height: 150px;
