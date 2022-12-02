@@ -79,4 +79,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('clothes')->group(function () {
         Route::get('create', [ClothesController::class, 'create'])->name('clothes.create');
     });
+
+    if (config('app.env') === 'local') {
+        Route::get('/test', [HomeController::class, 'test'])->name('test');
+    }
 });

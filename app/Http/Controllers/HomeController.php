@@ -52,4 +52,11 @@ class HomeController extends Controller
             'title' => 'マスタ編集メニュー',
         ]);
     }
+
+    public function test()
+    {
+        return view('test')->with([
+            'title' => 'test',
+        ]);
+    }
 }

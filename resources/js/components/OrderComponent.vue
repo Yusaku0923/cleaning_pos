@@ -1,6 +1,6 @@
 <template>
  <!-- いずれcomponentにまとめる -->
-    <div class="col-12 py-3 mx-auto d-flex justify-content-between">
+    <div class="col-12 py-3 mx-auto d-flex justify-content-between position-relative">
         <div class="category-bar col-3 border-top border-bottom border-secondary">
             <div class="card py-5 px-2 border border-secondary" 
                 @click="changeCategory(-1)"
@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <div class="clothes-bar col-5 border border-secondary">
+        <div class="clothes-bar col-5 border border-secondary ">
             <template v-if="isActive === -1">
                 <div class="card border border-secondary clothes-card position-relative p-2"
                     v-for="clothes in often_ordered"
@@ -30,6 +30,14 @@
                     </div>
                     <div class="position-absolute bottom-0 text-primary">
                         {{ clothes.price.toLocaleString() }} 円
+                    </div>
+                    <div class="position-absolute odcreate-clothes-tag"
+                        :class="{
+                            'odcreate-clothes-tag-one': clothes.tag_count === 1,
+                            'odcreate-clothes-tag-two': clothes.tag_count === 2,
+                            'odcreate-clothes-tag-more': clothes.tag_count >= 3,
+                        }">
+                        <i class="fa-solid fa-tag"></i>
                     </div>
                 </div>
             </template>
@@ -46,9 +54,34 @@
                         <div class="position-absolute bottom-0 text-primary">
                             {{ clothes.price.toLocaleString() }} 円
                         </div>
+                        <div class="position-absolute odcreate-clothes-tag"
+                            :class="{
+                                'odcreate-clothes-tag-one': clothes.tag_count === 1,
+                                'odcreate-clothes-tag-two': clothes.tag_count === 2,
+                                'odcreate-clothes-tag-more': clothes.tag_count >= 3,
+                            }">
+                            <i class="fa-solid fa-tag"></i>
+                        </div>
                     </div>
                 </template>
             </template>
+
+            <div class="col-5 card position-absolute odcreate-clothes-tagintro px-3">
+                <div class="col-12 d-flex fs-18">
+                    <div class="col-3 fw-bold">
+                        タグ枚数
+                    </div>
+                    <div class="col-3 odcreate-clothes-tag odcreate-clothes-tag-one">
+                        <i class="fa-solid fa-tag"></i><span class="ps-1">:１枚</span>
+                    </div>
+                    <div class="col-3 odcreate-clothes-tag odcreate-clothes-tag-two">
+                        <i class="fa-solid fa-tag"></i><span class="ps-1">:２枚</span>
+                    </div>
+                    <div class="col-3 odcreate-clothes-tag odcreate-clothes-tag-more">
+                        <i class="fa-solid fa-tag"></i><span class="ps-1">:３枚以上</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="slip-bar col-4 position-relative" v-if="step === 1">
@@ -57,7 +90,7 @@
             </div>
 
             <div class="order-list">
-                <div class="col-12 py-3 px-2 border border-secondary bg-white"
+                <div class="col-12 py-3 px-2 border border-secondary bg-white position-relative"
                     v-for="i in indexes"
                     :key="i">
                     <div class="col-12 px-2 order-title">{{ order[i].name }}</div>
@@ -76,6 +109,14 @@
                         <div class="col-5 order-text text-end text-primary">
                             {{ (order[i].count * order[i].price).toLocaleString() }} 円
                         </div>
+                    </div>
+                    <div class="position-absolute odcreate-selected-tag fs-24"
+                        :class="{
+                            'odcreate-clothes-tag-one': order[i].tag_count === 1,
+                            'odcreate-clothes-tag-two': order[i].tag_count === 2,
+                            'odcreate-clothes-tag-more': order[i].tag_count >= 3,
+                        }">
+                        <i class="fa-solid fa-tag"></i>
                     </div>
                 </div>
             </div>
