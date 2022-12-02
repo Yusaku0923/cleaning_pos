@@ -37,6 +37,9 @@
             .text-start {
                 text-align: left !important;
             }
+            .normal-font {
+                font-family: migmix !important;
+            }
             .bold-font {
                 font-family: migmix-bold !important;
             }
@@ -250,11 +253,11 @@
             <table class="total-left-table">
                 <thead>
                     <tr>
-                        <th>前回残高</th>
-                        <th>御入金金額</th>
-                        <th></th>
-                        <th>繰越金</th>
-                        <th>今回売上額</th>
+                        <th class="normal-font">前回残高</th>
+                        <th class="normal-font">御入金金額</th>
+                        <th class="normal-font"></th>
+                        <th class="normal-font">繰越金</th>
+                        <th class="normal-font">今回売上額</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -270,7 +273,7 @@
             <table class="total-right-table">
                 <thead>
                     <tr>
-                        <th>今回御請求額</th>
+                        <th class="normal-font">今回御請求額</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -285,14 +288,14 @@
             <table class="order-list">
                 <thead>
                     <tr>
-                        <th class="order-date">年月日</th>
-                        <th class="order-no">伝票No</th>
-                        <th class="order-detail">タグ/商品名/色柄加工等</th>
-                        <th class="order-div">区分</th>
-                        <th class="order-price">単価</th>
-                        <th class="order-count">数量</th>
-                        <th class="order-amount">売上金額</th>
-                        <th class="order-payment">入金額</th>
+                        <th class="order-date normal-font">年月日</th>
+                        <th class="order-no normal-font">伝票No</th>
+                        <th class="order-detail normal-font">タグ/商品名/色柄加工等</th>
+                        <th class="order-div normal-font">区分</th>
+                        <th class="order-price normal-font">単価</th>
+                        <th class="order-count normal-font">数量</th>
+                        <th class="order-amount normal-font">売上金額</th>
+                        <th class="order-payment normal-font">入金額</th>
                     </tr>
                 </thead>
                 <tbody>
