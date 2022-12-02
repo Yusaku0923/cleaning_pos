@@ -172,6 +172,10 @@
             table th {
                 background-color: #e6e6e6;
             }
+            .table-header {
+                background-color: #e6e6e6;
+                line-height: 1 !important;
+            }
             .list {
                 position: absolute;
                 top: 240px;
@@ -251,16 +255,16 @@
 
         <div class="total">
             <table class="total-left-table">
-                <thead>
-                    <tr>
-                        <th class="normal-font">前回残高</th>
-                        <th class="normal-font">御入金金額</th>
-                        <th class="normal-font"></th>
-                        <th class="normal-font">繰越金</th>
-                        <th class="normal-font">今回売上額</th>
-                    </tr>
-                </thead>
+                {{-- <thead>
+                </thead> --}}
                 <tbody>
+                    <tr>
+                        <td class="table-header">前回残高</td>
+                        <td class="table-header">御入金金額</td>
+                        <td class="table-header"></td>
+                        <td class="table-header">繰越金</td>
+                        <td class="table-header">今回売上額</td>
+                    </tr>
                     <tr>
                         <td class="number-font text-end">{{ number_format($invoice['carried_over_amount']) }}</td>
                         <td class="number-font text-end">0</td>
@@ -271,12 +275,12 @@
                 </tbody>
             </table>
             <table class="total-right-table">
-                <thead>
-                    <tr>
-                        <th class="normal-font">今回御請求額</th>
-                    </tr>
-                </thead>
+                {{-- <thead>
+                </thead> --}}
                 <tbody>
+                    <tr>
+                        <td class="table-header">今回御請求額</td>
+                    </tr>
                     <tr>
                         <td class="number-font text-end">{{ number_format($invoice['amount'] + $invoice['carried_over_amount']) }}</td>
                     </tr>
@@ -286,19 +290,19 @@
 
         <div class="list">
             <table class="order-list">
-                <thead>
-                    <tr>
-                        <th class="order-date normal-font">年月日</th>
-                        <th class="order-no normal-font">伝票No</th>
-                        <th class="order-detail normal-font">タグ/商品名/色柄加工等</th>
-                        <th class="order-div normal-font">区分</th>
-                        <th class="order-price normal-font">単価</th>
-                        <th class="order-count normal-font">数量</th>
-                        <th class="order-amount normal-font">売上金額</th>
-                        <th class="order-payment normal-font">入金額</th>
-                    </tr>
-                </thead>
+                {{-- <thead>
+                </thead> --}}
                 <tbody>
+                    <tr>
+                        <th class="order-date table-header">年月日</th>
+                        <th class="order-no table-header">伝票No</th>
+                        <th class="order-detail table-header">タグ/商品名/色柄加工等</th>
+                        <th class="order-div table-header">区分</th>
+                        <th class="order-price table-header">単価</th>
+                        <th class="order-count table-header">数量</th>
+                        <th class="order-amount table-header">売上金額</th>
+                        <th class="order-payment table-header">入金額</th>
+                    </tr>
                     @php
                         $line = 0;
                     @endphp
