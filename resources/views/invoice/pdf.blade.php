@@ -294,14 +294,14 @@
                 </thead> --}}
                 <tbody>
                     <tr>
-                        <th class="order-date table-header">年月日</th>
-                        <th class="order-no table-header">伝票No</th>
-                        <th class="order-detail table-header">タグ/商品名/色柄加工等</th>
-                        <th class="order-div table-header">区分</th>
-                        <th class="order-price table-header">単価</th>
-                        <th class="order-count table-header">数量</th>
-                        <th class="order-amount table-header">売上金額</th>
-                        <th class="order-payment table-header">入金額</th>
+                        <td class="order-date table-header">年月日</td>
+                        <td class="order-no table-header">伝票No</td>
+                        <td class="order-detail table-header">タグ/商品名/色柄加工等</td>
+                        <td class="order-div table-header">区分</td>
+                        <td class="order-price table-header">単価</td>
+                        <td class="order-count table-header">数量</td>
+                        <td class="order-amount table-header">売上金額</td>
+                        <td class="order-payment table-header">入金額</td>
                     </tr>
                     @php
                         $line = 0;
