@@ -85,9 +85,10 @@
                                     詳細
                                 </div>
                             </button>
-                            <button class="odlist-operation-btn bg-danger text-white mt-2 odlist-operation-btn-inactive"
-                                :class="{ 'odlist-operation-btn-inactive': selectedId === ''}"
+                            <button class="odlist-operation-btn bg-danger text-white mt-2"
+                                :class="{ 'odlist-operation-btn-inactive': selectedId === '', 'odlist-operation-btn-active': selectedId !== ''}"
                                 :disabled="selectedId === ''"
+                                @click="sendDeleteReq()"
                                 >
                                 <div class="odlist-operation-btn-icon">
                                     <i class="fa-solid fa-trash-can"></i>
@@ -206,6 +207,26 @@ export default ({
             })
             .then(function (response) {
                 return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        sendDeleteReq: async function() {
+            let confirm = alert('こちらの伝票を削除します。よろしいですか？');
+            if (confirm) {
+                await this.delete();
+            }
+        },
+        delete: async function() {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/order/delete', {
+                customer_id: this.customer.id,
+                order_id: this.selectedId,
+            })
+            .then(function (response) {
+                location.reload();
             })
             .catch(function (error) {
                 console.log(error);

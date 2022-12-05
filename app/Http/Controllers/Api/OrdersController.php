@@ -154,7 +154,7 @@ class OrdersController extends Controller
                     break;
             }
         }
-        Log::debug($conditions);
+
         return response()->json([
             'orders' => $orders,
             'conditions' => $conditions
@@ -166,6 +166,14 @@ class OrdersController extends Controller
             'payment' => $request->payment,
             'paid_at' => date('Y-m-d H:i:s')
         ]);
+
+        return response()->json([
+            'ok' => true
+        ]);
+    }
+
+    public function delete($order_id) {
+        Order::find($order_id)->delete();
 
         return response()->json([
             'ok' => true

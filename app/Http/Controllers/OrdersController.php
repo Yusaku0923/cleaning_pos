@@ -125,9 +125,9 @@ class OrdersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($order_id)
+    public function destroy(Request $request)
     {
-        Order::find($order_id)->delete();
+        Order::find($request->order_id)->delete();
 
         return redirect()->route('home');
     }

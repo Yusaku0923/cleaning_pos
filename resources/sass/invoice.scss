@@ -7,12 +7,19 @@
         &-search {
             &-field {
                 font-size: 20px;
+                &-column {
+                    line-height: 3;
+                }
+                &-btn {
+                    top: 11px;
+                    right: 22px;
+                }
             }
         }
 
         &-result {
             &-field {
-                height: 66vh;
+                height: 68vh;
                 &-card {
                     font-size: 20px;
                 }
@@ -20,7 +27,7 @@
                     font-size: 24px;
                 }
                 &-list {
-                    height: 58vh;
+                    height: 50vh;
                     &-card {
                         font-size: 20px;
                     }
@@ -70,11 +77,12 @@
         transition: 1s;
         width: 150px;
         height: 150px;
+        border: 3px solid #000;
         border-radius: 50%;
         background-color: $orange;
         text-align: center;
         font-size: 28px;
-        line-height: 150px;
+        line-height: 144px;
         text-decoration: none;
         color: #fff;
         &:hover {

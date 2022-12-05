@@ -7,16 +7,18 @@
             <div class="col-8 px-1 iv-left">
                 <div class="col-12 iv-left-search">
                     <div class="card mt-2">
-                        <div class="card-body col-12 p-1 iv-left-search-field d-flex">
-                            <div class="col-2">
+                        <div class="card-body col-12 p-1 iv-left-search-field d-flex position-relative">
+                            <div class="col-2 iv-left-search-field-column">
                                 <div class="col-10 bg-secondary text-white rounded text-center">表示項目</div>
                             </div>
-                            <div class="col-2">締日：{{ cutoffDate === 0 ? '-': cutoffDate === 99 ? '末日': cutoffDate + '日' }}</div>
-                            <div class="col-3">対象月：{{ targetMonth === '' ? '-': targetMonth }}</div>
-                            <div class="col-5">名前：{{ customerName === '' ? '-': customerName }}</div>
-                        </div>
-                        <div class="card-footer p-1 px-3">
-                            <p class="col-12 text-end mb-0">検索項目入力　<i class="fa-solid fa-chevron-down"></i></p>
+                            <div class="col-2 iv-left-search-field-column">締日：{{ cutoffDate == 0 ? '-': cutoffDate == 99 ? '末日': cutoffDate + '日' }}</div>
+                            <div class="col-3 iv-left-search-field-column">対象月：{{ targetMonth === '' ? '-': targetMonth }}</div>
+                            <div class="col-4 iv-left-search-field-column">名前：{{ customerName === '' ? '-': customerName }}</div>
+                            <div class="position-absolute iv-left-search-field-btn">
+                                <button class="modal-cs-btn modal-cs-btn-send" @click="dispSearch = true">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,11 +83,20 @@
                 印刷
             </a>
         </div>
+        <search-modal
+            @close="close"
+            @search="displaySearchResult"
+            :cutoff_date="cutoffDate"
+            :target_month="dateFormater(targetMonth, 'YYYY-MM')"
+            :customer_name="customerName"
+            v-if="dispSearch"
+        ></search-modal>
     </div>
 </template>
 
 <script>
 import moment from "moment";
+import SearchModal from "./Modals/InvoiceSearchModalComponent";
 
 export default ({
     props: {
@@ -93,9 +104,17 @@ export default ({
             type: Array,
             required: true
         },
+        manager_id: {
+            required: true
+        },
+        token: {
+            Type: String,
+            required: true,
+        }
     },
     data() {
         return {
+            dispSearch: false,
             cutoffDate: 0,
             targetMonth: this.dateFormater(new Date(), 'YYYY/MM'),
             customerName: '',
@@ -105,9 +124,15 @@ export default ({
             params: '',
         }
     },
+    components: {
+        'search-modal': SearchModal,
+    },
     methods: {
         dateFormater: function(date, format = 'MM/DD') {
             return moment(date).format(format);
+        },
+        close: function() {
+            this.dispSearch = false;
         },
         switchSelection: function(invoice) {
             if (this.indexes.includes(invoice.id)) {
@@ -118,7 +143,32 @@ export default ({
                 this.indexes.push(invoice.id);
             }
             this.params = this.indexes.join(',');
-        }
+        },
+        displaySearchResult: async function(conditions) {
+            if (conditions.target_month.length !== 0) {
+                conditions.target_month = this.dateFormater(conditions.target_month, 'YYYY-MM');
+            }
+            let result = await this.search(conditions);
+            this.invoicesList = result.invoices;
+            this.cutoffDate = conditions.cutoff_date;
+            this.targetMonth = conditions.target_month;
+            this.customerName = conditions.customer_name;
+            this.close();
+        },
+        search: async function(conditions) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/invoice/search', {
+                manager_id: this.manager_id,
+                conditions: conditions,
+            })
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
     },
 })
 </script>

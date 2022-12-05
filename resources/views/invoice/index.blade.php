@@ -3,7 +3,9 @@
 @section('content')
 
 <invoice-component
+    :manager_id="{{ json_encode(session()->get('manager_id')) }}"
     :invoices="{{ json_encode($invoices) }}"
+    :token="{{ json_encode($token) }}"
 ></invoice-component>
 {{-- <div class="col-12">
     <div class="col-12 d-flex border-bottom border-2 mt-2 pb-2 dr-header">

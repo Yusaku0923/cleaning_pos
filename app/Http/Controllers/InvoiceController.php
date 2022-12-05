@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Models\Invoice;
+use App\Models\Store;
 class InvoiceController extends Controller
 {
     public function index() {
@@ -13,9 +16,12 @@ class InvoiceController extends Controller
         }
         $model = new Invoice();
         $invoices = $model->fetchInvoices(session()->get('manager_id'));
+        $store = Store::find(Auth::id());
+        $token = $store->createToken(Str::random(10));
         return view('invoice.index')->with([
             'title' => '請　求　書　発　行',
-            'invoices' => $invoices
+            'invoices' => $invoices,
+            'token' => $token->plainTextToken,
         ]);
     }
 

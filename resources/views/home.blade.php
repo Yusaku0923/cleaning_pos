@@ -5,7 +5,7 @@
     <div class="col-12 row justify-content-center mx-auto">
         <div class="col-12 row justify-content-between">
             {{-- Left Block --}}
-            <div class="col-6 left-block">
+            <div class="col-6 left-block position-relative" style="height: 84vh">
                 <customer-info-component
                     :customer="{{ json_encode($customer) }}"
                 ></customer-info-component>
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="card col-12 py-1 px-3 mt-3"><span>担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></span></div>
-                <div class="col-12 d-flex justify-content-between" style="margin-top: 20px">
+                <div class="col-12 d-flex justify-content-between position-absolute bottom-0 pe-4">
                     <div class="card col-15 mr-1 text-center lh-leftbtn cbtn-red" data-bs-toggle="modal" data-bs-target="#order-cancel-modal">直前預り<br>取り消し</div>
                     <button type="button" class="card col-15 mr-1 text-center lh-leftbtn cbtn-blue" data-bs-toggle="modal" data-bs-target="#manager-select-modal"><div class="mx-auto">担当者<br>変更</div></button>
                     <div class="card col-15 mr-1 text-center lh-leftbtn cbtn-blue" data-bs-toggle="modal" data-bs-target="#tag-edit-modal">タグ番号<br>{{ is_null($tag) ? '0-000': Utility::convertTagFormat($tag) }}</div>
@@ -109,7 +109,7 @@
             </div>
 
             {{-- Right Block --}}
-            <div class="col-6 right-block">
+            <div class="col-6 right-block position-relative" style="height: 84vh">
                 <div class="card col-12 py-2 h4 text-center">
                     顧　客　呼　出
                 </div>
@@ -145,7 +145,7 @@
                     </div>
                 </div>
 
-                <div class="col-12 d-flex justify-content-between" style="margin-top: 20px;">
+                <div class="col-12 d-flex justify-content-between position-absolute bottom-0 pe-4">
                     <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue">メニュー</a>
                     <div class="card col-3 col-3-custom lh-rightbtn text-center bg-secondary"></div>
                     <a href="{{ route('customer.clear') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-red">入力クリア</a>
