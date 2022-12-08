@@ -3,9 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Models\Clothes;
 
 class ClothesController extends Controller
 {
+    public $category_id = NULL;
+
+    public $posts;
+
+    protected $rules = [
+        'posts.name' => 'string',
+        'posts.price' => 'number'
+    ];
     /**
      * Display a listing of the resource.
      *
@@ -23,8 +33,21 @@ class ClothesController extends Controller
      */
     public function create()
     {
+        if (is_null($this->category_id)) {
+            $category = '';
+            $cards = Category::all();
+        } else {
+            $category = Category::where('id', $this->category_id)->value('name');
+            $cards = Clothes::where('category_id', $this->category_id)->get();
+        }
+
+        // return view('livewire.create-clothes-menu')->with([
+        // ]);
         return view('clothes.create')->with([
-            'title' => '商　品　マ　ス　タ'
+            'title' => '商　品　マ　ス　タ',
+            // 'category' => $category,
+            'cards' => $cards,
+            // 'category_id' => 
         ]);
     }
 

@@ -2,11 +2,11 @@
 <div class="modal fade" id="manager-select-modal" tabindex="-1" role="dialog" aria-labelledby="manager-select-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title h3 fw-bold" id="manager-select-modal-label">担当者選択</h5>
-                <button type="button" class="close btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+            <div class="modal-header manager-field">
+                <h5 class="modal-title fs-26 fw-bold" id="manager-select-modal-label">担当者変更</h5>
+                {{-- <button type="button" class="close btn cbtn-red" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" class="h5">×</span>
-                </button>
+                </button> --}}
             </div>
             <form method="POST" action="{{ route('manager.update') }}" class="form-horizontal" autocomplete="off">
                 {{ csrf_field() }}

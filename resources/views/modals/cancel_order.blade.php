@@ -1,11 +1,11 @@
 <div class="modal fade" id="order-cancel-modal" tabindex="-1" role="dialog" aria-labelledby="order-cancel-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title h3 fw-bold" id="order-cancel-modal-label">直前預り取り消し</h5>
-                <button type="button" class="close btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+            <div class="modal-header cancel-field">
+                <h5 class="modal-title fs-26 fw-bold" id="order-cancel-modal-label">直前預り取り消し</h5>
+                {{-- <button type="button" class="close btn cbtn-red" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" class="h5">×</span>
-                </button>
+                </button> --}}
             </div>
             <form method="POST" action="{{ route('order.delete', $latest_order['id']) }}">
                 @csrf
@@ -39,7 +39,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary fs-20" data-bs-dismiss="modal">閉じる</button>
-                    <button type="submit" class="btn btn-danger fs-20">削除</button>
+                    <button type="submit" class="btn cbtn-red fs-20">削除</button>
                 </div>
             </form>
         </div>

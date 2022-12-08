@@ -1,6 +1,10 @@
 <?php
 namespace App\Services;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use App\Models\Store;
+
 class Utility
 {
     public static function convertTagFormat($tag) {
@@ -37,5 +41,12 @@ class Utility
         }
 
         return [$period_start, $period_end];
+    }
+
+    public static function fetchApiToken() {
+        $store = Store::find(Auth::id());
+        $token = $store->createToken(Str::random(10));
+
+        return $token->plainTextToken;
     }
 }

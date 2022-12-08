@@ -1,6 +1,6 @@
 <template>
-    <div class="col-3 mt-2 col-3-custom">
-        <div class="card px-2 history-card"
+    <div class="col-3 col-3-custom">
+        <div class="card px-2 history-card fs-16"
             @click="dispDetail = true"
             :class="{ 'history-card-uh': order.handed_at === null }">
             <div class="col-12 text-nowrap overflow-hidden"
@@ -16,6 +16,7 @@
             @close="close"
             :customer="customer"
             :order="order"
+            :token="token"
             v-if="dispDetail"
         ></detail-modal>
     </div>
@@ -31,7 +32,10 @@ export default ({
         },
         order: {
             required: true
-        }
+        },
+        token: {
+            required: true
+        },
     },
     data() {
         return {

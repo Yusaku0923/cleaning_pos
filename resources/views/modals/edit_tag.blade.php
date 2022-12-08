@@ -1,11 +1,11 @@
 <div class="modal fade" id="tag-edit-modal" tabindex="-1" role="dialog" aria-labelledby="tag-edit-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title h3 fw-bold" id="tag-edit-modal-label">タグ番号更新</h5>
-                <button type="button" class="close btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+            <div class="modal-header tag-field">
+                <h5 class="modal-title fs-26 fw-bold" id="tag-edit-modal-label">タグ番号更新</h5>
+                {{-- <button type="button" class="close btn cbtn-red" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" class="h5">×</span>
-                </button>
+                </button> --}}
             </div>
             <form method="POST" action="{{ route('tag.update') }}">
                 @csrf

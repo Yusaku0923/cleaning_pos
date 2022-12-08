@@ -13,7 +13,7 @@
     }
 
     &-window {
-        background: #fff;
+        background: $white;
         border-radius: 4px;
         overflow: hidden;
     }
@@ -57,13 +57,13 @@
     height: 137px;
     font-size: 32px;
     line-height: 137px;
-    background-color: #35a057;
+    background-color: $green;
 }
 
 .modal-ac-board {
     width: 800px;
     height: 600px;
-    background-color: #0067C0;
+    background-color: $deepblue;
 }
 .modal-ac-header {
     height: 50px;
@@ -72,11 +72,11 @@
 }
 .modal-ac-body {
     height: 470px;
-    background-color: #0067C0;
+    background-color: $deepblue;
 }
 .modal-ac-result {
     &-total {
-        background-color: #fff;
+        background-color: $white;
         &-label {
             font-size: 20px;
             line-height: 72px;
@@ -92,7 +92,7 @@
     }
     
     &-change {
-        background-color: #fff;
+        background-color: $white;
         &-label {
             font-size: 20px;
             line-height: 45px;
@@ -103,7 +103,7 @@
     }
     
     &-receive {
-        background-color: #fff;
+        background-color: $white;
         margin-top: 35px;
         &-label {
             font-size: 20px;
@@ -130,7 +130,7 @@
         left: -95px;
         margin-top: -40px;
         border: 40px solid transparent;
-        border-right: 40px solid #0067C0;
+        border-right: 40px solid $deepblue;
     }
 
     &-upper {
@@ -142,16 +142,16 @@
         gap: 0;
 
         &-key {
-            background-color: #fff;
+            background-color: $white;
             line-height: 108px;
         }
 
         &-backspace {
-            background-color: #0067C0;
+            background-color: $deepblue;
             line-height: 108px;
         }
         &-minus {
-            background-color: #0067C0;
+            background-color: $deepblue;
             line-height: 108px;
         }
     }
@@ -165,7 +165,7 @@
         gap: 0;
 
         &-key {
-            background-color: #fff;
+            background-color: $white;
             line-height: 108px;
         }
 
@@ -173,7 +173,7 @@
             height: 216px;
             width: 108px;
 
-            background-color: #0067C0;
+            background-color: $deepblue;
             line-height: 216px;
         }
 
@@ -202,7 +202,7 @@
     &-label {
         font-size: 24px;
         text-align: center;
-        color: #fff;
+        color: $white;
         background-color: $green;
         
     }
@@ -243,12 +243,12 @@
         }
         &-back {
             font-size: 22px;
-            color: #fff;
+            color: $white;
             background-color: $secondary;
         }
         &-send {
             font-size: 22px;
-            color: #fff;
+            color: $white;
             background-color: $green;
         }
     }
@@ -260,7 +260,7 @@
     &-label {
         font-size: 24px;
         text-align: center;
-        color: #fff;
+        color: $white;
         background-color: $orange;
     }
     &-current {
@@ -269,25 +269,25 @@
     &-detail {
         &-invoice {
             background-color: $green;
-            color: #fff;
+            color: $white;
             border-radius: 5px;
             padding: 0 10px;
         }
         &-later {
             background-color: $danger;
-            color: #fff;
+            color: $white;
             border-radius: 5px;
             padding: 0 10px;
         }
         &-cash {
             background-color: $primary;
-            color: #fff;
+            color: $white;
             border-radius: 5px;
             padding: 0 10px;
         }
         &-pycheck {
             background-color: $orange;
-            color: #fff;
+            color: $white;
             border-radius: 5px;
             padding: 0 10px;
         }
@@ -305,11 +305,11 @@
         &-column {
             top: 0;
             z-index: 2;
-            background-color: #fff;
-            border: 3px solid #fff;
+            background-color: $white;
+            border: 3px solid $white;
             &-bar {
                 background-color: $orange;
-                color: #fff;
+                color: $white;
             }
         }
         &-open {
@@ -341,23 +341,28 @@
             opacity: 1;
             transition: all .025s;
         }
+        &-receipt {
+            font-size: 22px;
+            color: $white;
+            background-color: $teal;
+        }
         &-back {
             font-size: 22px;
-            color: #fff;
+            color: $white;
             background-color: $secondary;
         }
         &-send {
             font-size: 22px;
-            color: #fff;
+            color: $white;
             background-color: $green;
         }
         &-toggle-o {
             background-color: $orange;
-            color: #fff;
+            color: $white;
         }
         &-toggle-c {
             background-color: $danger;
-            color: #fff;
+            color: $white;
         }
     }
 }

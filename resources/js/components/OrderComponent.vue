@@ -1,7 +1,7 @@
 <template>
  <!-- いずれcomponentにまとめる -->
     <div class="col-12 py-3 mx-auto d-flex justify-content-between position-relative">
-        <div class="category-bar col-3 border-top border-bottom border-secondary">
+        <div class="category-bar bg-light col-3 border-top border-bottom border-secondary">
             <div class="card py-5 px-2 border border-secondary" 
                 @click="changeCategory(-1)"
                 :class="{'odcreate-category-active': isActive === -1}"
@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <div class="clothes-bar col-5 border border-secondary ">
+        <div class="clothes-bar bg-light col-5 border border-secondary pb-5">
             <template v-if="isActive === -1">
                 <div class="card border border-secondary clothes-card position-relative p-2"
                     v-for="clothes in often_ordered"
@@ -66,7 +66,7 @@
                 </template>
             </template>
 
-            <div class="col-5 card position-absolute odcreate-clothes-tagintro px-3">
+            <div class="col-5 bg-white position-absolute odcreate-clothes-tagintro px-3">
                 <div class="col-12 d-flex fs-18">
                     <div class="col-3 fw-bold">
                         タグ枚数
@@ -84,7 +84,7 @@
             </div>
         </div>
 
-        <div class="slip-bar col-4 position-relative" v-if="step === 1">
+        <div class="slip-bar bg-light col-4 position-relative" v-if="step === 1">
             <div class="col-12 py-3 px-2 border border-secondary bg-white slip-header">
                 計：{{ total }}点
             </div>
@@ -103,7 +103,7 @@
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                             <div class="text-primary order-text">
-                                {{ order[i].count }} 点
+                                {{ order[i].count * order[i].tag_count }} 点
                             </div>
                         </div>
                         <div class="col-5 order-text text-end text-primary">
@@ -134,7 +134,7 @@
 
         </div>
 
-        <div class="slip-bar col-4 border border-secondary position-relative" v-if="step === 2 || step === 3 || step === 4 || step === 5">
+        <div class="slip-bar bg-light col-4 border border-secondary position-relative" v-if="step === 2 || step === 3 || step === 4 || step === 5">
             <div class="col-12 py-3 px-2 border-bottom border-secondary bg-white d-flex justify-content-between slip-header">
                 <div class="col-3 text-primary" @click="changeStep(1)" v-if="step !== 5">
                         <i class="fa-solid fa-chevron-left"></i> 戻る
@@ -364,7 +364,7 @@ export default ({
         'receipt-printer': ReceiptPrinter,
     },
     mounted() {
-        // ローカルストレージ活用
+        // ローカルIPは.envに
         let ePosDev = new epson.ePOSDevice();
         ePosDev.connect('192.168.0.215', 8008, function(data) {
             if(data == 'OK' || data == 'SSL_CONNECT_OK') {
@@ -402,7 +402,7 @@ export default ({
                 }
                 this.$set(this.order, clothes.id, clothes);
 
-                this.total++;
+                this.total += clothes.tag_count;
                 this.amount += this.order[clothes.id].price;
             }
         },
@@ -414,11 +414,11 @@ export default ({
 
             this.orderForSend[clothes.id] = addedCount;
 
-            this.total++;
+            this.total += clothes.tag_count;
             this.amount += this.order[clothes.id].price;
         },
         decreace: function (clothes) {
-            this.total--;
+            this.total -= clothes.tag_count;
             this.amount -= this.order[clothes.id].price;
 
             let substractedCount = this.order[clothes.id].count - 1;

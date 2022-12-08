@@ -1,10 +1,10 @@
 <template>
     <div class="col-12">
         <div class="col-10 mx-auto">
-            <div class="card col-12 py-3 mb-4 h4 text-center">
+            <div class="card card-border col-12 py-3 mb-4 h4 text-center">
                 顧　客　検　索
             </div>
-            <div class="card col-12 py-4">
+            <div class="card card-border col-12 py-4">
                 <div class="form-group col-6 mx-auto">
                     <input type="text" class="form-control form-control-lg" placeholder="名前、フリガナ、電話番号"
                         v-model="keyword"
@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="col-10 mx-auto my-3">
-            <div class="card col-12">
+            <div class="card card-border col-12">
                 <div class="col-10 d-flex mx-auto mt-3 dr-body-column-inner bg-primary text-white" >
                     <div class="col-7 text-center">お名前</div>
                     <div class="col-3 text-center">最終来店日</div>

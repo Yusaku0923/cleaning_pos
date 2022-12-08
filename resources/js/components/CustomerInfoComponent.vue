@@ -1,13 +1,13 @@
 <template>
     <div>
-        <div class="card col-12 py-2 h4 text-center position-relative" v-if="('name' in customer)">
+        <div class="card card-border col-12 py-2 h4 text-center position-relative" v-if="('name' in customer)">
             {{ customer.name + '　様' }}
             <div class="position-absolute ci-invoice-mark" v-if="Boolean(customer.is_invoice)">請</div>
         </div>
-        <div class="card col-12 py-2 h4 text-center" v-else>
+        <div class="card card-border col-12 py-2 h4 text-center" v-else>
             顧客情報が選択されていません
         </div>
-        <div class="card col-12 text-center">
+        <div class="card card-border col-12 text-center">
             <table class="table h-100 csinfo-table">
                 <thead>
                     <tr>

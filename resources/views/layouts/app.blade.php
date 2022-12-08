@@ -29,16 +29,15 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
 
     @livewireStyles
 </head>
 <body>
-    <div id="app">
+    <div id="app" class="{{ session('theme_body') ?? session('theme_body') }}">
         <main class="py-4 position-relative">
             <div class="col-12 mb-4 px-2 position-sticky">
                 @if ( !request()->is('*login*') )
-                <a href="{{ route('home') }}" class="card py-2 text-decoration-none text-body">
+                <a href="{{ route('home') }}" class="card py-2 text-decoration-none text-body border border-2 border-dark {{ session('theme_header') ?? session('theme_header') }}">
                     <div class="d-flex justify-content-between">
                         <div class="col-4 px-5 text-start">担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></div>
                         <div class="col-4 text-center fw-bold">{{ $title ?? 'システム' }}</div>

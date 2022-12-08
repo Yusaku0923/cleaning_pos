@@ -78,7 +78,7 @@
         color: #fff;
     }
     &-selected {
-        border: 3px solid #2dbe5b;
+        border: 3px solid $green;
     }
     &-unselected {
         padding: 10px 2px !important;
@@ -87,5 +87,5 @@
 
 
 
-.uh-orange {background-color:$orange;}
-.uh-green {background-color:#2dbe5b;}
+.py-yellow {background-color:$yellow;}
+.py-green {background-color:$green;}

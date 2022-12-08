@@ -57,10 +57,10 @@
                             <div class="col-12 position-absolute modal-cd-bottoms">
                                 <div class="col-12 d-flex justify-content-between px-3">
                                     <div class="col-8 fw-bold" style="line-height: 46px;">預り一覧（全{{ order.count }}点）</div>
-                                    <div class="col-4 text-end px-3" v-if="!openAC">
+                                    <div class="col-4 text-end ps-3" v-if="!openAC">
                                         <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-o" @click="toggleAC()"><i class="fa-solid fa-angle-up pe-2"></i>開く</button>
                                     </div>
-                                    <div class="col-4 text-end px-3" v-else>
+                                    <div class="col-4 text-end ps-3" v-else>
                                         <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-c" @click="toggleAC()"><i class="fa-solid fa-angle-down pe-2"></i>閉じる</button>
                                     </div>
                                 </div>
@@ -92,7 +92,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 card-footer py-3 d-flex justify-content-end">
+                        <div class="col-12 card-footer py-3 d-flex justify-content-between">
+                            <div class="col-5 text-start">
+                                <button class="px-3 py-1 modal-cd-btn modal-cd-btn-receipt" @click="$emit('close')">レシート再発行</button>
+                            </div>
                             <div class="col-3 text-end">
                                 <button class="px-3 py-1 modal-cd-btn modal-cd-btn-back" @click="$emit('close')">閉じる</button>
                             </div>
@@ -101,11 +104,16 @@
                 </div>
             </div>
         </div>
+        <receipt-printer
+            ref="child"
+            :token="token"
+        ></receipt-printer>
     </transition>
 </template>
 
 <script>
 import moment from "moment";
+import ReceiptPrinter from '../Functions/ReceiptPrinter';
 
 export default ({
     props: {
@@ -114,6 +122,9 @@ export default ({
         },
         order: {
             required: true
+        },
+        token: {
+            required: true
         }
     },
     data() {
@@ -121,6 +132,9 @@ export default ({
             openAC: true,
             hideUpper: false
         }
+    },
+    components: {
+        'receipt-printer': ReceiptPrinter,
     },
     methods: {
         dateFormater: function(date, format = 'MM/DD') {

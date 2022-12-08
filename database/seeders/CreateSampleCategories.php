@@ -16,6 +16,13 @@ class CreateSampleCategories extends Seeder
     public function run()
     {
         $list = [
+            'カスタム' => [
+                [
+                    'name' => '手入力',
+                    'name_kana' => '手入力',
+                    'price' => 9999
+                ],
+            ],
             'シャツ' =>[
                 [
                     'name' => 'Yシャツ（立体仕上げ）',
@@ -251,23 +258,24 @@ class CreateSampleCategories extends Seeder
             ]
         ];
 
-        // foreach ($list as $key => $arr) {
-        //     $obj = Category::query()->create([
-        //         'store_id' => 1,
-        //         'name' => $key
-        //     ]);
+        if (config('app.env') !== 'production') {
+            foreach ($list as $key => $arr) {
+                $obj = Category::query()->create([
+                    'store_id' => 1,
+                    'name' => $key
+                ]);
 
-        //     foreach ($arr as $_key => $_arr) {
-        //         Clothes::query()->create([
-        //             'store_id' => 1,
-        //             'category_id' => $obj->id,
-        //             'name' => $_arr['name'],
-        //             'name_kana' => $_arr['name_kana'],
-        //             'price' => $_arr['price'],
-        //         ]);
-        //     }
-        // }
-
+                foreach ($arr as $_key => $_arr) {
+                    Clothes::query()->create([
+                        'store_id' => 1,
+                        'category_id' => $obj->id,
+                        'name' => $_arr['name'],
+                        'name_kana' => $_arr['name_kana'],
+                        'price' => $_arr['price'],
+                    ]);
+                }
+            }
+        }
 
         for ($i = 1; $i <= 26; $i++) {
             Category::create([

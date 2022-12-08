@@ -7,11 +7,11 @@
 <div class="modal fade" id="customer-edit-modal" tabindex="-1" role="dialog" aria-labelledby="customer-edit-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content mx-auto">
-            <div class="modal-header">
-                <h5 class="modal-title h3 fw-bold" id="customer-edit-modal-label">顧客情報編集</h5>
-                <button type="button" class="close btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+            <div class="modal-header detail-field">
+                <h5 class="modal-title fs-26 fw-bold" id="customer-edit-modal-label">顧客情報編集</h5>
+                {{-- <button type="button" class="close btn cbtn-red" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" class="h5">×</span>
-                </button>
+                </button> --}}
             </div>
             <form method="POST" action="{{ route('customer.update', $customer->id) }}">
                 @csrf

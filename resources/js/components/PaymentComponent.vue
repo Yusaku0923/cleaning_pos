@@ -7,10 +7,10 @@
                 ></customer-info-component>
             </div>
             <div class="col-12 mt-2">
-                <div class="card col-12 py-2 h4 text-center">
+                <div class="card card-border col-12 py-2 h4 text-center">
                     未払い一覧
                 </div>
-                <div class="card position-relative payment-orders">
+                <div class="card card-border position-relative payment-orders">
                     <div class="col-12 mb-2 bg-white position-sticky payment-orders-column pt-3 border border-white">
                         <div class="card col-11 mx-auto bg-primary text-white">
                             <div class="d-flex">
@@ -39,11 +39,11 @@
 
         <div class="col-6 px-4">
             <div class="col-12">
-                <div class="card col-12 py-2 h4 text-center">
+                <div class="card card-border col-12 py-2 h4 text-center">
                     伝票詳細
                 </div>
             </div>
-            <div class="card col-12 payment-operation">
+            <div class="card card-border col-12 payment-operation">
                 <div class="card-header text-center fw-bold">
                     操作
                 </div>
@@ -57,11 +57,11 @@
                                 戻る
                             </div>
                         </button>
-                        <button class="payment-operation-btn text-white mt-2 uh-orange"
+                        <button class="payment-operation-btn text-black mt-2 py-yellow"
                             :disabled="selectedOrder === ''"
                             :class="{ 'payment-operation-btn-inactive': selectedOrder === '' }"
                             @click="changeStatus()">
-                            <div class="payment-operation-btn-icon">
+                            <div class="payment-operation-btn-icon text-white">
                                 <i class="fa-solid fa-money-bill"></i>
                             </div>
                             <div class="payment-operation-btn-label text-center">
@@ -71,7 +71,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card position-relative mt-2 payment-detail">
+            <div class="card card-border position-relative mt-2 payment-detail">
                 <div class="col-12 mb-2 bg-white position-sticky payment-detail-column pt-3 border border-white">
                     <div class="card col-11 mx-auto bg-primary text-white">
                         <div class="d-flex">
