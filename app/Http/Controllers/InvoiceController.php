@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Invoice;
 use App\Models\Store;
+use App\Models\Customer;
 class InvoiceController extends Controller
 {
     public function index() {
@@ -22,6 +23,20 @@ class InvoiceController extends Controller
             'title' => '請　求　書　発　行',
             'invoices' => $invoices,
             'token' => $token->plainTextToken,
+        ]);
+    }
+
+    public function payment_confimation() {
+        if (!session()->exists('customer_id')) {
+            return redirect()->route('home');
+        }
+        $model = new Invoice();
+        $invoices = $model->fetchInvoicesNeedsPaymentConfimation(session()->get('customer_id'));
+
+        return view('invoice.payment_confimation')->with([
+            'title' => '入　金　確　認',
+            'customer' =>  Customer::find(session()->get('customer_id')),
+            'invoices' => $invoices,
         ]);
     }
 

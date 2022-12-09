@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('invoice')->group(function () {
         Route::get('', [InvoiceController::class, 'index'])->name('invoice.index');
+        Route::get('payment_confimation', [InvoiceController::class, 'payment_confimation'])->name('invoice.payment_confimation');
         Route::get('generate', [InvoiceController::class, 'generate'])->name('invoice.generate');
     });
 

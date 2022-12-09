@@ -1,12 +1,13 @@
 <template>
     <div class="col-12">
         <div class="col-12 d-flex border-bottom border-2 mt-2 pb-2 dr-header">
-            <div class="col-4 iv-title text-center fw-bold mx-auto">請求書発行</div>
+            <div class="col-4 iv-title text-center fw-bold mx-auto"
+            :class="[ theme !== '' ? theme: '' ]">請求書発行</div>
         </div>
         <div class="col-12 d-flex">
-            <div class="col-8 px-1 iv-left">
+            <div class="col-8 ps-3 iv-left">
                 <div class="col-12 iv-left-search">
-                    <div class="card mt-2">
+                    <div class="card card-border mt-2">
                         <div class="card-body col-12 p-1 iv-left-search-field d-flex position-relative">
                             <div class="col-2 iv-left-search-field-column">
                                 <div class="col-10 bg-secondary text-white rounded text-center">表示項目</div>
@@ -23,7 +24,7 @@
                     </div>
                 </div>
                 <div class="col-12 iv-left-result mt-2">
-                    <div class="card iv-left-result-field">
+                    <div class="card card-border iv-left-result-field">
                         <div class="col-11 d-flex mx-auto mt-2 dr-body-column-inner bg-primary text-white">
                             <div class="col-3 text-center">請求対象期間</div>
                             <div class="col-5 text-center">お名前</div>
@@ -54,10 +55,10 @@
 
             <div class="col-4 px-3 iv-right position-relative">
                 <div class="col-12 iv-right-select">
-                    <div class="card col-12 mx-auto mt-2 p-1 text-center iv-right-select-label">
+                    <div class="card card-border col-12 mx-auto mt-2 p-1 text-center iv-right-select-label">
                         選択中
                     </div>
-                    <div class="card col-12 overflow-scroll mx-auto mt-2 p-2 iv-right-select-field">
+                    <div class="card card-border col-12 overflow-scroll mx-auto mt-2 p-2 iv-right-select-field">
                         <div class="card col-12 my-1 py-2 iv-right-select-field-card iv-selected-right"
                             v-for="index in indexes"
                             :key="index"
@@ -110,6 +111,10 @@ export default ({
         token: {
             Type: String,
             required: true,
+        },
+        theme: {
+            Typr: String,
+            required: true
         }
     },
     data() {
@@ -130,6 +135,9 @@ export default ({
     methods: {
         dateFormater: function(date, format = 'MM/DD') {
             return moment(date).format(format);
+        },
+        themeClass: function() {
+            return this.theme;
         },
         close: function() {
             this.dispSearch = false;

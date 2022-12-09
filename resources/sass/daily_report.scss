@@ -1,6 +1,5 @@
 .dr {
     &-header {
-        // position: fixed;
     }
     &-earnings {
         &-label {
@@ -11,6 +10,7 @@
 
     &-date {
         font-size: 28px;
+        line-height: 57.6px;
     }
 
     &-search {
@@ -61,7 +61,7 @@
             height: 50px;
             z-index: 2;
             top: 0;
-            background-color: $body-bg;
+            background-color: inherit;
             margin-bottom: 48px;
             &-inner {
                 font-size: 18px;

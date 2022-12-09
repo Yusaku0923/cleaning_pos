@@ -34,14 +34,14 @@
 </head>
 <body>
     <div id="app" class="{{ session('theme_body') ?? session('theme_body') }}">
-        <main class="py-4 position-relative">
+        <main class="pt-4 position-relative">
             <div class="col-12 mb-4 px-2 position-sticky">
                 @if ( !request()->is('*login*') )
-                <a href="{{ route('home') }}" class="card py-2 text-decoration-none text-body border border-2 border-dark {{ session('theme_header') ?? session('theme_header') }}">
-                    <div class="d-flex justify-content-between">
-                        <div class="col-4 px-5 text-start">担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></div>
-                        <div class="col-4 text-center fw-bold">{{ $title ?? 'システム' }}</div>
-                        <div class="col-4 px-5 text-end" id="RealtimeClockArea"></div>
+                <a href="{{ route('home') }}" class="card text-decoration-none text-body border border-2 border-dark {{ session('theme_header') ? session('theme_header') : '' }}">
+                    <div class="d-flex justify-content-between  {{ session('theme_header') ? session('theme_header').'-header' : '' }}">
+                        <div class="col-4 px-5 text-start fs-20" style="line-height: 43px">担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></div>
+                        <div class="col-4 text-center fs-20" style="line-height: 43px">{{ $title ?? 'システム' }}</div>
+                        <div class="col-4 px-5 text-end fs-20" id="RealtimeClockArea" style="line-height: 43px"></div>
                     </div>
                 </a>
                 @endif

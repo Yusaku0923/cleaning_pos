@@ -26,8 +26,6 @@ class Invoice extends Model
             if (!empty($condition['target_month'])) {
                 $query->where('invoices.period_end', '>=', date('Y-m-01', strtotime($condition['target_month'])));
                 $query->where('invoices.period_end', '<=', date('Y-m-t', strtotime($condition['target_month'])));
-                Log::debug(date('Y-m-t', strtotime($condition['target_month'])));
-                Log::debug($condition['target_month']);
             }
             if (!empty($condition['customer_name'])) $query->where('customers.name', 'like', '%'.$condition['customer_name'].'%');
         } else {
@@ -36,6 +34,34 @@ class Invoice extends Model
         }
         $query->orderBy('invoices.period_end', 'asc');
         $invoices = $query->get()->toArray();
+
+        return $invoices;
+    }
+
+    public function fetchInvoicesNeedsPaymentConfimation($customer_id) {
+        $query = Invoice::query();
+        $query->select('invoices.*', 'customers.name', 'customers.name_kana', 'customers.cutoff_date');
+        $query->join('customers', 'invoices.customer_id', '=', 'customers.id');
+        $query->where('invoices.customer_id', $customer_id);
+        $query->whereNull('invoices.paid_at');
+        $query->orderBy('invoices.period_end', 'asc');
+        $invoices = $query->get()->toArray();
+
+        foreach ($invoices as $key => $invoice) {
+            $query = Order::query();
+            $query->where('invoice_id', $invoice['id']);
+            $orders = $query->get()->toArray();
+
+            foreach ($orders as $i => $order) {
+                $query = OrderClothes::query();
+                $query->select('order_clothes.tag', 'clothes.*');
+                $query->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id');
+                $query->where('order_clothes.order_id', $order['id']);
+                $orders[$i]['items'] = $query->get()->toArray();
+            }
+
+            $invoices[$key]['orders'] = $orders;
+        }
 
         return $invoices;
     }

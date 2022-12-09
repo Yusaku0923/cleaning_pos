@@ -20,36 +20,62 @@
 .custom-1 {
     background-color: $custom1 !important;
     &-header {
-        background-color: $custom1 !important;
-        color: $white !important;
+        color: $custom1 !important;
+        filter: invert(100%) grayscale(100%) contrast(100);
+    }
+    &-font {
+        color: $custom1 !important;
+
     }
 }
 .custom-2 {
     background-color: $custom2!important;
     &-header {
-        background-color: $custom2!important;
-        color: $white !important;
+        color: $custom2 !important;
+        filter: invert(100%) grayscale(100%) contrast(100);
+    }
+    &-font {
+        color: $custom2 !important;
     }
 }
 .custom-3 {
     background-color: $custom3 !important;
     &-header {
-        background-color: $custom3 !important;
-        color: $black !important;
+        color: $custom3 !important;
+        filter: invert(100%) grayscale(100%) contrast(100);
+    }
+    &-font {
+        color: $custom3 !important;
     }
 }
 .custom-4 {
     background-color: $custom4 !important;
     &-header {
-        background-color: $custom4 !important;
-        color: $black !important;
+        color: $custom4 !important;
+        filter: invert(100%) grayscale(100%) contrast(100);
+    }
+    &-font {
+        color: $custom4 !important;
     }
 }
 .custom-5 {
     background-color: $custom5 !important;
     &-header {
-        background-color: $custom5 !important;
-        color: $white !important;
+        color: $custom5 !important;
+        filter: invert(100%) grayscale(100%) contrast(100);
+    }
+    &-font {
+        color: $custom5 !important;
+    }
+}
+.custom-6 {
+    background-color: $custom6 !important;
+    &-header {
+        color: $custom6 !important;
+        filter: invert(100%) grayscale(100%) contrast(100);
+    }
+    &-font {
+        color: $custom6 !important;
     }
 }
 
@@ -138,6 +164,11 @@
 .cbtn-gray, .cbtn-gray:hover {
     color: $white;
     background-color: #6c757d;
+    border: 2px solid $black;
+}
+.cbtn-yghalf, .cbtn-yghalf:hover {
+    color: $black;
+    background: linear-gradient(90deg, $yellow 0%, $yellow 50%, $green 50%, $green 100%);
     border: 2px solid $black;
 }
 

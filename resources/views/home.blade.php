@@ -6,11 +6,11 @@
         <div class="col-12 row justify-content-between">
             {{-- Left Block --}}
             <div class="col-6 left-block position-relative">
-                <div style="height: 73vh">
+                <div style="height: 74vh">
                     <customer-info-component
                         :customer="{{ json_encode($customer) }}"
                     ></customer-info-component>
-    
+
                     <div class="card card-border col-12 py-2 mt-2 h4 text-center">
                         顧　客　情　報
                     </div>
@@ -86,15 +86,15 @@
                         </div>
                     </div>
 
-                    <div class="card card-border col-12 fs-20 py-1 px-3 mt-3 {{ session('theme_header') ? session('theme_header') : (session('theme_body') ? session('theme_body') . '-header' : '') }}">
-                        <span>担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></span>
+                    <div class="card card-border col-12 fs-20 py-1 px-3 mt-3 {{ session('theme_header') ? session('theme_header') : (session('theme_body') ? session('theme_body') : '') }}">
+                        <span class="{{ session('theme_header') ? session('theme_header').'-header' : (session('theme_body') ? session('theme_body').'-header' : '') }}">担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></span>
                     </div>
                 </div>
                 <div class="col-12 d-flex justify-content-between">
                     <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-red fs-20" data-bs-toggle="modal" data-bs-target="#order-cancel-modal">直前預り<br>取り消し</div>
-                    <button type="button" class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-indigo fs-20" data-bs-toggle="modal" data-bs-target="#manager-select-modal"><div class="mx-auto">担当者<br>変更</div></button>
+                    <button type="button" class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-teal fs-20" data-bs-toggle="modal" data-bs-target="#manager-select-modal"><div class="mx-auto">担当者<br>変更</div></button>
                     <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-teal fs-20" data-bs-toggle="modal" data-bs-target="#tag-edit-modal">タグ番号<br>{{ is_null($tag) ? '0-000': Utility::convertTagFormat($tag) }}</div>
-                    <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-cyan fs-20">メニュー</a>
+                    <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-indigo fs-20">メニュー</a>
 
                     {{-- modals --}}
                     @if (!empty($customer))
@@ -113,7 +113,7 @@
 
             {{-- Right Block --}}
             <div class="col-6 right-block position-relative" style="height: 84vh">
-                <div style="height: 73vh;">
+                <div style="height: 74vh;">
                     <div class="card card-border col-12 py-2 h4 text-center">
                         顧　客　呼　出
                     </div>
@@ -128,8 +128,8 @@
                         </div>
                     </div>
                     <div class="col-12 d-flex justify-content-between mt-2" style="padding: 2px 0;">
-                        <a href="{{ route('payment.index') }}" class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn cbtn-yellow fs-20">入金</a>
-                        <div class="card col-15 py-3 mx-1 text-center ctl-btn bg-secondary"></div>
+                        <a href="{{ route('payment.index') }}" class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn cbtn-yellow fs-20 position-relative">入金</a>
+                        <a href="{{ route('invoice.payment_confimation') }}" class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn cbtn-green fs-20">入金確認</a>
                         <a href="{{ route('order.show') }}" class="card col-15 py-3 ml-1 text-center text-decoration-none ctl-btn cbtn-green fs-20">一覧</a>
                         <div class="card col-15 py-3 mx-1 text-center ctl-btn bg-secondary"></div>
                         <a href="{{ route('return.index') }}" class="card col-15 py-3 ml-1 text-center text-decoration-none ctl-btn cbtn-blue fs-20">お渡し</a>

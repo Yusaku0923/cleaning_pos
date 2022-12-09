@@ -3,12 +3,12 @@
 @section('content')
 <div class="col-12">
     <div class="col-12 d-flex border-bottom border-2 mt-2 pb-2 dr-header">
-        <div class="col-4 px-3 dr-earnings text-center">
-            <p class="dr-earnings-label">日次売上： <span class="border-bottom border-secondary">{{ number_format($daily_sum) }} 円</span></p>
-            <p class="dr-earnings-label">月次売上： <span class="border-bottom border-secondary">{{ number_format($monthly_sum) }} 円</span></p>
+        <div class="col-4 px-3 dr-earnings text-center {{ session('theme_body') ? session('theme_body') : '' }}">
+            <p class="dr-earnings-label {{ session('theme_body') ? session('theme_body').'-header' : '' }}">日次売上： <span class="border-bottom border-secondary">{{ number_format($daily_sum) }} 円</span></p>
+            <p class="dr-earnings-label {{ session('theme_body') ? session('theme_body').'-header' : '' }}">月次売上： <span class="border-bottom border-secondary">{{ number_format($monthly_sum) }} 円</span></p>
         </div>
-        <div class="col-4 dr-date text-center fw-bold">
-            <span>{{ $date === date('Y-m-d') ? '本日': date('Y年m月d日', strtotime($date)) }}の日報</span>
+        <div class="col-4 dr-date text-center {{ session('theme_body') ? session('theme_body') : '' }}">
+            <span class="fw-bold {{ session('theme_body') ? session('theme_body').'-header' : '' }}">{{ $date === date('Y-m-d') ? '本日': date('Y年m月d日', strtotime($date)) }}の日報</span>
         </div>
         <div class="col-4">
             <daily-report-search-component

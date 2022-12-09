@@ -114,22 +114,25 @@ class Order extends Model
         return $order;
     }
 
-    public function fetchDailyOrders($date) {
+    public function fetchDailyOrders($manager_id, $date) {
         $orders = Order::select('orders.*', 'customers.name')
                         ->join('customers', 'orders.customer_id', '=', 'customers.id')
                         ->where('orders.created_at', '>=', $date . ' 00:00:00')
                         ->where('orders.created_at', '<=', $date . ' 23:59:59')
+                        ->where('orders.manager_id', $manager_id)
                         ->orderBy('orders.created_at', 'asc')
                         ->get()->toArray();
 
         $daily_sum = Order::where('orders.created_at', '>=', $date . ' 00:00:00')
                         ->where('orders.created_at', '<=', $date . ' 23:59:59')
+                        ->where('orders.manager_id', $manager_id)
                         ->sum('amount');
 
         $month_start = date('Y-m-01', strtotime($date));
         $month_end = date('Y-m-t', strtotime($date));
         $monthly_sum = Order::where('orders.created_at', '>=', $month_start . ' 00:00:00')
                             ->where('orders.created_at', '<=', $month_end . ' 23:59:59')
+                            ->where('orders.manager_id', $manager_id)
                             ->sum('amount');
 
         if (!empty($orders)) {

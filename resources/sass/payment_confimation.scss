@@ -1,0 +1,92 @@
+.paymentconfirm {
+    &-orders {
+        height: 50vh;
+        overflow: scroll;
+        white-space:nowrap;
+        &-column {
+            top: 0;
+            z-index: 2;
+        }
+
+        &-order {
+            font-size: 16px;
+        }
+    }
+
+    &-operation {
+        height: 161px;
+        &-btn {
+            width: 100px;
+            height: 100px;
+            text-align: center;
+            border-radius: 10px;
+
+            position: relative;
+            transition: 0.3s ease-in-out;
+            border: 0.2rem solid #543618;
+            box-shadow: 0.2rem 0.2rem 0px 0.1rem #cccccc;
+            &::after {
+                content: '';
+                width: 5px;
+                height: 5px;
+                transform: rotate(45deg) translateY(-50%);
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                border-radius: 1px;
+                transition: 0.3s ease-in-out;
+            }
+            &-active:active {
+                transform: translate3d(0.2rem, 0.2rem, 0);
+                box-shadow: none;
+                opacity: 1;
+                transition: all .025s;
+            }
+            &-inactive {
+                opacity: .5;
+            }
+            &-icon {
+                font-size: 52px;
+                line-height: 65px;
+                
+            }
+            &-label {
+                font-size: 18px;
+                color: $white;
+            }
+            &-inactive {
+                opacity: .5;
+            }
+        }
+    }
+
+    &-detail {
+        height: 56.5vh;
+        overflow: scroll;
+        white-space:nowrap;
+        &-column {
+            top: 0;
+            z-index: 2;
+        }
+
+        &-clothes {
+            font-size: 16px;
+        }
+    }
+
+    &-handed {
+        background-color: gray;
+        color: #fff;
+    }
+    &-selected {
+        border: 3px solid $green;
+    }
+    &-unselected {
+        padding: 10px 2px !important;
+    }
+}
+
+
+
+.py-yellow {background-color:$yellow;}
+.py-green {background-color:$green;}
