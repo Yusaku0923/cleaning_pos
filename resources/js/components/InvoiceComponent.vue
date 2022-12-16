@@ -121,7 +121,7 @@ export default ({
         return {
             dispSearch: false,
             cutoffDate: 0,
-            targetMonth: this.dateFormater(new Date(), 'YYYY/MM'),
+            targetMonth: this.dateFormater(new Date(), 'YYYY-MM'),
             customerName: '',
             invoicesList: this.invoices,
             selectedInvoices: {},
