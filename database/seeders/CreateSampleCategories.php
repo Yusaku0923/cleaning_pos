@@ -258,7 +258,7 @@ class CreateSampleCategories extends Seeder
             ]
         ];
 
-        // if (config('app.env') !== 'production') {
+        if (config('app.env') !== 'production') {
             foreach ($list as $key => $arr) {
                 $obj = Category::query()->create([
                     'store_id' => 1,
@@ -275,7 +275,7 @@ class CreateSampleCategories extends Seeder
                     ]);
                 }
             }
-        // }
+        }
 
         for ($i = 1; $i <= 26; $i++) {
             Category::create([

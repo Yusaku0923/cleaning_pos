@@ -42,7 +42,7 @@ export default ({
 
             let printer = null;
             let ePosDev = new epson.ePOSDevice();
-            ePosDev.connect('192.168.0.214', 8008, cbConnect, {"eposprint" : true});
+            ePosDev.connect('192.168.0.215', 8008, cbConnect, {"eposprint" : true});
 
             function cbConnect(data) {
                 if(data == 'OK' || data == 'SSL_CONNECT_OK') {
@@ -78,7 +78,6 @@ export default ({
                 printer.addText(store_name);
 
                 printer.addTextSmooth(false);
-                printer.addFeed();
                 printer.addFeed();
                 printer.addTextSize(1, 1);
 
@@ -141,6 +140,7 @@ export default ({
 
                 // order list
                 for (const order of order_list) {
+                    console.log(order['count']);
                     if (order['count'] <= 1) {
                         // one line
                         printer.addTextPosition(10);
@@ -158,7 +158,7 @@ export default ({
                         printer.addTextPosition(350);
 
                         // clothes price
-                        printer.addText(order['price'].toLocaleString());
+                        printer.addText(order['price']);
 
                         printer.addFeed();
                     } else {
@@ -189,7 +189,7 @@ export default ({
                         printer.addTextSize(1, 2);
 
                         // clothes price
-                        printer.addText(order['price'].toLocaleString());
+                        printer.addText(order['price']);
 
                         printer.addFeed();
                     }
@@ -204,14 +204,14 @@ export default ({
                 printer.addTextPosition(100);
 
                 // total count
-                printer.addText(total_count.toLocaleString());
+                printer.addText(total_count);
 
                 printer.addTextPosition(200);
                 printer.addText('小計');
                 printer.addTextPosition(340);
 
                 // subtotal
-                printer.addText((amount + discount).toLocaleString());
+                printer.addText(amount + discount);
                 printer.addFeed();
                 printer.addHLine(0, 575, printer.LINE_THIN);
                 printer.addFeed();
@@ -227,7 +227,7 @@ export default ({
                 printer.addTextPosition(340);
 
                 // total
-                printer.addText(amount.toLocaleString());
+                printer.addText(amount);
                 printer.addFeed();
                 printer.addFeed();
                 printer.addTextPosition(200);
@@ -247,7 +247,7 @@ export default ({
                     printer.addTextPosition(240);
 
                     // total
-                    printer.addText(amount.toLocaleString());
+                    printer.addText(amount);
                     printer.addFeed();
                     printer.addHLine(0, 575, printer.LINE_THIN);
                     printer.addFeed();
@@ -256,26 +256,26 @@ export default ({
                     printer.addTextPosition(10);
                     printer.addText('お預り');
                     printer.addTextPosition(120);
-                    printer.addText(payment.toLocaleString());
+                    printer.addText(payment);
                     printer.addTextPosition(240);
                     printer.addText('お釣り');
                     printer.addTextAlign(printer.ALIGN_RIGHT);
                     printer.addTextPosition(340);
-                    printer.addText((payment - amount).toLocaleString());
+                    printer.addText(payment - amount);
                 } else {
                     printer.addText('未収額');
                     printer.addTextPosition(240);
-                    printer.addText((amount - payment).toLocaleString());
+                    printer.addText(amount - payment);
                     printer.addFeed();
                     printer.addHLine(0, 575, printer.LINE_THIN);
                 }
                 printer.addFeed();
                 printer.addFeed();
                 printer.addTextSize(1, 1);
-                printer.addTextPosition(0);
+                printer.addTextPosition(20);
                 printer.addText('いつもご利用ありがとうございます。');
                 printer.addFeed();
-                printer.addTextPosition(0);
+                printer.addTextPosition(20);
                 printer.addText('今後ともよろしくお願いいたします。');
                 printer.addFeed();
                 printer.addHLine(0, 575, printer.LINE_THIN);

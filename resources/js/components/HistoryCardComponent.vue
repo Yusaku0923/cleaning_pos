@@ -53,7 +53,7 @@ export default ({
     computed: {
         limit() {
             return this.order.items.slice(0, 3);
-        },
+        }
     }
 })
 </script>

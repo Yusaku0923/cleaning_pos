@@ -94,11 +94,7 @@
                         </div>
                         <div class="col-12 card-footer py-3 d-flex justify-content-between">
                             <div class="col-5 text-start">
-                                <button class="px-3 py-1 modal-cd-btn modal-cd-btn-receipt" @click="receiptReissue()">レシート再発行</button>
-                                <receipt-printer
-                                    ref="child"
-                                    :token="token"
-                                ></receipt-printer>
+                                <button class="px-3 py-1 modal-cd-btn modal-cd-btn-receipt" @click="$emit('close')">レシート再発行</button>
                             </div>
                             <div class="col-3 text-end">
                                 <button class="px-3 py-1 modal-cd-btn modal-cd-btn-back" @click="$emit('close')">閉じる</button>
@@ -108,6 +104,10 @@
                 </div>
             </div>
         </div>
+        <receipt-printer
+            ref="child"
+            :token="token"
+        ></receipt-printer>
     </transition>
 </template>
 
@@ -160,11 +160,7 @@ export default ({
         },
         toggleAC: function() {
             this.openAC = !this.openAC;
-        },
-        receiptReissue: function() {
-            this.$refs.child.printReceipt(this.order.id);
-            this.$emit('close');
-        },
+        }
     }
 });
 </script>
