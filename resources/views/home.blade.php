@@ -81,20 +81,44 @@
                                 @endif
                             </div>
                             <div class="col-6 d-flex justify-content-end">
-                                <div class="col-11 mt-3 customer-edit-btn" data-bs-toggle="modal" data-bs-target="#customer-edit-modal"><i class="fa-solid fa-wrench" style="line-height: 52px;margin-right: 10px;"></i>顧客情報編集</div>
+                                @if (session()->has('customer_id'))
+                                    <div class="col-11 mt-3 customer-edit-btn" data-bs-toggle="modal" data-bs-target="#customer-edit-modal">
+                                        <i class="fa-solid fa-wrench" style="line-height: 52px;margin-right: 10px;"></i>顧客情報編集
+                                    </div>
+                                @else
+                                    <div class="col-11 mt-3 customer-edit-btn bg-secondary" style="height: 52px;"></div>
+                                @endif
                             </div>
                         </div>
                     </div>
 
                     <div class="card card-border col-12 fs-20 py-1 px-3 mt-3 {{ session('theme_header') ? session('theme_header') : (session('theme_body') ? session('theme_body') : '') }}">
-                        <span class="{{ session('theme_header') ? session('theme_header').'-header' : (session('theme_body') ? session('theme_body').'-header' : '') }}">担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></span>
+                        <span class="{{ session('theme_header') ? session('theme_header').'-header' : (session('theme_body') ? session('theme_body').'-header' : '') }}">
+                            担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span>
+                        </span>
                     </div>
                 </div>
                 <div class="col-12 d-flex justify-content-between">
-                    <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-red fs-20" data-bs-toggle="modal" data-bs-target="#order-cancel-modal">直前預り<br>取り消し</div>
-                    <button type="button" class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-teal fs-20" data-bs-toggle="modal" data-bs-target="#manager-select-modal"><div class="mx-auto">担当者<br>変更</div></button>
-                    <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-teal fs-20" data-bs-toggle="modal" data-bs-target="#tag-edit-modal">タグ番号<br>{{ is_null($tag) ? '0-000': Utility::convertTagFormat($tag) }}</div>
-                    <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-indigo fs-20">メニュー</a>
+                    @if(!empty($latest_order))
+                        <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-red fs-20" data-bs-toggle="modal" data-bs-target="#order-cancel-modal">
+                            <div class="mx-auto">直前預り<br>取り消し</div>
+                        </div>
+                    @else
+                        <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn bg-secondary"></div>
+                    @endif
+
+                    <button type="button" class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-teal fs-20" data-bs-toggle="modal" data-bs-target="#manager-select-modal">
+                        <div class="mx-auto">担当者<br>変更</div>
+                    </button>
+
+                    @if (session()->has('manager_id'))
+                        <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-teal fs-20" data-bs-toggle="modal" data-bs-target="#tag-edit-modal">
+                            <div class="mx-auto">タグ番号<br>{{ is_null($tag) ? '0-000': Utility::convertTagFormat($tag) }}</div>
+                        </div>
+                    @else
+                        <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn bg-secondary"></div>
+                    @endif
+                    <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue fs-20">メニュー</a>
 
                     {{-- modals --}}
                     @if (!empty($customer))
@@ -119,20 +143,63 @@
                     </div>
                     <div class="card card-border">
                         <div class="col-12 d-flex py-4 justify-content-around">
-                            <a href="{{ route('customer.create') }}" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-blue">
-                                新規登録
-                            </a>
-                            <a href="{{ route('customer.search') }}" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-green">
-                                顧客検索
-                            </a>
+                            @if (session()->has('manager_id'))
+                                <a href="{{ route('customer.create') }}" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-blue">
+                                    新規登録
+                                </a>
+                            @else
+                                <div class="card col-5 py-5 text-center cbtn cbtn-lg bg-secondary" ><div style="height: 30px"></div></div>
+                            @endif
+
+                            @if (session()->has('manager_id'))
+                                <a href="{{ route('customer.search') }}" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-green">
+                                    顧客検索
+                                </a>
+                            @else
+                                <div class="card col-5 py-5 text-center cbtn cbtn-lg bg-secondary"><div style="height: 30px"></div></div>
+                            @endif
                         </div>
                     </div>
                     <div class="col-12 d-flex justify-content-between mt-2" style="padding: 2px 0;">
-                        <a href="{{ route('payment.index') }}" class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn cbtn-yellow fs-20 position-relative">入金</a>
-                        <a href="{{ route('invoice.payment_confimation') }}" class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn cbtn-green fs-20">入金確認</a>
-                        <a href="{{ route('order.show') }}" class="card col-15 py-3 ml-1 text-center text-decoration-none ctl-btn cbtn-green fs-20">一覧</a>
+                        @if (session()->has('customer_id'))
+                            <a href="{{ route('payment.index') }}" class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn cbtn-yellow fs-20 position-relative">
+                                入金
+                            </a>
+                        @else
+                            <div class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn bg-secondary fs-20 position-relative">
+                                <div style="height: 45px"></div>
+                            </div>
+                        @endif
+
+                        @if (session()->has('customer_id'))
+                            <a href="{{ route('invoice.payment_confimation') }}" class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn cbtn-green fs-20">
+                                入金確認
+                            </a>
+                        @else
+                            <div class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn bg-secondary fs-20 position-relative">
+                                <div style="height: 45px"></div>
+                            </div>
+                        @endif
+
+                        @if (session()->has('customer_id'))
+                            <a href="{{ route('order.show') }}" class="card col-15 py-3 ml-1 text-center text-decoration-none ctl-btn cbtn-green fs-20">一覧</a>
+                        @else
+                            <div class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn bg-secondary fs-20 position-relative">
+                                <div style="height: 45px"></div>
+                            </div>
+                        @endif
+
                         <div class="card col-15 py-3 mx-1 text-center ctl-btn bg-secondary"></div>
-                        <a href="{{ route('return.index') }}" class="card col-15 py-3 ml-1 text-center text-decoration-none ctl-btn cbtn-blue fs-20">お渡し</a>
+
+                        @if (session()->has('customer_id'))
+                            <a href="{{ route('return.index') }}" class="card col-15 py-3 ml-1 text-center text-decoration-none ctl-btn cbtn-blue fs-20">
+                                お渡し
+                            </a>
+                        @else
+                            <div class="card col-15 py-3 mr-1 text-center text-decoration-none ctl-btn bg-secondary fs-20 position-relative">
+                                <div style="height: 45px"></div>
+                            </div>
+                        @endif
                     </div>
     
                     <div class="card card-border col-12 py-2 h4 text-center mt-2">
@@ -152,10 +219,18 @@
                 </div>
 
                 <div class="col-12 d-flex justify-content-between">
-                    <a href="{{ route('customer.clear') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-red fs-20">入力クリア</a>
+                    @if (session()->has('customer_id'))
+                        <a href="{{ route('customer.clear') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-red fs-20">入力クリア</a>
+                    @else
+                        <div class="card col-3 col-3-custom lh-rightbtn text-center lh-leftbtn bg-secondary"></div>
+                    @endif
                     <div class="card col-3 col-3-custom lh-rightbtn text-center bg-secondary"></div>
                     <div class="card col-3 col-3-custom lh-rightbtn text-center bg-secondary"></div>
-                    <a href="{{ route('order.create') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue fs-20">預り入力</a>
+                    @if (session()->has('customer_id'))
+                        <a href="{{ route('order.create') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue fs-20">預り入力</a>
+                    @else
+                        <div class="card col-3 col-3-custom lh-rightbtn text-center lh-leftbtn bg-secondary"></div>
+                    @endif
                 </div>
             </div>
         </div>

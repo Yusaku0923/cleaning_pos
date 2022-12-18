@@ -189,8 +189,8 @@
 
 /* card */
 .manager-field {
-    background-color: $indigo;
-    color: $white;
+    background-color: $teal;
+    color: $black;
 }
 .cancel-field {
     background-color: $danger;
@@ -390,4 +390,12 @@
 #tag-body {
     width: 140px;
     margin-left: 10px;
+}
+
+.required-label {
+    color: $white;
+    background-color: $red;
+    padding: 2px 6px;
+    margin-left: 5px;
+    border-radius: 3px;
 }

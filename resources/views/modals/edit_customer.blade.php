@@ -19,6 +19,7 @@
                     <div class="col-12 form-group mb-2">
                         <label for="name" class="form-label fs-20 fw-bold">名前</label>
                         <input type="text" id="name" class="form-control fs-24" name="name" value="{{ $customer->name }}">
+
                     </div>
                     <div class="col-12 form-group mb-2">
                         <label for="name_kana" class="form-label fs-20 fw-bold">名前(カナ)</label>
@@ -28,6 +29,9 @@
                         <label for="phone_number" class="form-label fs-20 fw-bold">電話番号</label>
                         <input type="tel" id="name_kana" class="form-control fs-24" name="phone_number" value="{{ $customer->phone_number }}">
                     </div>
+                    @foreach ($errors->all() as $error)
+                    <li>{{$error}}</li>
+                    @endforeach
                     <hr>
                     <div class="col-12 form-group mb-2">
                         <label for="is_invoice" class="form-label fs-20 fw-bold">請求書払い</label>

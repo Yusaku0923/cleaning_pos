@@ -10,6 +10,9 @@
             <form method="POST" action="{{ route('customer.store') }}">
                 {{ csrf_field() }}
                 <customer-create-component></customer-create-component>
+                @foreach ($errors->all() as $error)
+                    <li>{{$error}}</li>
+                @endforeach
                 <div class="form-group mt-5 d-flex justify-content-between">
                     <a class="btn btn-secondary fs-20 px-5 py-3 card-border" href="{{ route('home') }}">ホームへ戻る</a>
                     <button class="btn btn-primary ml-5 fs-20 px-5 py-3 card-border" type="button" onclick="submit();">登録する</button>

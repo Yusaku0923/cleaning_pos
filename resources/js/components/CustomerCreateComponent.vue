@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="form-group">
-            <label for="customer_name" class="h4">お名前</label>
+            <label for="customer_name" class="h4">お名前</label><span class="required-label">必須</span>
             <input type="text" class="form-control form-control-lg" name="name" id="customer_name" placeholder="お名前" v-model="customer_name">
         </div>
         <div class="form-group mt-2">
-            <label for="customer_name_kana" class="h4">お名前(カナ)</label>
+            <label for="customer_name_kana" class="h4">お名前(カナ)</label><span class="required-label">必須</span>
             <input type="text" class="form-control form-control-lg" name="name_kana" id="customer_name_kana" placeholder="お名前(カナ)" v-model="customer_name_kana">
         </div>
         <div class="form-group mt-2">

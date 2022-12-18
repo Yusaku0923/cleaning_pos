@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Store;
 use App\Models\Customer;
+use App\Http\Requests\Customers\StoreRequest;
+use App\Http\Requests\Customers\UpdateRequest;
 
 use Illuminate\Support\Facades\Log;
+
 class CustomerController extends Controller
 {
     /**
@@ -57,7 +60,7 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         $customer = Customer::create([
             'manager_id' => $request->session()->get('manager_id'),
@@ -103,7 +106,7 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
         $customer = Customer::find($id);
         $customer->name = $request->name;
