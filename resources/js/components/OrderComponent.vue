@@ -227,6 +227,12 @@
 
                 <template v-if="step === 2 || step === 3">
                     <div class="col-12 mt-3">
+                        <div class="col-10 mx-auto d-flex pay-checkbox mb-3">
+                            <label class="col-4 form-label" for="created-at">注文日</label>
+                            <div class="col-8">
+                                <input type="date" class="form-control" id="created-at" v-model="created_at">
+                            </div>
+                        </div>
                         <div class="col-10 mx-auto pay-checkbox form-check"
                             v-if="is_invoice">
                             <input type="checkbox" class="form-check-input" id="is-invoice" v-model="isInvoice" @click="notPaid = true">
@@ -353,6 +359,7 @@ export default ({
             discount: 0,
             payment: 0,
             change: 0,
+            created_at: '',
 
             orderId: null
         }
@@ -482,6 +489,7 @@ export default ({
                 payment: this.payment,
                 not_paid: this.notPaid,
                 invoice: this.isInvoice,
+                created_at: this.created_at,
             })
             .then(function (response) {
                 return response.data.order_id;

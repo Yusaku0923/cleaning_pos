@@ -136,13 +136,12 @@ class Invoice extends Model
     public function existsTargetInvoice($customer_id) {
         $cutoff_date = Customer::where('id', $customer_id)->value('cutoff_date');
         list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date);
-        Log::debug(($cutoff_date));
-        Log::debug(($period_start));
-        Log::debug(($period_end));
+
         $invoice = Invoice::where('customer_id', $customer_id)
                             ->where('period_start', $period_start)
                             ->where('period_end', $period_end)
                             ->first();
+
         return !empty($invoice) ? $invoice->id : null;
     }
 }

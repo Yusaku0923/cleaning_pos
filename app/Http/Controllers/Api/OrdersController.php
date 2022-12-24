@@ -39,7 +39,7 @@ class OrdersController extends Controller
         $invoice_id = null;
         if ((boolean)$request->invoice) {
             $cutoff_date = Customer::where('id', $request->customer_id)->value('cutoff_date');
-            list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date);
+            list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date, $request->created_at);
             // 入金確認が必要なお客様は「paid_at」を埋めない
             if ((boolean)Customer::where('id', $request->customer_id)->value('needs_payment_confimation')) {
                 $paid_at = null;
@@ -67,7 +67,7 @@ class OrdersController extends Controller
                 $paid_at = null;
             }
         }
-        $order = Order::query()->create([
+        $order_record = [
             'store_id' => Auth::id(),
             'manager_id' => $request->manager_id,
             'customer_id' => $request->customer_id,
@@ -77,7 +77,11 @@ class OrdersController extends Controller
             'discount' => $request->discount,
             'payment' => $request->payment,
             'paid_at' => $paid_at,
-        ]);
+        ];
+        if (!empty($request->created_at)) {
+            $order_record['created_at'] = $request->created_at;
+        }
+        $order = Order::query()->create($order_record);
 
         $tag = TagNumber::where('manager_id', $request->manager_id)->value('tag_number');
         $response = [];
