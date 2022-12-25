@@ -118,7 +118,7 @@
                     @else
                         <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn bg-secondary"></div>
                     @endif
-                    <a href="{{ route('menu') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue fs-20">メニュー</a>
+                    <a onClick="location.href ='{{ route('menu') }}'" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue fs-20">メニュー</a>
 
                     {{-- modals --}}
                     @if (!empty($customer))
