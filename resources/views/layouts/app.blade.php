@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- icon -->
-    <link rel="apple-touch-icon" href="{{ public_path('img/icon.png') }}" />
+    <link rel="apple-touch-icon" href="{{ asset('img/icon.png') }}" />
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
