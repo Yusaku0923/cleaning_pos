@@ -11,3 +11,11 @@ function showClock() {
     document.getElementById("RealtimeClockArea").innerHTML = msg;
 }
 setInterval('showClock()', 1000);
+
+if (window.navigator.standalone) {
+    $('a').on('touchend', function(e) {
+        e.preventDefault();
+        location.href = e.target.href;
+        return false;
+    });
+}
