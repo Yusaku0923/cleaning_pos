@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\OrdersController;
 use App\Http\Controllers\Api\ReturnController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\ClothesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,9 @@ use App\Http\Controllers\Api\InvoiceController;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('clothes/store', [ClothesController::class, 'store'])->name('clothes.store');
+    Route::post('clothes/update', [ClothesController::class, 'update'])->name('clothes.update');
+    Route::post('clothes/delete', [ClothesController::class, 'delete'])->name('clothes.delete');
     Route::post('customer/search', [CustomerController::class, 'search'])->name('order.search');
     Route::post('order/store', [OrdersController::class, 'store'])->name('order.store');
     Route::post('order/search', [OrdersController::class, 'search'])->name('order.search');

@@ -20,7 +20,7 @@
         @if ($is_category)
         <button class="card menu-card col-12 mx-auto" wire:click="select({{ $card->id }})">
             <div class="category-label-field position-relative">
-                <p class="category-label text-center position-absolute top-50 start-50 translate-middle">{{ $card->name }}</p>
+                <p class="col-12 category-label text-center position-absolute top-50 start-50 translate-middle">{{ $card->name }}</p>
             </div>
         </button>
         @else

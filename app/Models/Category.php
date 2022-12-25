@@ -15,7 +15,7 @@ class Category extends Model
 
     public function clothes()
     {
-        return $this->hasMany(Clothes::class);
+        return $this->hasMany(Clothes::class)->orderBy('sort_key', 'asc');
     }
 
     public function getAllWithClothes()
