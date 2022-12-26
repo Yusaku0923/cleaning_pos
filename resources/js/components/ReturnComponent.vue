@@ -204,7 +204,7 @@ export default ({
         },
         send: function() {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
-            axios.post('api/return/update', {
+            axios.post('/api/return/update', {
                 items: this.selectedItems
             })
             .then(function (response) {

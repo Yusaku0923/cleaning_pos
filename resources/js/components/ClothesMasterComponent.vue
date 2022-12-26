@@ -59,7 +59,7 @@
         <!-- modal -->
         <clothes-edit-modal
             @close="close"
-            @update="update"
+            @update="updateClothes"
             :mode="modalMode"
             :info="modalInfo"
             v-if="showModal"
@@ -114,9 +114,9 @@ export default {
             this.showModal = true;
             this.selectedClothes = this.cards[index]['id'];
         },
-        update: function(name, name_kana, price, tag_count) {
+        updateClothes: function(name, name_kana, price, tag_count) {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
-            axios.post('api/clothes/update', {
+            axios.post('/api/clothes/update', {
                 id: this.selectedClothes,
                 category_id: this.selectedCategory,
                 name: name,
@@ -124,6 +124,15 @@ export default {
                 price: price,
                 tag_count: tag_count,
             })
+            .then(function (response) {
+                // location.reload();
+                console.log(response);
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
         }
     }
 }

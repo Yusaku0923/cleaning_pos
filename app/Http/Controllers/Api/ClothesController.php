@@ -27,10 +27,13 @@ class ClothesController extends Controller
     }
 
     public function update(Request $request, Clothes $model) {
-        Log::debug("message");
+        $sort_key = Clothes::where('id', $request->id)->value('sort_key');
+
         Clothes::find($request->id)->delete();
+
         $model->store_id = Auth::id();
         $model->category_id = $request->category_id;
+        $model->sort_key = $sort_key;
         $model->name = $request->name;
         $model->name_kana = $request->name_kana;
         $model->price = $request->price;
