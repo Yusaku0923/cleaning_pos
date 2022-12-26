@@ -3,7 +3,7 @@
         <div class="col-10 mx-auto">
             <div>
                 <div class="card col-12 py-3 mb-4 h4 text-center">
-                    カテゴリー
+                    {{ categoryName }}
                 </div>
                 <div class="col-12 menu-columns justify-content-between">
                     <!-- 商品選択時のみ表示 -->
@@ -19,7 +19,7 @@
                     <!-- 追加ボタン（選択画面によって変える） -->
                     <button type="button" class="card menu-card col-12 mx-auto">
                         <span class="fw-light text-primary menu-icon text-center mx-auto">＋</span>
-                        <span class="text-center mx-auto">カテゴリーを追加する</span>
+                        <span class="text-center mx-auto">{{ categoryName }}を追加する</span>
                     </button>
                     
                     <!-- カテゴリ表示 -->
@@ -84,6 +84,7 @@ export default {
     data() {
         return {
             mode: 'category',
+            categoryName: 'カテゴリー',
             cards: this.category_clothes,
             showModal: false,
             selectedCategory: '',
@@ -101,11 +102,13 @@ export default {
         },
         switchClothes: function(index) {
             this.mode = 'clothes';
+            this.categoryName = this.category_clothes[index]['name'];
             this.cards = this.category_clothes[index]['clothes'];
             this.selectedCategory = this.category_clothes[index]['id'];
         },
         switchCategory: function() {
             this.mode = 'category';
+            this.categoryName = 'カテゴリー';
             this.cards = this.category_clothes;
         },
         selectClothes: function(index) {

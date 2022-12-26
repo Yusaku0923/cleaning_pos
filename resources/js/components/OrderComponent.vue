@@ -110,6 +110,19 @@
                             {{ (order[i].count * order[i].price).toLocaleString() }} 円
                         </div>
                     </div>
+                    <div class="col-12 text-end">
+                        <label class="fs-18">
+                            <input
+                                type="checkbox"
+                                class="me-2"
+                                style="transform: scale(1.5);"
+                                :id="order[i].id"
+                                :value="order[i].id"
+                                v-model="dontIssueTagList"
+                            >
+                            タグを発行しない
+                        </label>
+                    </div>
                     <div class="position-absolute odcreate-selected-tag fs-24"
                         :class="{
                             'odcreate-clothes-tag-one': order[i].tag_count === 1,
@@ -353,6 +366,7 @@ export default ({
             indexes: [],
             order: {},
             orderForSend: {},
+            dontIssueTagList: [],
             total: 0,
             amount: 0, // with tax
             reduction: 0,
@@ -489,6 +503,7 @@ export default ({
                 payment: this.payment,
                 not_paid: this.notPaid,
                 invoice: this.isInvoice,
+                dont_issue_tag_list: this.dontIssueTagList,
                 created_at: this.created_at,
             })
             .then(function (response) {
