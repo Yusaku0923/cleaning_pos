@@ -13,9 +13,6 @@ class Invoice extends Model
 
     protected $guarded = [];
 
-    private function searchItems() {
-    }
-
     public function fetchInvoices($manager_id, $condition = null) {
         $query = Invoice::query();
         $query->select('invoices.*', 'customers.name', 'customers.name_kana', 'customers.cutoff_date');

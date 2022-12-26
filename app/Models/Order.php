@@ -15,9 +15,9 @@ class Order extends Model
 
     protected $guarded = [];
 
-    // public function order_clothes() {
-    //     return $this->hasMany(OrderClothes::class, 'order_id');
-    // }
+    public function order_clothes() {
+        return $this->hasMany(OrderClothes::class, 'order_id');
+    }
 
     public function clothes(): BelongsToMany {
         return $this->belongsToMany(Clothes::class)

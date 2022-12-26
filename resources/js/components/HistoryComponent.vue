@@ -214,7 +214,7 @@ export default ({
             });
         },
         sendDeleteReq: async function() {
-            let confirm = alert('こちらの伝票を削除します。よろしいですか？');
+            let confirm = window.confirm('こちらの伝票を削除します。よろしいですか？');
             if (confirm) {
                 await this.delete();
             }

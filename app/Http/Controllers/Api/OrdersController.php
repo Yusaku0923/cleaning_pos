@@ -90,7 +90,6 @@ class OrdersController extends Controller
 
         $tag = TagNumber::where('manager_id', $request->manager_id)->value('tag_number');
         $response = [];
-        Log::debug($request->dont_issue_tag_list);
         foreach ($request->order as $clothes_id => $count) {
             $tag_count = Clothes::where('id', $clothes_id)->value('tag_count');
             for ($i = 1; $i <= $count; $i++) {
@@ -208,8 +207,14 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function delete($order_id) {
-        Order::find($order_id)->delete();
+    public function delete(Request $request) {
+        $invoice_id = Order::where('id', $request->order_id)->value('invoice_id');
+        if (!is_null($invoice_id)) {
+            $amount = Order::where('id', $request->order_id)->value('amount');
+            Invoice::find($invoice_id)->decrement('amount', $amount);
+            // \DB::table('invoices')->where('id', $invoice_id)->decrement('amount', $amount);
+        }
+        Order::find($request->order_id)->delete();
 
         return response()->json([
             'ok' => true
