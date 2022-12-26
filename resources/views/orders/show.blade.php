@@ -5,7 +5,8 @@
 <history-component
     :customer="{{ json_encode($customer) }}"
     :initial_orders="{{ json_encode($orders) }}"
-    :token="{{ json_encode($token) }}"
+    :info="{{ json_encode( session('customer_info')) }}"
+    :token="{{ json_encode(Utility::fetchApiToken()) }}"
 ></history-component>
 
 @endsection

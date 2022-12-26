@@ -5,6 +5,8 @@
                 <div class="col-12">
                     <customer-info-component
                         :customer="customer"
+                        :info="info"
+                        :token="token"
                     ></customer-info-component>
                     <div class="col-12 mt-2">
                         <div class="card card-border col-12 py-2 h4 text-center">
@@ -155,6 +157,9 @@ export default ({
         },
         initial_orders: {
             required: true
+        },
+        info: {
+            required: false
         },
         token: {
             Type: String,

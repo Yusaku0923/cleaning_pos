@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Store;
 use App\Models\Customer;
+use App\Models\CustomerInformation;
 use App\Http\Requests\Customers\StoreRequest;
 use App\Http\Requests\Customers\UpdateRequest;
 
@@ -31,13 +32,17 @@ class CustomerController extends Controller
     }
 
     public function select($id) {
-        // TODO: アクセス権限確認
         session()->put('customer_id', $id);
+        $query = CustomerInformation::query();
+        $query->where('customer_id', $id);
+        $query->orderBy('created_at', 'asc');
+        $info = $query->get()->toArray();
+        session()->put('customer_info', $info);
+
         return redirect()->route('home');
     }
 
     public function clear() {
-        // TODO: アクセス権限確認
         session()->forget('customer_id');
         return redirect()->route('home');
     }
@@ -74,6 +79,7 @@ class CustomerController extends Controller
 
         // TODO:遷移先選択
         session()->put('customer_id', $customer->id);
+        session()->put('customer_info', []);
         return redirect()->route('home');
     }
 

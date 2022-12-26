@@ -69,7 +69,6 @@
 </template>
 
 <script>
-
 import ClothesEditModal from './Modals/ClothesEditModalComponent';
 
 export default {

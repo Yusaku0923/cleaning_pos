@@ -4,6 +4,8 @@
             <div class="col-12">
                 <customer-info-component
                     :customer="customer"
+                    :info="info"
+                    :token="token"
                 ></customer-info-component>
             </div>
             <div class="col-12 mt-2">
@@ -125,6 +127,9 @@ export default ({
         },
         invoices: {
             required: true
+        },
+        info: {
+            required: false
         },
         token: {
             type: String,

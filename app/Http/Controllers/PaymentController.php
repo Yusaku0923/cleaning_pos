@@ -19,13 +19,11 @@ class PaymentController extends Controller
         $customer = Customer::find(session()->get('customer_id'));
         $model = new Order();
         $unpaid_orders = $model->fetchUnpaidOrders($customer['id']);
-        $store = Store::find(Auth::id());
-        $token = $store->createToken(Str::random(10));
+
         return view('payment.index')->with([
             'title' => '入　金',
             'customer' => $customer,
             'orders' => $unpaid_orders,
-            'token' => $token->plainTextToken,
         ]);
     }
 }

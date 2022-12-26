@@ -35,7 +35,11 @@ class OrdersController extends Controller
     ];
 
     public function store(Request $request) {
-        $paid_at = date('Y-m-d H:i:s');
+        if (!empty($request->created_at)) {
+            $paid_at = date('Y-m-d 00:00:00', strtotime($request->created_at));
+        } else {
+            $paid_at = date('Y-m-d H:i:s');
+        }
         $invoice_id = null;
         // 請求書払いの注文はinvoiceテーブルにレコード追加
         if ((boolean)$request->invoice) {

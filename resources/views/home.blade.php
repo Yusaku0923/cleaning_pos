@@ -9,6 +9,8 @@
                 <div style="height: 74vh">
                     <customer-info-component
                         :customer="{{ json_encode($customer) }}"
+                        :info="{{ json_encode( session('customer_info')) }}"
+                        :token="{{ json_encode(Utility::fetchApiToken()) }}"
                     ></customer-info-component>
 
                     <div class="card card-border col-12 py-2 mt-2 h4 text-center">
