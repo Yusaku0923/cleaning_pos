@@ -9,12 +9,12 @@
         </div>
         <div class="card card-border col-12 text-center" @click="show">
             <table class="table h-100 csinfo-table">
-                <thead>
+                <thead class="cs-field">
                     <tr>
                         <th>CS情報</th>
                     </tr>
                 </thead>
-                <tbody style="height: 14.5vh;">
+                <tbody class="py-1" style="height: 14.5vh;">
                     <tr v-for="row in disp" :key="row.id">
                         <td class="d-flex">
                             <div class="col-9">{{ row.information }}</div>
@@ -26,7 +26,9 @@
         </div>
         <customer-info-edit-modal
             @close="close"
-            :info="info"
+            @add="add"
+            @delete="deleteRow"
+            :info="base"
             :token="token"
             v-if="showModal"
         ></customer-info-edit-modal>
@@ -52,11 +54,16 @@ export default ({
     data() {
         return {
             showModal: false,
-            disp: this.info.splice(-5),
+            base: [],
+            disp: [],
         }
     },
     components: {
         'customer-info-edit-modal': CustomerInfosEditModal,
+    },
+    mounted() {
+        this.base = this.info;
+        this.disp = this.base.slice(-4);
     },
     methods: {
         dateFormater: function(date, format = 'MM/DD') {
@@ -67,6 +74,46 @@ export default ({
         },
         close: function() {
             this.showModal = false;
+        },
+        add: async function(inputInformation) {
+            let self = this;
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/customer_info/store', {
+                information: inputInformation,
+            })
+            .then(function (response) {
+                console.log(response.data);
+                self.base = response.data.info;
+                self.disp = self.base.slice(-4);
+                self.base.splice();
+                self.disp.splice();
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        deleteRow: function(id) {
+            let self = this;
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return axios.post('/api/customer_info/delete', {
+                id: id,
+            })
+            .then(function (response) {
+                self.base = response.data.info;
+                self.disp = self.base.slice(-4);
+                self.base.splice();
+                self.disp.splice();
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        update: async function() {
+
         }
     },
 })
