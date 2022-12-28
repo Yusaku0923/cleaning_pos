@@ -17,7 +17,7 @@
                     </button>
 
                     <!-- 追加ボタン（選択画面によって変える） -->
-                    <button type="button" class="card menu-card col-12 mx-auto">
+                    <button type="button" class="card menu-card col-12 mx-auto" @click="showCreate()">
                         <span class="fw-light text-primary menu-icon text-center mx-auto">＋</span>
                         <span class="text-center mx-auto">{{ categoryName }}を追加する</span>
                     </button>
@@ -59,7 +59,9 @@
         <!-- modal -->
         <clothes-edit-modal
             @close="close"
+            @create="createClothes"
             @update="updateClothes"
+            @delete="deleteClothes"
             :mode="modalMode"
             :info="modalInfo"
             v-if="showModal"
@@ -110,15 +112,45 @@ export default {
             this.categoryName = 'カテゴリー';
             this.cards = this.category_clothes;
         },
+        showCreate: function() {
+            this.modalMode = 'create';
+            this.modalInfo = [];
+            this.showModal = true;
+            this.selectedClothes = '';
+        },
         selectClothes: function(index) {
             this.modalMode = 'edit';
             this.modalInfo = this.cards[index];
             this.showModal = true;
             this.selectedClothes = this.cards[index]['id'];
         },
-        updateClothes: function(name, name_kana, price, tag_count) {
+        createClothes: function(name, name_kana, price, tag_count) {
+            this.showModal = false;
+            let self = this;
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
-            axios.post('/api/clothes/update', {
+            return axios.post('/api/clothes/store', {
+                category_id: this.selectedCategory,
+                name: name,
+                name_kana: name_kana,
+                price: price,
+                tag_count: tag_count,
+            })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                self.updateState(response.data.category);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        updateClothes: async function(name, name_kana, price, tag_count) {
+            this.showModal = false;
+            let self = this;
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/clothes/update', {
                 id: this.selectedClothes,
                 category_id: this.selectedCategory,
                 name: name,
@@ -127,14 +159,45 @@ export default {
                 tag_count: tag_count,
             })
             .then(function (response) {
-                // location.reload();
-                console.log(response);
-                return;
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                self.updateState(response.data.category);
             })
             .catch(function (error) {
                 console.log(error);
-                return;
             });
+        },
+        deleteClothes: function(name, name_kana, price, tag_count) {
+            this.showModal = false;
+            let self = this;
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return axios.post('/api/clothes/delete', {
+                id: this.selectedClothes,
+                category_id: this.selectedCategory,
+                name: name,
+                name_kana: name_kana,
+                price: price,
+                tag_count: tag_count,
+            })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                self.updateState(response.data.category);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        updateState: function(res) {
+            let index = this.category_clothes.findIndex( item => item.id === res[0].id );
+            this.cards = res[0].clothes;
+            this.category_clothes.splice(index, 1, res[0]);
+
+            return;
         }
     }
 }
