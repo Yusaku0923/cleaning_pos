@@ -5,7 +5,7 @@
         :customer="{{ json_encode($customer) }}"
         :orders="{{ json_encode($orders) }}"
         :token="{{ json_encode(Utility::fetchApiToken()) }}"
-        :info="{{ json_encode( session('customer_info')) }}"
+        :info="{{ json_encode(session('customer_info') ?? []) }}"
     ></return-component>
 </div>
 

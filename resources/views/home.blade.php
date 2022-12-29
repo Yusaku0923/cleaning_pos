@@ -9,7 +9,7 @@
                 <div style="height: 74vh">
                     <customer-info-component
                         :customer="{{ json_encode($customer) }}"
-                        :info="{{ json_encode( session('customer_info')) }}"
+                        :info="{{ json_encode(session('customer_info') ?? []) }}"
                         :token="{{ json_encode(Utility::fetchApiToken()) }}"
                     ></customer-info-component>
 
@@ -109,9 +109,13 @@
                         <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn bg-secondary"></div>
                     @endif
 
-                    <button type="button" class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-teal fs-20" data-bs-toggle="modal" data-bs-target="#manager-select-modal">
+                    {{-- <button type="button" class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-teal fs-20" data-bs-toggle="modal" data-bs-target="#manager-select-modal">
                         <div class="mx-auto">担当者<br>変更</div>
-                    </button>
+                    </button> --}}
+                    <manager-select-btn-component
+                        :managers="{{ json_encode($managers) }}"
+                        :selected="{{ json_encode(session('manager') ?? '') }}"
+                    ></manager-select-btn-component>
 
                     @if (session()->has('manager_id'))
                         <div class="card col-3 col-3-custom mr-1 text-center lh-leftbtn cbtn-teal fs-20" data-bs-toggle="modal" data-bs-target="#tag-edit-modal">

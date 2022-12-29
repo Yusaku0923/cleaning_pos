@@ -30,6 +30,7 @@ class HomeController extends Controller
             // 担当者が設定されいていない、もしくは顧客-担当者が一致しない場合は顧客セッション削除
             if (!session()->exists('manager_id') || session()->get('manager_id') !== $customer->manager_id) {
                 session()->forget('customer_id');
+                session()->forget('customer_info');
                 $customer = [];
             } else {
                 $orders = $model->fetchOrders($customer->id, 4);

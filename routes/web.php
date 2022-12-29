@@ -59,7 +59,8 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('manager')->group(function () {
-        Route::post('update', [ManagerController::class, 'update'])->name('manager.update');
+        Route::get('update/{manager_id}', [ManagerController::class, 'update'])->name('manager.update');
+        // Route::post('update', [ManagerController::class, 'update'])->name('manager.update');
     });
 
     Route::prefix('order')->group(function () {

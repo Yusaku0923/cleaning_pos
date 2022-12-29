@@ -21,6 +21,14 @@
                             <div class="col-3 text-end">{{ dateFormater(row.created_at, 'YYYY/MM/DD') }}</div>
                         </td>
                     </tr>
+                    <template v-if="disp.length < 4">
+                        <tr v-for="row in (4 - disp.length)" :key="row * -1">
+                            <td style="height:3.6vh;">
+                                <div class="col-9"></div>
+                                <div class="col-3 text-end"></div>
+                            </td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
         </div>
@@ -63,14 +71,22 @@ export default ({
     },
     mounted() {
         this.base = this.info;
-        this.disp = this.base.slice(-4);
+        let delimt = 0;
+        if (this.base.length > 4) {
+            delimt = -4;
+        } else {
+            delimt = this.base.length * -1;
+        }
+        this.disp = this.base.slice(delimt);
     },
     methods: {
         dateFormater: function(date, format = 'MM/DD') {
             return moment(date).format(format);
         },
         show: function() {
-            this.showModal = true;
+            if (Object.keys(this.customer).length) {
+                this.showModal = true;
+            }
         },
         close: function() {
             this.showModal = false;
@@ -112,9 +128,6 @@ export default ({
                 return;
             });
         },
-        update: async function() {
-
-        }
     },
 })
 </script>

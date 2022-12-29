@@ -23,7 +23,7 @@
                         </div>
                         <hr>
                         <div class="col-12 d-flex">
-                            <input class="col-10 fs-20" type="text" v-model="inputInformation">
+                            <textarea class="col-10 fs-20" v-model="inputInformation"></textarea>
                             <div class="col-2">
                                 <button class="col-10 ms-3 btn btn-primary fs-20" @click="$emit('add', inputInformation);inputInformation=''">追加</button>
                             </div>

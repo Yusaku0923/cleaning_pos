@@ -1,6 +1,6 @@
 <div class="modal fade" id="tag-edit-modal" tabindex="-1" role="dialog" aria-labelledby="tag-edit-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content border border-4 border-dark">
             <div class="modal-header tag-field">
                 <h5 class="modal-title fs-26 fw-bold" id="tag-edit-modal-label">タグ番号更新</h5>
                 {{-- <button type="button" class="close btn cbtn-red" data-bs-dismiss="modal" aria-label="Close">

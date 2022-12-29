@@ -22,17 +22,15 @@ class CustomerController extends Controller
      */
     public function search()
     {
-        $store = Store::find(Auth::id());
-        $token = $store->createToken(Str::random(10));
-
         return view('customers.search')->with([
-            'auth_token' => $token->plainTextToken,
+            'title' => '顧　客　検　索',
             'manager_id' => session()->get('manager_id')
         ]);
     }
 
     public function select($id) {
         session()->put('customer_id', $id);
+    
         $query = CustomerInformation::query();
         $query->where('customer_id', $id);
         $query->orderBy('created_at', 'asc');
@@ -44,6 +42,7 @@ class CustomerController extends Controller
 
     public function clear() {
         session()->forget('customer_id');
+        session()->forget('customer_info');
         return redirect()->route('home');
     }
 
