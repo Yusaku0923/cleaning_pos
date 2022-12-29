@@ -10,6 +10,6 @@
     :categories='{{ json_encode($list) }}'
     :often_ordered='{{ json_encode($often_ordered) }}'
     :tax='{{ $tax }}'
-    :token='{{ json_encode($auth_token) }}'
+    :token="{{ json_encode(Utility::fetchApiToken()) }}"
 ></order-component>
 @endsection
