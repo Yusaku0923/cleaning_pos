@@ -107,7 +107,8 @@ class OrdersController extends Controller
                     OrderClothes::query()->create([
                         'order_id' => $order->id,
                         'clothes_id' => $clothes_id,
-                        'tag' => $converted_tag
+                        'tag' => $converted_tag,
+                        'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
                     ]);
     
                     if ($tag_count > 1) {
@@ -118,6 +119,7 @@ class OrdersController extends Controller
                                 'order_id' => $order->id,
                                 'clothes_id' => 999,
                                 'tag' => $converted_tag,
+                                'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
                             ]);
                         }
                     } else {
@@ -134,7 +136,8 @@ class OrdersController extends Controller
                     OrderClothes::query()->create([
                         'order_id' => $order->id,
                         'clothes_id' => $clothes_id,
-                        'tag' => '0-000'
+                        'tag' => '0-000',
+                        'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
                     ]);
     
                     if ($tag_count > 1) {
@@ -143,6 +146,7 @@ class OrdersController extends Controller
                                 'order_id' => $order->id,
                                 'clothes_id' => 999,
                                 'tag' => '0-000',
+                                'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
                             ]);
                         }
                     } else {
