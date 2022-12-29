@@ -256,6 +256,10 @@
                             <input type="checkbox" class="form-check-input" id="not-paid" v-model="notPaid">
                             <label class="form-check-label" for="not-paid">未収で登録する</label>
                         </div>
+                        <div class="col-10 mx-auto pay-checkbox form-check">
+                            <input type="checkbox" class="form-check-input" id="check-return" v-model="checkReturn">
+                            <label class="form-check-label" for="check-return">返却確認する</label>
+                        </div>
                     </div>
 
                 </template>
@@ -335,6 +339,10 @@ export default ({
             type: Boolean,
             required: true
         },
+        check_return: {
+            type: Boolean,
+            required: true
+        },
         customer_name: {
             type: String,
             required: true
@@ -362,6 +370,7 @@ export default ({
             isActive: -1,
             notPaid: this.is_invoice,
             isInvoice: this.is_invoice,
+            checkReturn: this.check_return,
             showDiscount: false,
             indexes: [],
             order: {},
@@ -503,6 +512,7 @@ export default ({
                 payment: this.payment,
                 not_paid: this.notPaid,
                 invoice: this.isInvoice,
+                check_return: this.checkReturn,
                 dont_issue_tag_list: this.dontIssueTagList,
                 created_at: this.created_at,
             })

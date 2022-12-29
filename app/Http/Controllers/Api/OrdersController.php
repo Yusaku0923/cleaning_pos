@@ -90,6 +90,10 @@ class OrdersController extends Controller
         if (!empty($request->created_at)) {
             $order_record['created_at'] = $request->created_at;
         }
+        // 返却日設定
+        if (!$request->check_return) {
+            $order_record['handed_at'] = date('Y-m-d H:i:s');
+        }
         $order = Order::query()->create($order_record);
 
         $tag = TagNumber::where('manager_id', $request->manager_id)->value('tag_number');

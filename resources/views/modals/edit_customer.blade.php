@@ -33,43 +33,58 @@
                     <li>{{$error}}</li>
                     @endforeach
                     <hr>
-                    <div class="col-12 form-group mb-2">
-                        <label for="is_invoice" class="form-label fs-20 fw-bold">請求書払い</label>
-                        <div class="col-8 d-flex fs-20">
-                            <div class="col-6">
-                                <input type="radio" id="is_invoice_true" class="form-check-input" name="is_invoice" value="1" {{ (boolean)$customer->is_invoice ? 'checked': '' }} />
-                                <label for="is_invoice_true">する</label>
-                            </div>
-                            <div class="col-6">
-                                <input type="radio" id="is_invoice_false" class="form-check-input" name="is_invoice" value="0" {{ (boolean)$customer->is_invoice ? '': 'checked' }} />
-                                <label for="is_invoice_false">しない</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 form-group mb-2">
-                        <label for="check_payment" class="form-label fs-20 fw-bold">入金確認</label>
-                        <div class="col-8 d-flex fs-20">
-                            <div class="col-6">
-                                <input type="radio" id="check_payment_true" class="form-check-input" name="check_payment" value="1" {{ (boolean)$customer->needs_payment_confimation ? 'checked': '' }} />
-                                <label for="check_payment_true">する</label>
-                            </div>
-                            <div class="col-6">
-                                <input type="radio" id="check_payment_false" class="form-check-input" name="check_payment" value="0" {{ (boolean)$customer->needs_payment_confimation ? '': 'checked' }} />
-                                <label for="check_payment_false">しない</label>
+                    <div class="col-12 overflow-scroll" style="height: 25vh">
+                        <div class="col-12 form-group mb-2">
+                            <label for="is_invoice" class="form-label fs-20 fw-bold">請求書払い</label>
+                            <div class="col-8 d-flex fs-20">
+                                <div class="col-6">
+                                    <input type="radio" id="is_invoice_true" class="form-check-input" name="is_invoice" value="1" {{ (boolean)$customer->is_invoice ? 'checked': '' }} />
+                                    <label for="is_invoice_true">する</label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="radio" id="is_invoice_false" class="form-check-input" name="is_invoice" value="0" {{ (boolean)$customer->is_invoice ? '': 'checked' }} />
+                                    <label for="is_invoice_false">しない</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-6 form-group mb-2">
-                        <label for="cutoff_date" class="form-label fs-20 fw-bold">締め日</label>
-                        <select id="cutoff_date" name="cutoff_date" class="form-select" aria-label="締め日">
-                            @foreach ($cutoff as $key => $date)
-                            @if ($key === 0)
-                            <option value="{{ $key }}" disabled>日付を選択してください</option>
-                            @else
-                            <option value="{{ $key }}" {{ $customer->cutoff_date === $key ? 'selected': '' }}>{{ $date }}日</option>
-                            @endif
-                            @endforeach
-                        </select>
+                        <div class="col-12 form-group mb-2">
+                            <label for="check_payment" class="form-label fs-20 fw-bold">入金確認</label>
+                            <div class="col-8 d-flex fs-20">
+                                <div class="col-6">
+                                    <input type="radio" id="check_payment_true" class="form-check-input" name="check_payment" value="1" {{ (boolean)$customer->needs_payment_confimation ? 'checked': '' }} />
+                                    <label for="check_payment_true">する</label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="radio" id="check_payment_false" class="form-check-input" name="check_payment" value="0" {{ (boolean)$customer->needs_payment_confimation ? '': 'checked' }} />
+                                    <label for="check_payment_false">しない</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 form-group mb-2">
+                            <label for="check_return" class="form-label fs-20 fw-bold">返却確認</label>
+                            <div class="col-8 d-flex fs-20">
+                                <div class="col-6">
+                                    <input type="radio" id="check_retrun_true" class="form-check-input" name="check_return" value="1" {{ (boolean)$customer->needs_return_confimation ? 'checked': '' }} />
+                                    <label for="check_retrun_true">する</label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="radio" id="check_return_false" class="form-check-input" name="check_return" value="0" {{ (boolean)$customer->needs_return_confimation ? '': 'checked' }} />
+                                    <label for="check_return_false">しない</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 form-group mb-2">
+                            <label for="cutoff_date" class="form-label fs-20 fw-bold">締め日</label>
+                            <select id="cutoff_date" name="cutoff_date" class="form-select" aria-label="締め日">
+                                @foreach ($cutoff as $key => $date)
+                                @if ($key === 0)
+                                <option value="{{ $key }}" disabled>日付を選択してください</option>
+                                @else
+                                <option value="{{ $key }}" {{ $customer->cutoff_date === $key ? 'selected': '' }}>{{ $date }}日</option>
+                                @endif
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

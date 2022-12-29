@@ -133,7 +133,6 @@
                     @if (!empty($latest_order))
                         @include('modals.cancel_order')
                     @endif
-                    @include('modals.select_manager')
                     @if (!is_null($tag))
                         @include('modals.edit_tag')
                     @endif

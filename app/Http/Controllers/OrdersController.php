@@ -53,6 +53,7 @@ class OrdersController extends Controller
             'customer_id' => session()->get('customer_id'),
             'customer_name' => $customer->name,
             'is_invoice' => $customer->is_invoice,
+            'check_return' => $customer->needs_return_confimation,
             'auth_token' => $token->plainTextToken,
             'list' => $category_clothes,
             'often_ordered' => $often_ordered,
