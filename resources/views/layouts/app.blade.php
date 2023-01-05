@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Fullscreen For Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -38,6 +39,7 @@
 </head>
 <body>
     <div id="app" class="{{ session('theme_body') ?? session('theme_body') }}">
+        @if (!request()->is('*customer_display*'))
         <main class="pt-4 position-relative">
             <div class="col-12 mb-4 px-2 position-sticky">
                 @if ( !request()->is('*login*') )
@@ -52,6 +54,9 @@
             </div>
             @yield('content')
         </main>
+        @else
+        @yield('content')
+        @endif
     </div>
 </body>
 </html>

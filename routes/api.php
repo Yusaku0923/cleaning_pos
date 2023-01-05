@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\ClothesController;
 use App\Http\Controllers\Api\CustomerInformationController;
+use App\Http\Controllers\Api\CustomerDisplayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,4 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('invoice/search', [InvoiceController::class, 'search'])->name('invoice.search');
 
     Route::post('return/update', [ReturnController::class, 'update'])->name('return.update');
+
 });
+Route::post('broadcast', [CustomerDisplayController::class, 'broadcast'])->name('customer_display.broadcast');

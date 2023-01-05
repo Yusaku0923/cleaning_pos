@@ -30,6 +30,8 @@ Auth::routes([
     'reset' => false,
 ]);
 
+Route::get('/customer_display', [HomeController::class, 'customer_display'])->name('customer_display');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/menu', [HomeController::class, 'menu'])->name('menu');

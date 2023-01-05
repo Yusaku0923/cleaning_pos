@@ -15,7 +15,8 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.0",
-        "livewire/livewire": "^2.10"
+        "livewire/livewire": "^2.10",
+        "pusher/pusher-php-server": "^7.2"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

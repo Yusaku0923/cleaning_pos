@@ -54,6 +54,13 @@ class HomeController extends Controller
         ]);
     }
 
+    public function customer_display()
+    {
+        return view('customer_display')->with([
+            // 'title' => '',
+        ]);
+    }
+
     public function test()
     {
         return view('test')->with([
