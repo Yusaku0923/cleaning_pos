@@ -35,6 +35,8 @@ class CustomerDisplayController extends Controller
      * ・注文追加
      * event: add
      * value: {id: 商品ID, name: 商品名, price: 値段, count: 個数}
+     * {"event":"add","id":"1","name":"Tシャツ","price": 100,"count": 1}
+     * 
      * display: リストに商品追加、合計金額更新
      * 
      * ・注文削減

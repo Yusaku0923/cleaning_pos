@@ -20,15 +20,15 @@
 
                         <div class="col-11 mx-auto px-3 overflow-scroll cd-2-order-list" id="order-area" @click="scroll()">
                             <div id="list-top"></div>
-                            <div class="col-12 my-2 py-1 px-1 d-flex cd-2-order-list-row" v-for="i in 22" :key="i" :id="['row-' + i]">
+                            <div class="col-12 my-2 py-1 px-1 d-flex cd-2-order-list-row" v-for="order in state.order" :key="order.id" :id="['row-' + order.id]">
                                 <div class="col-6 cd-2-order-list-row-name">
-                                    Yシャツ
+                                    {{ order.name }}
                                 </div>
                                 <div class="col-2 text-start cd-2-order-list-row-count">
-                                    × {{ i }}
+                                    × {{ order.count }}
                                 </div>
                                 <div class="col-4 text-end cd-2-order-list-row-price">
-                                    1,000円
+                                    {{ order.price }}円
                                 </div>
                             </div>
                         </div>
@@ -103,8 +103,13 @@ export default ({
             phase: 1,
             state: {
                 customer: '',
-                order: {},
+                total: 0,
+                order: [],
+                discount: 0,
+                reduction: 0,
                 amount: 0,
+                payment: 0,
+                change: 0,
             },
             scrollList: ['list-top', 'row-8', 'row-15'],
             phase1_1anim: false,
@@ -115,54 +120,67 @@ export default ({
     },
     mounted() {
         window.Echo.channel('cleaning-pos')
-            .listen('.customer-display', res => {
-                switch(res.event) {
+            .listen('.customer-display', req => {
+                switch(req.event) {
                     case 'customer':
-                        this.setCustomer(res);
+                        this.setCustomer(req);
                         break;
                     case 'order':
-                        this.transferOrder(res);
+                        this.transferOrder(req);
                         break;
-                    case 'add':
-                        this.addOrder(res);
+                    case 'update':
+                        this.update(req);
                         break;
-                    case 'reduce':
-                        this.reduceOrder(res);
+                    case 'delete':
+                        this.delete(req);
                         break;
                     case 'confirm':
-                        this.transferConfirm(res);
+                        this.transferConfirm(req);
                         break;
                     case 'discount':
-                        this.discount(res);
+                        this.discount(req);
                         break;
                     case 'account':
-                        this.account(res);
+                        this.account(req);
                         break;
                     case 'finish':
-                        this.finishOrder(res);
+                        this.finishOrder(req);
                         break;
                     default:
-                        console.log(res)
+                        console.log(req)
                         break;
                 }
             });
     },
     methods: {
-        setCustomer: function(res) {
-            this.$set(this.state, 'customer', res.name);
+        setCustomer: function(req) {
+            this.$set(this.state, 'customer', req.name);
             this.phase1_1anim = true;
         },
-        transferOrder: function(res) {
+        transferOrder: function(req) {
             this.phase1_2anim = true;
             setTimeout(() => {
                 this.phase = 2;
-                this.scroll();
+                // this.scroll();
             }, 1000);
         },
-        addOrder: function() {
+        update: function(req) {
+            if (req.order.length !==0) {
+                let index = this.state.order.findIndex((elem) => {
+                    return elem.id === req.order.id;
+                });
+    
+                if (index !== -1) {
+                    this.state.order.splice(index, 1, req.order);
+                } else {
+                    this.state.order.push(req.order);
+                }
+            }
 
+            this.amount = req.amount;
+            this.total = req.total;
         },
-        reduceOrder: function() {
+        delete: function() {
 
         },
         transferConfirm: function() {
@@ -192,7 +210,7 @@ export default ({
         },
         scroll: function() {
             let index = 0;
-            setInterval(function() {
+            setInterval(() => {
                 let row = document.getElementById(this.scrollList[index]);
                 row.scrollIntoView({
                     behavior : 'smooth',
@@ -202,7 +220,7 @@ export default ({
                 } else {
                     index++;
                 }
-            }.bind(this), 5000)
+            }, 5000);
         }
     }
 });

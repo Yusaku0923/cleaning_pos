@@ -208,26 +208,23 @@ $cdblue: rgb(2, 153, 253);
 
     &-3 {
         position: relative;
-        animation: thanks-anim-move 1.5s linear;
+        animation: thanks-anim-move 1s linear;
         &-string {
             width: 1vw;
             height: 50vh;
             background-color: $white;
             &-l {
-                // animation: thanks-anim-string-l 2s;
                 position: absolute;
                 top: -10vh;
                 left: 32vw;
             }
             &-r {
-                // animation: thanks-anim-string-r 2s;
                 position: absolute;
                 top: -10vh;
                 right: 32vw;
             }
         }
         &-board {
-            // animation: thanks-anim-board 2s;
             position: absolute;
             top: 30vh;
             left: 25vh;
@@ -410,6 +407,7 @@ $cdblue: rgb(2, 153, 253);
 
     100% {
         transform: translateX(150vw);
+        display: none;
     }
 }
 @keyframes thanks-anim-move {
@@ -417,18 +415,17 @@ $cdblue: rgb(2, 153, 253);
         transform: translateY(-100vh);
     }
 
-    40% {
+    60% {
         transform: translateY(0);
     }
-    60% {
-        transform: translateY(-10vh);
+    70% {
+        transform: translateY(-7vh);
     }
     80% {
-        transform: translateY(0);
+        transform: translateY(-10vh);
     }
-    
     90% {
-        transform: translateY(-3vh);
+        transform: translateY(-7vh);
     }
     100% {
         transform: translateY(0);
