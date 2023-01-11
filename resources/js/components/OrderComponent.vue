@@ -103,7 +103,8 @@
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                             <div class="text-primary order-text">
-                                {{ order[i].count * order[i].tag_count }} 点
+                                <!-- {{ order[i].count * order[i].tag_count }} 点 -->
+                                {{ order[i].count }} 点
                             </div>
                         </div>
                         <div class="col-5 order-text text-end text-primary">
@@ -434,6 +435,8 @@ export default ({
 
                 this.total += clothes.tag_count;
                 this.amount += this.order[clothes.id].price;
+
+                this.CD_updateClothes(clothes.id);
             }
         },
         increace: function (clothes) {
@@ -523,7 +526,46 @@ export default ({
                 console.log(error);
                 return;
             });
-        }
+        },
+        // カスタマーディスプレイ表示情報(API => WebSocket)
+        CD_updateClothes: function(id) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'update',
+                total: this.total,
+                id: id,
+                name: this.order[id].name,
+                count: this.order[id].count,
+                price: this.order[id].count * this.order[id].price,
+                amount: this.amount
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        CD_deleteClothes: function(id) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'update',
+                total: this.total,
+                id: id,
+                name: order[i].name,
+                count: order[i].count,
+                price: order[i].count * order[i].price,
+                amount: this.amount
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
     }
 });
 </script>

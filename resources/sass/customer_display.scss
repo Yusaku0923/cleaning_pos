@@ -88,7 +88,7 @@ $cdblue: rgb(2, 153, 253);
             &-bar {
                 position: absolute;
                 top: 5vh;
-                left: 47.95vw;
+                left: 47.9vw;
                 width: 5vw;
                 height:3vh;
                 background: linear-gradient(#e9e9e9 20%, #cecece 30%, #b6b5b5 45%);
@@ -183,7 +183,6 @@ $cdblue: rgb(2, 153, 253);
                 background-color: $white;
                 z-index: 5;
                 color: $cdblue;
-                font-size: 30px;
                 // &-total {
                 //     // border-bottom: 2px solid $cdblue;
                 // }
@@ -199,6 +198,15 @@ $cdblue: rgb(2, 153, 253);
                 // &-change {
                 //     // border-bottom: 2px solid $cdblue;
                 // }
+                &-label {
+                    font-size: 24px;
+                    line-height: 50px;
+                }
+                &-value {
+                    font-size: 32px;
+                    line-height: 50px;
+                    font-weight: bold;
+                }
             }
         }
         &-end {
@@ -208,7 +216,7 @@ $cdblue: rgb(2, 153, 253);
 
     &-3 {
         position: relative;
-        animation: thanks-anim-move 1s linear;
+        animation: thanks-anim-move 2s linear;
         &-string {
             width: 1vw;
             height: 50vh;
@@ -415,17 +423,35 @@ $cdblue: rgb(2, 153, 253);
         transform: translateY(-100vh);
     }
 
-    60% {
+    30% {
         transform: translateY(0);
     }
-    70% {
+    40% {
         transform: translateY(-7vh);
     }
-    80% {
+    50% {
         transform: translateY(-10vh);
     }
-    90% {
+    60% {
         transform: translateY(-7vh);
+    }
+    70% {
+        transform: translateY(0);
+    }
+    75% {
+        transform: translateY(-3.5vh);
+    }
+    80% {
+        transform: translateY(-5vh);
+    }
+    85% {
+        transform: translateY(-3.5vh);
+    }
+    90% {
+        transform: translateY(0);
+    }
+    95% {
+        transform: translateY(-2vh);
     }
     100% {
         transform: translateY(0);

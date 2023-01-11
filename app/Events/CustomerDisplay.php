@@ -4,7 +4,7 @@ namespace App\Events;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
 class CustomerDisplay implements ShouldBroadcastNow
@@ -20,8 +20,8 @@ class CustomerDisplay implements ShouldBroadcastNow
 
     public function broadcastOn()
     {
-        // return ['cleaning-pos'];
-        return new PresenceChannel('cleaning-pos', $this->message);
+        
+        return new Channel('cleaning-pos', $this->message);
     }
 
     public function broadcastAs()

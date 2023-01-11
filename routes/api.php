@@ -41,5 +41,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('return/update', [ReturnController::class, 'update'])->name('return.update');
 
+    Route::post('broadcast', [CustomerDisplayController::class, 'broadcast'])->name('customer_display.broadcast');
 });
-Route::post('broadcast', [CustomerDisplayController::class, 'broadcast'])->name('customer_display.broadcast');

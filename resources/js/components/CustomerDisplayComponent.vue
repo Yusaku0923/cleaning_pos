@@ -18,7 +18,7 @@
                     <div>
                         <div class="cd-2-order-bar"></div>
 
-                        <div class="col-11 mx-auto px-3 overflow-scroll cd-2-order-list" id="order-area" @click="scroll()">
+                        <div class="col-11 mx-auto px-3 overflow-scroll cd-2-order-list" id="order-area">
                             <div id="list-top"></div>
                             <div class="col-12 my-2 py-1 px-1 d-flex cd-2-order-list-row" v-for="order in state.order" :key="order.id" :id="['row-' + order.id]">
                                 <div class="col-6 cd-2-order-list-row-name">
@@ -38,46 +38,46 @@
                     <div class="cd-2-result-bar"></div>
                     <img class="cd-2-result-hanger" src="/img/hanger.svg" alt="">
                     <img class="cd-2-result-tshorts" src="/img/tshorts.svg" alt="">
-                    <div class="cd-2-result-field fw-bold">
+                    <div class="cd-2-result-field">
                         <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-total">
-                            <div class="col-5">
+                            <div class="col-6 cd-2-result-field-label">
                                 点数
                             </div>
-                            <div class="col-7 text-end">
-                                10点
+                            <div class="col-6 text-end cd-2-result-field-value">
+                                {{ state.total }}点
                             </div>
                         </div>
-                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-amount">
-                            <div class="col-4">
+                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-amount" v-if="state.reduction !== 0">
+                            <div class="col-4 cd-2-result-field-label">
                                 割引き
                             </div>
-                            <div class="col-8 text-end">
-                                <div class="col-12">200円</div>
-                                <div class="col-12">(10%割引き)</div>
+                            <div class="col-8 text-end cd-2-result-field-value">
+                                <div class="col-12">{{ state.reduction.toLocaleString() }}円</div>
+                                <div class="col-12" v-if="state.discount !== 0">({{ state.discount }}%引き)</div>
                             </div>
                         </div>
                         <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-amount">
-                            <div class="col-5">
+                            <div class="col-6 cd-2-result-field-label">
                                 合計金額
                             </div>
-                            <div class="col-7 text-end">
-                                2,000円
+                            <div class="col-6 text-end cd-2-result-field-value">
+                                {{ state.amount.toLocaleString() }}円
                             </div>
                         </div>
-                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-payment">
-                            <div class="col-5">
+                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-payment" v-if="state.payment !== 0">
+                            <div class="col-6 cd-2-result-field-label">
                                 お預かり
                             </div>
-                            <div class="col-7 text-end">
-                                2,000円
+                            <div class="col-6 text-end cd-2-result-field-value">
+                                {{ state.payment.toLocaleString() }}円
                             </div>
                         </div>
-                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-change">
-                            <div class="col-5">
+                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-change" v-if="state.change !== 0">
+                            <div class="col-6 cd-2-result-field-label">
                                 お釣り
                             </div>
-                            <div class="col-7 text-end">
-                                0円
+                            <div class="col-6 text-end cd-2-result-field-value">
+                                {{ state.change.toLocaleString() }}円
                             </div>
                         </div>
                     </div>
@@ -105,13 +105,15 @@ export default ({
                 customer: '',
                 total: 0,
                 order: [],
-                discount: 0,
                 reduction: 0,
+                discount: 0,
                 amount: 0,
                 payment: 0,
                 change: 0,
             },
-            scrollList: ['list-top', 'row-8', 'row-15'],
+            row: 0,
+            scrollList: ['list-top'],
+            scrollEvent: -1,
             phase1_1anim: false,
             phase1_2anim: false,
             phase3_1anim: false,
@@ -121,6 +123,7 @@ export default ({
     mounted() {
         window.Echo.channel('cleaning-pos')
             .listen('.customer-display', req => {
+                req = req.message; // コイツ
                 switch(req.event) {
                     case 'customer':
                         this.setCustomer(req);
@@ -133,9 +136,6 @@ export default ({
                         break;
                     case 'delete':
                         this.delete(req);
-                        break;
-                    case 'confirm':
-                        this.transferConfirm(req);
                         break;
                     case 'discount':
                         this.discount(req);
@@ -161,56 +161,94 @@ export default ({
             this.phase1_2anim = true;
             setTimeout(() => {
                 this.phase = 2;
-                // this.scroll();
             }, 1000);
         },
         update: function(req) {
-            if (req.order.length !==0) {
-                let index = this.state.order.findIndex((elem) => {
-                    return elem.id === req.order.id;
-                });
-    
-                if (index !== -1) {
-                    this.state.order.splice(index, 1, req.order);
-                } else {
-                    this.state.order.push(req.order);
+            let index = this.state.order.findIndex((elem) => {
+                return elem.id === req.id;
+            });
+
+            let order = {
+                id: req.id,
+                name: req.name,
+                count: req.count,
+                price: req.price,
+            };
+
+            if (index !== -1) {
+                this.state.order.splice(index, 1, order);
+            } else {
+                this.state.order.push(order);
+
+                this.row = this.state.order.length;
+                // 6 * x + 2[x > 0]行ずつでスクロールリストチェックを行う
+                if (this.row >= 8 && this.row % 6 === 2) {
+                    let tg = 'row-' + this.row;
+                    if (this.scrollList.indexOf(tg) === -1) this.scrollList.push(tg);
+                    // スクロールイベントを実行中でなければ実行
+                    if (this.scrollEvent !== -1) this.scroll();
                 }
             }
 
-            this.amount = req.amount;
-            this.total = req.total;
+            this.state.total = req.total;
+            this.state.amount = req.amount;
         },
         delete: function() {
+            let index = this.state.order.findIndex((elem) => {
+                return elem.id === req.id;
+            });
 
+            if (index !== -1) {
+                this.state.order.splice(index, 1);
+
+                this.row = this.state.order.length;
+                // 6 * x + 2[x > 0]行ずつでスクロールリストチェックを行う
+                if (this.row >= 8 && this.row % 6 === 2) {
+                    let tg = 'row-' + this.row;
+                    let tgIndex = this.scrollList.indexOf(tg);
+                    if (tgIndex === -1) this.scrollList.splice(tgIndex, 1);
+                    // スクロールイベントの実行の必要がなければ中断
+                    if (this.scrollList === 1) {
+                        clearInterval(this.scrollEvent);
+                        this.scrollEvent = -1;
+                    }
+                }
+            }
+
+            this.state.total = req.total;
+            this.state.amount = req.amount;
         },
-        transferConfirm: function() {
-
+        discount: function(req) {
+            this.state.reduction = req.reduction;
+            this.state.discount = req.discount;
+            this.state.amount = req.amount;
         },
-        discount: function() {
-
-        },
-        account: function() {
-
+        account: function(req) {
+            this.state.payment = req.payment;
+            this.state.change = req.change;
+            setTimeout(() => {
+                this.finishOrder();
+            }, 60000);
         },
         finishOrder: function() {
             this.phase3_1anim = true;
+            if (this.scrollList === 1) {
+                clearInterval(this.scrollEvent);
+                this.scrollEvent = -1;
+            }
             setTimeout(() => {
-                this.phase1_1anim = false;
-                this.phase1_2anim = false;
-                this.phase3_1anim = false;
                 this.phase = 3;
             }, 1200);
             setTimeout(() => {
                 this.phase3_2anim = true;
             }, 6200);
             setTimeout(() => {
-                this.phase = 1;
-                this.phase3_2anim = false;
+                this.initialize();
             }, 8000);
         },
         scroll: function() {
             let index = 0;
-            setInterval(() => {
+            this.scrollEvent = setInterval(() => {
                 let row = document.getElementById(this.scrollList[index]);
                 row.scrollIntoView({
                     behavior : 'smooth',
@@ -221,7 +259,28 @@ export default ({
                     index++;
                 }
             }, 5000);
-        }
+        },
+        initialize: function() {
+            this.state = {
+                customer: '',
+                total: 0,
+                order: [],
+                reduction: 0,
+                discount: 0,
+                amount: 0,
+                payment: 0,
+                change: 0,
+            };
+            this.scrollList = ['list-top'];
+            this.row = 0;
+            this.scrollEvent = 0;
+            this.phase1_1anim = false;
+            this.phase1_2anim = false;
+            this.phase3_1anim = false;
+            this.phase3_2anim = false;
+
+            this.phase = 1;
+        },
     }
 });
 </script>

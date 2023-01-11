@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Events\CustomerDisplay;
+use Illuminate\Support\Facades\Log;
+
 
 class CustomerDisplayController extends Controller
 {
@@ -33,7 +35,7 @@ class CustomerDisplayController extends Controller
      * display: 注文選択画面に遷移
      * 
      * ・注文追加
-     * event: add
+     * event: update
      * value: {id: 商品ID, name: 商品名, price: 値段, count: 個数}
      * {"event":"add","id":"1","name":"Tシャツ","price": 100,"count": 1}
      * 
@@ -43,11 +45,6 @@ class CustomerDisplayController extends Controller
      * event: reduce
      * value: {id: 商品ID, count: 個数}
      * display: リストに商品削減、合計金額更新
-     * 
-     * ・確認画面
-     * event: confirm
-     * value: {amount: 合計金額}
-     * display: 確認画面へ遷移
      * 
      * ・割引
      * event: discount
@@ -67,7 +64,7 @@ class CustomerDisplayController extends Controller
      * ⇒一旦案2でやってみよ
      */
     public function broadcast(Request $request) {
-        broadcast(new CustomerDisplay('aaaaa'));
+        broadcast(new CustomerDisplay($request->all()));
 
         return response()->json([]);
     }
