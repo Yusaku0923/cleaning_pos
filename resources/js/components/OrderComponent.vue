@@ -285,6 +285,7 @@
                 伝票発行
             </div>
             <a class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount text-decoration-none"
+                @click="CD_finish()"
                 :href="route"
                 v-if="step === 4 || step === 5"
             >ホームに戻る</a>
@@ -449,6 +450,8 @@ export default ({
 
             this.total += clothes.tag_count;
             this.amount += this.order[clothes.id].price;
+
+            this.CD_updateClothes(clothes.id);
         },
         decreace: function (clothes) {
             this.total -= clothes.tag_count;
@@ -462,7 +465,9 @@ export default ({
             this.$delete(this.order, clothes.id);
             if (clothes.count !== 0) {
                 this.$set(this.order, clothes.id, clothes);
+                this.CD_updateClothes(clothes.id);
             } else {
+                this.CD_deleteClothes(clothes.id);
                 this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
                 delete this.orderForSend[clothes.id];
             }
@@ -472,6 +477,7 @@ export default ({
             this.reduction = reduction;
             this.discount = discount;
 
+            this.CD_discount();
             this.switchDiscount();
         },
 
@@ -491,9 +497,11 @@ export default ({
             this.payment = payment;
             this.change = payment - Math.trunc((this.amount - this.reduction));
 
+            this.CD_account();
+
             // order登録API
             let order_id = await this.storeOrder();
-           
+
             // レシート発行
             this.$refs.child.printReceipt(order_id);
             this.orderId = order_id;
@@ -537,7 +545,7 @@ export default ({
                 name: this.order[id].name,
                 count: this.order[id].count,
                 price: this.order[id].count * this.order[id].price,
-                amount: this.amount
+                amount: this.amount - this.reduction
             })
             .then(function (response) {
                 return;
@@ -550,13 +558,55 @@ export default ({
         CD_deleteClothes: function(id) {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
             axios.post('/api/broadcast', {
-                event: 'update',
+                event: 'delete',
                 total: this.total,
                 id: id,
-                name: order[i].name,
-                count: order[i].count,
-                price: order[i].count * order[i].price,
-                amount: this.amount
+                amount: this.amount - this.reduction
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        CD_discount: function() {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'discount',
+                reduction: this.reduction,
+                discount: this.discount,
+                amount: this.amount - this.reduction
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        CD_account: function() {
+            console.log('account');
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'account',
+                payment: this.payment,
+                change: this.change
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        CD_finish: function() {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'finish'
             })
             .then(function (response) {
                 return;

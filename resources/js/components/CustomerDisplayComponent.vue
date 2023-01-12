@@ -28,7 +28,7 @@
                                     × {{ order.count }}
                                 </div>
                                 <div class="col-4 text-end cd-2-order-list-row-price">
-                                    {{ order.price }}円
+                                    {{ order.price.toLocaleString() }}円
                                 </div>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
                                 {{ state.payment.toLocaleString() }}円
                             </div>
                         </div>
-                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-change" v-if="state.change !== 0">
+                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-change" v-if="state.payment !== 0">
                             <div class="col-6 cd-2-result-field-label">
                                 お釣り
                             </div>
@@ -154,11 +154,15 @@ export default ({
     },
     methods: {
         setCustomer: function(req) {
+            if (this.phase !== 1) {
+                this.initialize();
+            }
             this.$set(this.state, 'customer', req.name);
             this.phase1_1anim = true;
         },
         transferOrder: function(req) {
             this.phase1_2anim = true;
+            this.initialize('state');
             setTimeout(() => {
                 this.phase = 2;
             }, 1000);
@@ -190,10 +194,10 @@ export default ({
                 }
             }
 
-            this.state.total = req.total;
-            this.state.amount = req.amount;
+            this.$set(this.state, 'total', req.total);
+            this.$set(this.state, 'amount', req.amount);
         },
-        delete: function() {
+        delete: function(req) {
             let index = this.state.order.findIndex((elem) => {
                 return elem.id === req.id;
             });
@@ -215,17 +219,17 @@ export default ({
                 }
             }
 
-            this.state.total = req.total;
-            this.state.amount = req.amount;
+            this.$set(this.state, 'total', req.total);
+            this.$set(this.state, 'amount', req.amount);
         },
         discount: function(req) {
-            this.state.reduction = req.reduction;
-            this.state.discount = req.discount;
-            this.state.amount = req.amount;
+            this.$set(this.state, 'reduction', req.reduction);
+            this.$set(this.state, 'discount', req.discount);
+            this.$set(this.state, 'amount', req.amount);
         },
         account: function(req) {
-            this.state.payment = req.payment;
-            this.state.change = req.change;
+            this.$set(this.state, 'payment', req.payment);
+            this.$set(this.state, 'change', req.change);
             setTimeout(() => {
                 this.finishOrder();
             }, 60000);
@@ -260,26 +264,38 @@ export default ({
                 }
             }, 5000);
         },
-        initialize: function() {
-            this.state = {
-                customer: '',
-                total: 0,
-                order: [],
-                reduction: 0,
-                discount: 0,
-                amount: 0,
-                payment: 0,
-                change: 0,
-            };
-            this.scrollList = ['list-top'];
-            this.row = 0;
-            this.scrollEvent = 0;
-            this.phase1_1anim = false;
-            this.phase1_2anim = false;
-            this.phase3_1anim = false;
-            this.phase3_2anim = false;
+        initialize: function(specify = '') {
+            if (specify.length === 0 || specify === 'state') {
+                this.state = {
+                    customer: '',
+                    total: 0,
+                    order: [],
+                    reduction: 0,
+                    discount: 0,
+                    amount: 0,
+                    payment: 0,
+                    change: 0,
+                };
+            }
+            if (specify.length === 0 || specify === 'scrollList') {
+                this.scrollList = ['list-top'];
+            }
+            if (specify.length === 0 || specify === 'row') {
+                this.row = 0;
+            }
+            if (specify.length === 0 || specify === 'scrollEvent') {
+                this.scrollEvent = 0;
+            }
+            if (specify.length === 0 || specify === 'animation') {
+                this.phase1_1anim = false;
+                this.phase1_2anim = false;
+                this.phase3_1anim = false;
+                this.phase3_2anim = false;
+            }
+            if (specify.length === 0 || specify === 'phase') {
+                this.phase = 1;
+            }
 
-            this.phase = 1;
         },
     }
 });

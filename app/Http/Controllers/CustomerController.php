@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use App\Models\Store;
 use App\Models\Customer;
 use App\Models\CustomerInformation;
 use App\Http\Requests\Customers\StoreRequest;
 use App\Http\Requests\Customers\UpdateRequest;
-
+use App\Services\Utility;
 use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
@@ -36,6 +35,12 @@ class CustomerController extends Controller
         $query->orderBy('created_at', 'asc');
         $info = $query->get()->toArray();
         session()->put('customer_info', $info);
+        Utility::sendWebSocket(
+            [
+                'event' => 'customer',
+                'name' => Customer::where('id', $id)->value('name')
+            ]
+        );
 
         return redirect()->route('home');
     }
@@ -74,11 +79,16 @@ class CustomerController extends Controller
             'birth_day' => $request->birth_day ?? NULL,
             'sex' => $request->sex ?? NULL,
         ]);
-        // $customer->save();
 
         // TODO:遷移先選択
         session()->put('customer_id', $customer->id);
         session()->put('customer_info', []);
+        Utility::sendWebSocket(
+            [
+                'event' => 'customer',
+                'name' => Customer::where('id', $customer->id)->value('name')
+            ]
+        );
         return redirect()->route('home');
     }
 

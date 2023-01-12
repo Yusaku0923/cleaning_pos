@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Services\Utility;
 use App\Models\Order;
 use App\Models\Category;
 use App\Models\Clothes;
@@ -34,6 +35,11 @@ class OrdersController extends Controller
         if (!session()->has('manager_id') || !session()->has('customer_id')) {
             return redirect()->route('home');
         }
+        Utility::sendWebSocket(
+            [
+                'event' => 'order'
+            ]
+        );
 
         $customer = Customer::find(session()->get('customer_id'));
         $category_clothes = Category::with('clothes')->where('id', '!=',  1)->get();
