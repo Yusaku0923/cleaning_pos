@@ -1,6 +1,6 @@
 <template>
     <div class="cd col-12">
-        <div class="cd-1" v-if="phase === 1" @click="transferOrder()">
+        <div class="cd-1" v-if="phase === 1">
             <div
                 class="mx-auto cd-1-welcome col-12"
                 :class="{'cd-1-welcome-anim-1': phase1_1anim, 'cd-1-welcome-anim-2': phase1_2anim}"
@@ -11,7 +11,7 @@
             >{{ state.customer }}様</div>
         </div>
 
-        <div class="cd-2 position-relative" v-if="phase === 2" :class="{'cd-2-end': phase3_1anim}" @click="finishOrder()">
+        <div class="cd-2 position-relative" v-if="phase === 2" :class="{'cd-2-end': phase3_1anim}">
             <div class="cd-2-bar"></div>
             <div class="col-12 d-flex">
                 <div class="col-6 cd-2-order">
@@ -162,7 +162,13 @@ export default ({
         },
         transferOrder: function(req) {
             this.phase1_2anim = true;
-            this.initialize('state');
+            this.$set(this.state, 'total', 0);
+            this.$set(this.state, 'order', []);
+            this.$set(this.state, 'reduction', 0);
+            this.$set(this.state, 'discount', 0);
+            this.$set(this.state, 'amount', 0);
+            this.$set(this.state, 'payment', 0);
+            this.$set(this.state, 'change', 0);
             setTimeout(() => {
                 this.phase = 2;
             }, 1000);
@@ -264,38 +270,26 @@ export default ({
                 }
             }, 5000);
         },
-        initialize: function(specify = '') {
-            if (specify.length === 0 || specify === 'state') {
-                this.state = {
-                    customer: '',
-                    total: 0,
-                    order: [],
-                    reduction: 0,
-                    discount: 0,
-                    amount: 0,
-                    payment: 0,
-                    change: 0,
-                };
-            }
-            if (specify.length === 0 || specify === 'scrollList') {
-                this.scrollList = ['list-top'];
-            }
-            if (specify.length === 0 || specify === 'row') {
-                this.row = 0;
-            }
-            if (specify.length === 0 || specify === 'scrollEvent') {
-                this.scrollEvent = 0;
-            }
-            if (specify.length === 0 || specify === 'animation') {
-                this.phase1_1anim = false;
-                this.phase1_2anim = false;
-                this.phase3_1anim = false;
-                this.phase3_2anim = false;
-            }
-            if (specify.length === 0 || specify === 'phase') {
-                this.phase = 1;
-            }
+        initialize: function() {
+            this.state = {
+                customer: '',
+                total: 0,
+                order: [],
+                reduction: 0,
+                discount: 0,
+                amount: 0,
+                payment: 0,
+                change: 0,
+            };
+            this.scrollList = ['list-top'];
+            this.row = 0;
+            this.scrollEvent = 0;
+            this.phase1_1anim = false;
+            this.phase1_2anim = false;
+            this.phase3_1anim = false;
+            this.phase3_2anim = false;
 
+            this.phase = 1;
         },
     }
 });

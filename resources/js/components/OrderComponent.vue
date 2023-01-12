@@ -280,7 +280,7 @@
             </div>
             <div class="col-12 py-4 px-2 text-white position-absolute bottom-0 text-center order-amount"
                 :style="{'background-color': '#2dbe5b'}"
-                @click="issueSlip()"
+                @click="issueSlip();"
                 v-if="(step === 2 || step === 3) && (isInvoice || notPaid)">
                 伝票発行
             </div>

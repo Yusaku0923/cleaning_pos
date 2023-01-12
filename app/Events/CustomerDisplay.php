@@ -6,6 +6,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Support\Facades\Log;
 
 class CustomerDisplay implements ShouldBroadcastNow
 {
@@ -20,7 +21,6 @@ class CustomerDisplay implements ShouldBroadcastNow
 
     public function broadcastOn()
     {
-        
         return new Channel('cleaning-pos', $this->message);
     }
 
