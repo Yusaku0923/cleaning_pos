@@ -114,6 +114,8 @@ export default ({
             row: 0,
             scrollList: ['list-top'],
             scrollEvent: -1,
+            cancelOrderEvent: -1,
+            finishOrderEvent: -1,
             phase1_1anim: false,
             phase1_2anim: false,
             phase3_1anim: false,
@@ -162,6 +164,7 @@ export default ({
         },
         transferOrder: function(req) {
             this.phase1_2anim = true;
+            // 注文初期化
             this.$set(this.state, 'total', 0);
             this.$set(this.state, 'order', []);
             this.$set(this.state, 'reduction', 0);
@@ -172,6 +175,10 @@ export default ({
             setTimeout(() => {
                 this.phase = 2;
             }, 1000);
+            // 長時間(10分)放置の場合、強制終了
+            this.cancelOrderEvent = setTimeout(() => {
+                this.initialize();
+            }, 600000);
         },
         update: function(req) {
             let index = this.state.order.findIndex((elem) => {
@@ -236,15 +243,21 @@ export default ({
         account: function(req) {
             this.$set(this.state, 'payment', req.payment);
             this.$set(this.state, 'change', req.change);
-            setTimeout(() => {
+            // 会計後１分放置していた場合、強制終了
+            this.finishOrderEvent = setTimeout(() => {
                 this.finishOrder();
             }, 60000);
         },
         finishOrder: function() {
             this.phase3_1anim = true;
-            if (this.scrollList === 1) {
+            if (this.scrollEvent !== -1) {
                 clearInterval(this.scrollEvent);
-                this.scrollEvent = -1;
+            }
+            if (this.cancelOrderEvent !== -1) {
+                clearTimeout(this.cancelOrderEvent);
+            }
+            if (this.finishOrderEvent !== -1) {
+                clearTimeout(this.finishOrderEvent);
             }
             setTimeout(() => {
                 this.phase = 3;
@@ -283,7 +296,9 @@ export default ({
             };
             this.scrollList = ['list-top'];
             this.row = 0;
-            this.scrollEvent = 0;
+            this.scrollEvent = -1;
+            this.cancelOrderEvent = -1,
+            this.finishOrderEvent = -1,
             this.phase1_1anim = false;
             this.phase1_2anim = false;
             this.phase3_1anim = false;
