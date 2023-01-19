@@ -5,6 +5,8 @@
                 class="mx-auto cd-1-welcome col-12"
                 :class="{'cd-1-welcome-anim-1': phase1_1anim, 'cd-1-welcome-anim-2': phase1_2anim}"
             >いらっしゃいませ</div>
+            <div>{{ height }}</div>
+            <div>{{ width }}</div>
             <div
                 class="mx-auto cd-1-name col-12 cd-1-smooth"
                 :class="{'cd-1-name-anim-1': phase1_1anim, 'cd-1-name-anim-2': phase1_2anim}"
@@ -100,6 +102,9 @@
 export default ({
     data() {
         return {
+            height: 0,
+            width: 0,
+
             phase: 1,
             state: {
                 customer: '',
@@ -123,8 +128,8 @@ export default ({
         }
     },
     mounted() {
-        console.log(document.documentElement.clientWidth);
-        console.log(document.documentElement.clientHeight);
+        this.height = document.documentElement.clientWidth;
+        this.width = document.documentElement.clientHeight;
         window.addEventListener('resize', this.handleResize);
         window.Echo.channel('cleaning-pos')
             .listen('.customer-display', req => {
