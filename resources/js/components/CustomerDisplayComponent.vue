@@ -123,6 +123,9 @@ export default ({
         }
     },
     mounted() {
+        console.log(document.documentElement.clientWidth);
+        console.log(document.documentElement.clientHeight);
+        window.addEventListener('resize', this.handleResize);
         window.Echo.channel('cleaning-pos')
             .listen('.customer-display', req => {
                 req = req.message; // コイツ
@@ -155,6 +158,10 @@ export default ({
             });
     },
     methods: {
+        handleResize: function() {
+            console.log(document.documentElement.clientWidth);
+            console.log(document.documentElement.clientHeight);
+        },
         setCustomer: function(req) {
             if (this.phase !== 1) {
                 this.initialize();
