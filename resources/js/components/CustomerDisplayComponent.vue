@@ -130,7 +130,7 @@ export default ({
     mounted() {
         this.height = document.documentElement.clientWidth;
         this.width = document.documentElement.clientHeight;
-        window.addEventListener('resize', this.handleResize);
+        // window.addEventListener('resize', this.handleResize);
         window.Echo.channel('cleaning-pos')
             .listen('.customer-display', req => {
                 req = req.message; // コイツ
@@ -173,6 +173,8 @@ export default ({
             }
             this.$set(this.state, 'customer', req.name);
             this.phase1_1anim = true;
+            this.height = document.documentElement.clientWidth;
+            this.width = document.documentElement.clientHeight;
         },
         transferOrder: function(req) {
             this.phase1_2anim = true;
