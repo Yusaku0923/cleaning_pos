@@ -170,16 +170,16 @@ $cdblue: rgb(2, 153, 253);
                 top: 18.6vh;
                 left: 3%;
                 width: 95%;
-                height: 68vh;
+                height: 80vh;
                 z-index: 4;
             }
             &-field {
                 animation: order-result-anim-move 2s, order-result-anim-deg 2s, order-result-anim-field 2s;
-                width: 32vw;
-                height: 60vh;
+                width: 31vw;
+                height: 68vh;
                 position: absolute;
                 top: 28.6vh;
-                left: 18.5%;
+                left: 19%;
                 background-color: $white;
                 z-index: 5;
                 color: $cdblue;
