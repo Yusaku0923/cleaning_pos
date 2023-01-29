@@ -32,6 +32,8 @@ Vue.component('customer-search-component', require('./components/CustomerSearchC
 Vue.component('history-component', require('./components/HistoryComponent.vue').default);
 Vue.component('history-card-component', require('./components/HistoryCardComponent.vue').default);
 Vue.component('clothes-mst-component', require('./components/ClothesMasterComponent.vue').default);
+Vue.component('manager-select-btn-component', require('./components/ManagerSelectButtonComponent.vue').default);
+Vue.component('customer-display-component', require('./components/CustomerDisplayComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

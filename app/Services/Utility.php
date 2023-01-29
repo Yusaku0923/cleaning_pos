@@ -4,6 +4,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Store;
+use App\Events\CustomerDisplay;
 
 class Utility
 {
@@ -51,5 +52,11 @@ class Utility
         $token = $store->createToken(Str::random(10));
 
         return $token->plainTextToken;
+    }
+
+    public static function sendWebSocket($body) {
+        broadcast(new CustomerDisplay($body));
+
+        return;
     }
 }

@@ -36,9 +36,10 @@
     32 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     33 => 'App\\Providers\\AppServiceProvider',
     34 => 'App\\Providers\\AuthServiceProvider',
-    35 => 'App\\Providers\\EventServiceProvider',
-    36 => 'App\\Providers\\RouteServiceProvider',
-    37 => 'Barryvdh\\DomPDF\\ServiceProvider',
+    35 => 'App\\Providers\\BroadcastServiceProvider',
+    36 => 'App\\Providers\\EventServiceProvider',
+    37 => 'App\\Providers\\RouteServiceProvider',
+    38 => 'Barryvdh\\DomPDF\\ServiceProvider',
   ),
   'eager' => 
   array (
@@ -63,9 +64,10 @@
     18 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     19 => 'App\\Providers\\AppServiceProvider',
     20 => 'App\\Providers\\AuthServiceProvider',
-    21 => 'App\\Providers\\EventServiceProvider',
-    22 => 'App\\Providers\\RouteServiceProvider',
-    23 => 'Barryvdh\\DomPDF\\ServiceProvider',
+    21 => 'App\\Providers\\BroadcastServiceProvider',
+    22 => 'App\\Providers\\EventServiceProvider',
+    23 => 'App\\Providers\\RouteServiceProvider',
+    24 => 'Barryvdh\\DomPDF\\ServiceProvider',
   ),
   'deferred' => 
   array (

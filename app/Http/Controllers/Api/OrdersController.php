@@ -35,8 +35,13 @@ class OrdersController extends Controller
     ];
 
     public function store(Request $request) {
-        $paid_at = date('Y-m-d H:i:s');
+        if (!empty($request->created_at)) {
+            $paid_at = date('Y-m-d 00:00:00', strtotime($request->created_at));
+        } else {
+            $paid_at = date('Y-m-d H:i:s');
+        }
         $invoice_id = null;
+        // 請求書払いの注文はinvoiceテーブルにレコード追加
         if ((boolean)$request->invoice) {
             $cutoff_date = Customer::where('id', $request->customer_id)->value('cutoff_date');
             list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date, $request->created_at);
@@ -63,10 +68,13 @@ class OrdersController extends Controller
                 $invoice_id = $invoice->id;
             }
         } else {
+            // 未収の場合は支払い日時をnullに
             if ($request->not_paid) {
                 $paid_at = null;
             }
         }
+
+        // 注文レコード追加
         $order_record = [
             'store_id' => Auth::id(),
             'manager_id' => $request->manager_id,
@@ -78,8 +86,13 @@ class OrdersController extends Controller
             'payment' => $request->payment,
             'paid_at' => $paid_at,
         ];
+        // 預り日設定
         if (!empty($request->created_at)) {
             $order_record['created_at'] = $request->created_at;
+        }
+        // 返却日設定
+        if (!$request->check_return) {
+            $order_record['handed_at'] = date('Y-m-d H:i:s');
         }
         $order = Order::query()->create($order_record);
 
@@ -88,32 +101,62 @@ class OrdersController extends Controller
         foreach ($request->order as $clothes_id => $count) {
             $tag_count = Clothes::where('id', $clothes_id)->value('tag_count');
             for ($i = 1; $i <= $count; $i++) {
-                $converted_tag = Utility::convertTagFormat($tag);
-                OrderClothes::query()->create([
-                    'order_id' => $order->id,
-                    'clothes_id' => $clothes_id,
-                    'tag' => $converted_tag
-                ]);
-
-                if ($tag_count > 1) {
-                    for ($j = 1; $j < $tag_count; $j++) {
-                        $tag = $this->addTag($tag);
-                        $converted_tag = Utility::convertTagFormat($tag);
-                        OrderClothes::query()->create([
-                            'order_id' => $order->id,
-                            'clothes_id' => 999,
-                            'tag' => $converted_tag,
-                        ]);
+                if (!in_array($clothes_id, $request->dont_issue_tag_list)) {
+                    // タグを発行する場合
+                    $converted_tag = Utility::convertTagFormat($tag);
+                    OrderClothes::query()->create([
+                        'order_id' => $order->id,
+                        'clothes_id' => $clothes_id,
+                        'tag' => $converted_tag,
+                        'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
+                    ]);
+    
+                    if ($tag_count > 1) {
+                        for ($j = 1; $j < $tag_count; $j++) {
+                            $tag = $this->addTag($tag);
+                            $converted_tag = Utility::convertTagFormat($tag);
+                            OrderClothes::query()->create([
+                                'order_id' => $order->id,
+                                'clothes_id' => 999,
+                                'tag' => $converted_tag,
+                                'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
+                            ]);
+                        }
+                    } else {
+                        if (!isset($response[$clothes_id])) {
+                            $response[$clothes_id] = $converted_tag;
+                        } else if ($i >= 2 && $i === $count) {
+                            $response[$clothes_id] .= '～' . $converted_tag;
+                        }
                     }
+
+                    $tag = $this->addTag($tag);
                 } else {
-                    if (!isset($response[$clothes_id])) {
-                        $response[$clothes_id] = $converted_tag;
-                    } else if ($i >= 2 && $i === $count) {
-                        $response[$clothes_id] .= '～' . $converted_tag;
+                    // タグを発行しない場合
+                    OrderClothes::query()->create([
+                        'order_id' => $order->id,
+                        'clothes_id' => $clothes_id,
+                        'tag' => '0-000',
+                        'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
+                    ]);
+    
+                    if ($tag_count > 1) {
+                        for ($j = 1; $j < $tag_count; $j++) {
+                            OrderClothes::query()->create([
+                                'order_id' => $order->id,
+                                'clothes_id' => 999,
+                                'tag' => '0-000',
+                                'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
+                            ]);
+                        }
+                    } else {
+                        if (!isset($response[$clothes_id])) {
+                            $response[$clothes_id] = '0-000';
+                        } else if ($i >= 2 && $i === $count) {
+                            $response[$clothes_id] .= '～0-000';
+                        }
                     }
                 }
-
-                $tag = $this->addTag($tag);
             }
         }
         TagNumber::where('manager_id', $request->manager_id)
@@ -176,8 +219,14 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function delete($order_id) {
-        Order::find($order_id)->delete();
+    public function delete(Request $request) {
+        $invoice_id = Order::where('id', $request->order_id)->value('invoice_id');
+        if (!is_null($invoice_id)) {
+            $amount = Order::where('id', $request->order_id)->value('amount');
+            Invoice::find($invoice_id)->decrement('amount', $amount);
+            // \DB::table('invoices')->where('id', $invoice_id)->decrement('amount', $amount);
+        }
+        Order::find($request->order_id)->delete();
 
         return response()->json([
             'ok' => true

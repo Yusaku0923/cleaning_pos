@@ -1,6 +1,6 @@
 <div class="modal fade" id="order-cancel-modal" tabindex="-1" role="dialog" aria-labelledby="order-cancel-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content border border-4 border-dark">
             <div class="modal-header cancel-field">
                 <h5 class="modal-title fs-26 fw-bold" id="order-cancel-modal-label">直前預り取り消し</h5>
                 {{-- <button type="button" class="close btn cbtn-red" data-bs-dismiss="modal" aria-label="Close">

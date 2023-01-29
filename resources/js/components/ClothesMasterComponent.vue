@@ -3,7 +3,7 @@
         <div class="col-10 mx-auto">
             <div>
                 <div class="card col-12 py-3 mb-4 h4 text-center">
-                    カテゴリー
+                    {{ categoryName }}
                 </div>
                 <div class="col-12 menu-columns justify-content-between">
                     <!-- 商品選択時のみ表示 -->
@@ -17,9 +17,9 @@
                     </button>
 
                     <!-- 追加ボタン（選択画面によって変える） -->
-                    <button type="button" class="card menu-card col-12 mx-auto">
+                    <button type="button" class="card menu-card col-12 mx-auto" @click="showCreate()">
                         <span class="fw-light text-primary menu-icon text-center mx-auto">＋</span>
-                        <span class="text-center mx-auto">カテゴリーを追加する</span>
+                        <span class="text-center mx-auto">{{ categoryName }}を追加する</span>
                     </button>
                     
                     <!-- カテゴリ表示 -->
@@ -59,7 +59,9 @@
         <!-- modal -->
         <clothes-edit-modal
             @close="close"
-            @update="update"
+            @create="createClothes"
+            @update="updateClothes"
+            @delete="deleteClothes"
             :mode="modalMode"
             :info="modalInfo"
             v-if="showModal"
@@ -69,7 +71,6 @@
 </template>
 
 <script>
-
 import ClothesEditModal from './Modals/ClothesEditModalComponent';
 
 export default {
@@ -84,6 +85,7 @@ export default {
     data() {
         return {
             mode: 'category',
+            categoryName: 'カテゴリー',
             cards: this.category_clothes,
             showModal: false,
             selectedCategory: '',
@@ -101,12 +103,20 @@ export default {
         },
         switchClothes: function(index) {
             this.mode = 'clothes';
+            this.categoryName = this.category_clothes[index]['name'];
             this.cards = this.category_clothes[index]['clothes'];
             this.selectedCategory = this.category_clothes[index]['id'];
         },
         switchCategory: function() {
             this.mode = 'category';
+            this.categoryName = 'カテゴリー';
             this.cards = this.category_clothes;
+        },
+        showCreate: function() {
+            this.modalMode = 'create';
+            this.modalInfo = [];
+            this.showModal = true;
+            this.selectedClothes = '';
         },
         selectClothes: function(index) {
             this.modalMode = 'edit';
@@ -114,9 +124,33 @@ export default {
             this.showModal = true;
             this.selectedClothes = this.cards[index]['id'];
         },
-        update: function(name, name_kana, price, tag_count) {
+        createClothes: function(name, name_kana, price, tag_count) {
+            this.showModal = false;
+            let self = this;
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
-            axios.post('api/clothes/update', {
+            return axios.post('/api/clothes/store', {
+                category_id: this.selectedCategory,
+                name: name,
+                name_kana: name_kana,
+                price: price,
+                tag_count: tag_count,
+            })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                self.updateState(response.data.category);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        updateClothes: async function(name, name_kana, price, tag_count) {
+            this.showModal = false;
+            let self = this;
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/clothes/update', {
                 id: this.selectedClothes,
                 category_id: this.selectedCategory,
                 name: name,
@@ -124,6 +158,46 @@ export default {
                 price: price,
                 tag_count: tag_count,
             })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                self.updateState(response.data.category);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        deleteClothes: function(name, name_kana, price, tag_count) {
+            this.showModal = false;
+            let self = this;
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return axios.post('/api/clothes/delete', {
+                id: this.selectedClothes,
+                category_id: this.selectedCategory,
+                name: name,
+                name_kana: name_kana,
+                price: price,
+                tag_count: tag_count,
+            })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                self.updateState(response.data.category);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        updateState: function(res) {
+            let index = this.category_clothes.findIndex( item => item.id === res[0].id );
+            this.cards = res[0].clothes;
+            this.category_clothes.splice(index, 1, res[0]);
+
+            return;
         }
     }
 }

@@ -4,6 +4,8 @@
             <div class="col-12">
                 <customer-info-component
                     :customer="customer"
+                    :info="info"
+                    :token="token"
                 ></customer-info-component>
             </div>
             <div class="col-12 mt-2">
@@ -139,6 +141,9 @@ export default ({
         orders: {
             required: true
         },
+        info: {
+            required: false
+        },
         token: {
             type: String,
             required: true
@@ -204,7 +209,7 @@ export default ({
         },
         send: function() {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
-            axios.post('api/return/update', {
+            axios.post('/api/return/update', {
                 items: this.selectedItems
             })
             .then(function (response) {

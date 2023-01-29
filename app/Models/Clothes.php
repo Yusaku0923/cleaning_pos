@@ -26,6 +26,7 @@ class Clothes extends Model
                                 ->join('orders', 'order_clothes.order_id', '=', 'orders.id')
                                 ->where('orders.customer_id', $customer_id)
                                 ->where('order_clothes.clothes_id', '<>', 999)
+                                ->whereNull('clothes.deleted_at')
                                 ->groupBy('order_clothes.clothes_id')
                                 ->orderByDesc('count')
                                 ->limit($limit)

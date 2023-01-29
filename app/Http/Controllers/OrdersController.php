@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Services\Utility;
 use App\Models\Order;
 use App\Models\Category;
 use App\Models\Clothes;
@@ -34,6 +35,11 @@ class OrdersController extends Controller
         if (!session()->has('manager_id') || !session()->has('customer_id')) {
             return redirect()->route('home');
         }
+        Utility::sendWebSocket(
+            [
+                'event' => 'order'
+            ]
+        );
 
         $customer = Customer::find(session()->get('customer_id'));
         $category_clothes = Category::with('clothes')->where('id', '!=',  1)->get();
@@ -53,6 +59,7 @@ class OrdersController extends Controller
             'customer_id' => session()->get('customer_id'),
             'customer_name' => $customer->name,
             'is_invoice' => $customer->is_invoice,
+            'check_return' => $customer->needs_return_confimation,
             'auth_token' => $token->plainTextToken,
             'list' => $category_clothes,
             'often_ordered' => $often_ordered,
@@ -86,13 +93,11 @@ class OrdersController extends Controller
         $model = new Order();
         $orders = $model->fetchOrders(session()->get('customer_id'), 20);
         $customer = Customer::find(session()->get('customer_id'));
-        $store = Store::find(Auth::id());
-        $token = $store->createToken(Str::random(10));
+
         return view('orders.show')->with([
             'title' => '預　り　一　覧',
             'customer' => $customer,
             'orders' => $orders,
-            'token' => $token->plainTextToken,
         ]);
     }
 

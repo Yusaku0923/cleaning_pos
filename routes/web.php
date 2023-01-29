@@ -30,6 +30,8 @@ Auth::routes([
     'reset' => false,
 ]);
 
+Route::get('/customer_display', [HomeController::class, 'customer_display'])->name('customer_display');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
@@ -59,7 +61,8 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('manager')->group(function () {
-        Route::post('update', [ManagerController::class, 'update'])->name('manager.update');
+        Route::get('update/{manager_id}', [ManagerController::class, 'update'])->name('manager.update');
+        // Route::post('update', [ManagerController::class, 'update'])->name('manager.update');
     });
 
     Route::prefix('order')->group(function () {

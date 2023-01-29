@@ -5,7 +5,7 @@
 <invoice-component
     :manager_id="{{ json_encode(session()->get('manager_id')) }}"
     :invoices="{{ json_encode($invoices) }}"
-    :token="{{ json_encode($token) }}"
+    :token="{{ json_encode(Utility::fetchApiToken()) }}"
     :theme="{{ session('theme_header') ? json_encode(session('theme_header').'-header'): (session('theme_body') ? json_encode(session('theme_header').'-header'): 'theme') }}"
 ></invoice-component>
 {{-- <div class="col-12">

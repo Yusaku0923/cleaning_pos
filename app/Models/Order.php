@@ -15,9 +15,9 @@ class Order extends Model
 
     protected $guarded = [];
 
-    // public function order_clothes() {
-    //     return $this->hasMany(OrderClothes::class, 'order_id');
-    // }
+    public function order_clothes() {
+        return $this->hasMany(OrderClothes::class, 'order_id');
+    }
 
     public function clothes(): BelongsToMany {
         return $this->belongsToMany(Clothes::class)
@@ -69,11 +69,11 @@ class Order extends Model
             }
             // has specified tag item
             if (!empty($where['tag'])) {
-                $order_id = $this->hasSpecifiedTag($customer_id, $where['tag']);
-                if (is_null($order_id)) {
+                $ids = $this->hasSpecifiedTag($customer_id, $where['tag']);
+                if (is_null($ids)) {
                     return [];
                 } else {
-                    $query->where('id', $order_id);
+                    $query->whereIn('id', $ids);
                 }
             }
         }
@@ -229,6 +229,6 @@ class Order extends Model
         $query->where('orders.customer_id', $customer_id);
         $query->where('order_clothes.tag', $tag);
 
-        return $query->value('id');
+        return $query->get('id')->toArray();
     }
 }

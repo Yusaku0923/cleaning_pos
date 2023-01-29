@@ -188,6 +188,10 @@
 }
 
 /* card */
+.cs-field {
+    background-color: rgba(0, 0, 0, 0.03);;
+    color: $black;
+}
 .manager-field {
     background-color: $teal;
     color: $black;
@@ -207,7 +211,6 @@
 .detail-field {
     background-color: $orange;
     color: $white;
-
 }
 
 .menu-columns {

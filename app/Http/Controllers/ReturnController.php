@@ -19,13 +19,11 @@ class ReturnController extends Controller
         $customer = Customer::find(session()->get('customer_id'));
         $model = new Order();
         $unhanded_orders = $model->fetchUnhandedOrders($customer['id']);
-        $store = Store::find(Auth::id());
-        $token = $store->createToken(Str::random(10));
+
         return view('return.index')->with([
             'title' => 'お　渡　し',
             'customer' => $customer,
             'orders' => $unhanded_orders,
-            'token' => $token->plainTextToken,
         ]);
     }
 

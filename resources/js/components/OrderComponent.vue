@@ -103,12 +103,26 @@
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                             <div class="text-primary order-text">
-                                {{ order[i].count * order[i].tag_count }} 点
+                                <!-- {{ order[i].count * order[i].tag_count }} 点 -->
+                                {{ order[i].count }} 点
                             </div>
                         </div>
                         <div class="col-5 order-text text-end text-primary">
                             {{ (order[i].count * order[i].price).toLocaleString() }} 円
                         </div>
+                    </div>
+                    <div class="col-12 text-end">
+                        <label class="fs-18">
+                            <input
+                                type="checkbox"
+                                class="me-2"
+                                style="transform: scale(1.5);"
+                                :id="order[i].id"
+                                :value="order[i].id"
+                                v-model="dontIssueTagList"
+                            >
+                            タグを発行しない
+                        </label>
                     </div>
                     <div class="position-absolute odcreate-selected-tag fs-24"
                         :class="{
@@ -243,6 +257,10 @@
                             <input type="checkbox" class="form-check-input" id="not-paid" v-model="notPaid">
                             <label class="form-check-label" for="not-paid">未収で登録する</label>
                         </div>
+                        <div class="col-10 mx-auto pay-checkbox form-check">
+                            <input type="checkbox" class="form-check-input" id="check-return" v-model="checkReturn">
+                            <label class="form-check-label" for="check-return">返却確認する</label>
+                        </div>
                     </div>
 
                 </template>
@@ -262,11 +280,12 @@
             </div>
             <div class="col-12 py-4 px-2 text-white position-absolute bottom-0 text-center order-amount"
                 :style="{'background-color': '#2dbe5b'}"
-                @click="issueSlip()"
+                @click="issueSlip();"
                 v-if="(step === 2 || step === 3) && (isInvoice || notPaid)">
                 伝票発行
             </div>
             <a class="col-12 py-4 px-2 bg-primary text-white position-absolute bottom-0 text-center order-amount text-decoration-none"
+                @click="CD_finish()"
                 :href="route"
                 v-if="step === 4 || step === 5"
             >ホームに戻る</a>
@@ -322,6 +341,10 @@ export default ({
             type: Boolean,
             required: true
         },
+        check_return: {
+            type: Boolean,
+            required: true
+        },
         customer_name: {
             type: String,
             required: true
@@ -349,10 +372,12 @@ export default ({
             isActive: -1,
             notPaid: this.is_invoice,
             isInvoice: this.is_invoice,
+            checkReturn: this.check_return,
             showDiscount: false,
             indexes: [],
             order: {},
             orderForSend: {},
+            dontIssueTagList: [],
             total: 0,
             amount: 0, // with tax
             reduction: 0,
@@ -411,6 +436,8 @@ export default ({
 
                 this.total += clothes.tag_count;
                 this.amount += this.order[clothes.id].price;
+
+                this.CD_updateClothes(clothes.id);
             }
         },
         increace: function (clothes) {
@@ -423,6 +450,8 @@ export default ({
 
             this.total += clothes.tag_count;
             this.amount += this.order[clothes.id].price;
+
+            this.CD_updateClothes(clothes.id);
         },
         decreace: function (clothes) {
             this.total -= clothes.tag_count;
@@ -436,7 +465,9 @@ export default ({
             this.$delete(this.order, clothes.id);
             if (clothes.count !== 0) {
                 this.$set(this.order, clothes.id, clothes);
+                this.CD_updateClothes(clothes.id);
             } else {
+                this.CD_deleteClothes(clothes.id);
                 this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
                 delete this.orderForSend[clothes.id];
             }
@@ -446,6 +477,7 @@ export default ({
             this.reduction = reduction;
             this.discount = discount;
 
+            this.CD_discount();
             this.switchDiscount();
         },
 
@@ -465,9 +497,11 @@ export default ({
             this.payment = payment;
             this.change = payment - Math.trunc((this.amount - this.reduction));
 
+            this.CD_account();
+
             // order登録API
             let order_id = await this.storeOrder();
-           
+
             // レシート発行
             this.$refs.child.printReceipt(order_id);
             this.orderId = order_id;
@@ -489,6 +523,8 @@ export default ({
                 payment: this.payment,
                 not_paid: this.notPaid,
                 invoice: this.isInvoice,
+                check_return: this.checkReturn,
+                dont_issue_tag_list: this.dontIssueTagList,
                 created_at: this.created_at,
             })
             .then(function (response) {
@@ -498,7 +534,88 @@ export default ({
                 console.log(error);
                 return;
             });
-        }
+        },
+        // カスタマーディスプレイ表示情報(API => WebSocket)
+        CD_updateClothes: function(id) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'update',
+                total: this.total,
+                id: id,
+                name: this.order[id].name,
+                count: this.order[id].count,
+                price: this.order[id].count * this.order[id].price,
+                amount: this.amount - this.reduction
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        CD_deleteClothes: function(id) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'delete',
+                total: this.total,
+                id: id,
+                amount: this.amount - this.reduction
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        CD_discount: function() {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'discount',
+                reduction: this.reduction,
+                discount: this.discount,
+                amount: this.amount - this.reduction
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        CD_account: function() {
+            console.log('account');
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'account',
+                payment: this.payment,
+                change: this.change
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        CD_finish: function() {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            axios.post('/api/broadcast', {
+                event: 'finish'
+            })
+            .then(function (response) {
+                return;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
     }
 });
 </script>
