@@ -73,6 +73,7 @@ class Invoice extends Model
         foreach ($invoices as $key => $invoice) {
             $query = Order::query();
             $query->where('invoice_id', $invoice['id']);
+            $query->orderBy('created_at', 'asc');
             $orders = $query->get()->toArray();
 
             foreach ($orders as $i => $order) {
