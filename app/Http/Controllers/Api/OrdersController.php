@@ -47,7 +47,7 @@ class OrdersController extends Controller
                 $paid_at = $period_end;
             }
             $model = new Invoice();
-            $invoice_id = $model->existsTargetInvoice($request->customer_id);
+            $invoice_id = $model->existsTargetInvoice($request->customer_id, $period_start, $period_end);
             if (!is_null($invoice_id)) {
                 $invoice = Invoice::find($invoice_id);
                 $invoice->increment('amount', $request->amount);
