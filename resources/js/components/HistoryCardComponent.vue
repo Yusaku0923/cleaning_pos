@@ -14,6 +14,7 @@
         </div>
         <detail-modal
             @close="close"
+            @updateTag="updateTag"
             :customer="customer"
             :order="order"
             :token="token"
@@ -48,6 +49,22 @@ export default ({
     methods: {
         close: function() {
             this.dispDetail = false;
+        },
+        updateTag: async function(id, tag) {
+            console.log(id);
+            console.log(tag);
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/order/update_tag', {
+                id: id,
+                tag: tag,
+            })
+            .then(function (response) {
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
         }
     },
     computed: {
