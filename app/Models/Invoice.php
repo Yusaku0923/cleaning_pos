@@ -4,14 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use App\Services\Utility;
 
 class Invoice extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $guarded = [];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($invoice) {
+            $invoice->orders()->delete();
+        });
+    }
 
     public function fetchInvoices($manager_id, $condition = null) {
         $query = Invoice::query();
@@ -31,6 +42,10 @@ class Invoice extends Model
         }
         $query->orderBy('invoices.period_end', 'asc');
         $invoices = $query->get()->toArray();
+
+        foreach ($invoices as $key => $invoice) {
+            $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
+        }
 
         return $invoices;
     }
@@ -60,6 +75,10 @@ class Invoice extends Model
             $invoices[$key]['orders'] = $orders;
         }
 
+        foreach ($invoices as $key => $invoice) {
+            $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
+        }
+
         return $invoices;
     }
 
@@ -85,6 +104,7 @@ class Invoice extends Model
             }
 
             $invoices[$key]['orders'] = $orders;
+            $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
         }
 
         // PDF出力用にフォーマットを整える(30行毎)
