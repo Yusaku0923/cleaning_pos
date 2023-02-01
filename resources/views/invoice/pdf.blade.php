@@ -241,7 +241,7 @@
 
         <div class="manager_name">担当:{{ session()->get('manager_name') }}</div>
 
-        <div class="address">〒<span class="number-font">000-0000</span>　{{ Auth::user()->address }}</div>
+        <div class="address">〒<span class="number-font">{{ Auth::user()->postal_code }}</span>　{{ Auth::user()->address }}</div>
 
         <div class="customer_name bold-font">{{ $invoice['customer_name'] }}　様</div>
 
