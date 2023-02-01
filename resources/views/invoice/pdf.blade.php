@@ -311,7 +311,7 @@
                     <tr>
                         <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['ordered_at'])) }}</td>
                         <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
-                        <td class="order-detail text-start"><span class="number-font">{{ $row['tag'] }}</span> <span>{{ $row['name'] }}</span></td>
+                        <td class="order-detail text-start"><span class="number-font">@if ($row['tag'] !== '0-000'){{ $row['tag'] }}@endif</span> <span>{{ $row['name'] }}</span></td>
                         <td class="order-div"></td>
                         <td class="order-price text-end number-font number-height">{{ number_format($row['price']) }}</td>
                         <td class="order-count text-end number-font number-height">{{ number_format($row['count']) }}</td>
@@ -322,7 +322,11 @@
                     <tr>
                         <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['ordered_at'])) }}</td>
                         <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
-                        <td class="order-detail text-start"><span class="number-font">{{ $row['start_tag'] }}~{{ $row['end_tag'] }}</span> <span>{{ $row['name'] }}</span></td>
+                        <td class="order-detail text-start"><span class="number-font">
+                        @if ($row['tag'] !== '0-000')
+                            {{ $row['start_tag'] }}~{{ $row['end_tag'] }}
+                        @endif
+                        </span> <span>{{ $row['name'] }}</span></td>
                         <td class="order-div"></td>
                         <td class="order-price text-end number-font number-height">{{ number_format($row['price']) }}</td>
                         <td class="order-count text-end number-font number-height">{{ number_format($row['count']) }}</td>
