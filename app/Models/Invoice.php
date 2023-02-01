@@ -111,17 +111,49 @@ class Invoice extends Model
         $formated = [];
         $row = 0;
         $page_count = 1;
+        $prev_item = 0;
+        $item_count = 0;
+        $start_tag = '';
         foreach ($invoices as $invoice) {
             $invoice['page_count'] = $page_count;
             $invoice['customer_name'] = Customer::where('id', $invoice['customer_id'])->value('name');
             $page = $invoice;
             foreach ($invoice['orders'] as $order) {
-                foreach ($order['items'] as $item) {
-                    $item['is_detail'] = true;
-                    $item['order_id'] = $order['id'];
-                    $item['ordered_at'] = $order['created_at'];
-                    $page['row'][] = $item;
-                    $row++;
+                foreach ($order['items'] as $key => $item) {
+                    // 単一レコードの場合
+                    if ($prev_item != $item['id'] && (array_key_last($order['items']) == $key || $order['items'][$key + 1]['id'] != $item['id'])) {
+                        $prev_item = $item['id'];
+
+                        $item['order_id'] = $order['id'];
+                        $item['ordered_at'] = $order['created_at'];
+                        $item['count'] = 1;
+                        $item['is_detail'] = 1;
+
+                        $page['row'][] = $item;
+                        $row++;
+
+                    // 複数レコードの場合
+                    } else {
+                        $prev_item = $item['id'];
+                        $item_count++;
+                        if (empty($start_tag)) $start_tag = $item['tag'];
+                        if (array_key_last($order['items']) == $key || $order['items'][$key + 1]['id'] != $item['id']) {
+                            $item['order_id'] = $order['id'];
+                            $item['ordered_at'] = $order['created_at'];
+                            $item['count'] = $item_count;
+                            $item['start_tag'] = $start_tag;
+                            $item['end_tag'] = $item['tag'];
+                            $item['is_detail'] = 2;
+
+                            $page['row'][] = $item;
+                            $row++;
+
+                            $start_tag = '';
+                            $item_count = 0;
+                        } else {
+                            continue;
+                        }
+                    }
 
                     if ($row >= 30) {
                         $formated[] = $page;
@@ -130,7 +162,10 @@ class Invoice extends Model
                         $row = 0;
                     }
                 }
-                $order['is_detail'] = false;
+                // 注文ごとに初期化
+                $prev_item = 0;
+
+                $order['is_detail'] = 0;
                 $page['row'][] = $order;
                 $row++;
 
