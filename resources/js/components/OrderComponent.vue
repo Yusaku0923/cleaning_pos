@@ -398,7 +398,7 @@ export default ({
     mounted() {
         // ローカルIPは.envに
         let ePosDev = new epson.ePOSDevice();
-        ePosDev.connect('192.168.0.215', 8008, function(data) {
+        ePosDev.connect('192.168.0.214', 8008, function(data) {
             if(data == 'OK' || data == 'SSL_CONNECT_OK') {
                 console.log('printer connected');
             } else {
