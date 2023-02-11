@@ -241,7 +241,7 @@
 
         <div class="manager_name">担当:{{ session()->get('manager_name') }}</div>
 
-        <div class="address">〒<span class="number-font">000-0000</span>　{{ Auth::user()->address }}</div>
+        <div class="address">〒<span class="number-font">{{ Auth::user()->postal_code }}</span>　{{ Auth::user()->address }}</div>
 
         <div class="customer_name bold-font">{{ $invoice['customer_name'] }}　様</div>
 
@@ -307,15 +307,30 @@
                         $line = 0;
                     @endphp
                     @foreach ($invoice['row'] as $row)
-                    @if ($row['is_detail'])
+                    @if ($row['is_detail'] === 1)
                     <tr>
                         <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['ordered_at'])) }}</td>
                         <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
-                        <td class="order-detail text-start"><span class="number-font">{{ $row['tag'] }}</span> <span>{{ $row['name'] }}</span></td>
+                        <td class="order-detail text-start"><span class="number-font">@if ($row['tag'] !== '0-000'){{ $row['tag'] }}@endif</span> <span>{{ $row['name'] }}</span></td>
                         <td class="order-div"></td>
                         <td class="order-price text-end number-font number-height">{{ number_format($row['price']) }}</td>
-                        <td class="order-count text-end number-font number-height">1</td>
+                        <td class="order-count text-end number-font number-height">{{ number_format($row['count']) }}</td>
                         <td class="order-amount text-end number-font number-height">{{ number_format($row['price']) }}</td>
+                        <td class="order-payment text-end number-font number-height"></td>
+                    </tr>
+                    @elseif ($row['is_detail'] === 2)
+                    <tr>
+                        <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['ordered_at'])) }}</td>
+                        <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
+                        <td class="order-detail text-start"><span class="number-font">
+                        @if ($row['tag'] !== '0-000')
+                            {{ $row['start_tag'] }}~{{ $row['end_tag'] }}
+                        @endif
+                        </span> <span>{{ $row['name'] }}</span></td>
+                        <td class="order-div"></td>
+                        <td class="order-price text-end number-font number-height">{{ number_format($row['price']) }}</td>
+                        <td class="order-count text-end number-font number-height">{{ number_format($row['count']) }}</td>
+                        <td class="order-amount text-end number-font number-height">{{ number_format($row['price'] * $row['count']) }}</td>
                         <td class="order-payment text-end number-font number-height"></td>
                     </tr>
                     @else

@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('order/store', [OrdersController::class, 'store'])->name('order.store');
     Route::post('order/search', [OrdersController::class, 'search'])->name('order.search');
     Route::post('order/delete', [OrdersController::class, 'delete'])->name('order.delete');
+    Route::post('order/update_tag', [OrdersController::class, 'updateTag'])->name('order.update_tag');
     Route::post('payment', [OrdersController::class, 'payment'])->name('order.payment');
     Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
 

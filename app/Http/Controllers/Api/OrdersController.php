@@ -55,12 +55,10 @@ class OrdersController extends Controller
             $invoice_id = $model->existsTargetInvoice($request->customer_id, $period_start, $period_end);
             if (!is_null($invoice_id)) {
                 $invoice = Invoice::find($invoice_id);
-                $invoice->increment('amount', $request->amount);
             } else {
                 $invoice = Invoice::query()->create([
                     'manager_id' => $request->manager_id,
                     'customer_id' => $request->customer_id,
-                    'amount' => $request->amount,
                     'period_start' => $period_start,
                     'period_end' => $period_end,
                     'paid_at' => $paid_at,
@@ -220,13 +218,28 @@ class OrdersController extends Controller
     }
 
     public function delete(Request $request) {
-        $invoice_id = Order::where('id', $request->order_id)->value('invoice_id');
-        if (!is_null($invoice_id)) {
-            $amount = Order::where('id', $request->order_id)->value('amount');
-            Invoice::find($invoice_id)->decrement('amount', $amount);
-            // \DB::table('invoices')->where('id', $invoice_id)->decrement('amount', $amount);
+        $order = Order::find($request->order_id);
+        $invoice_id = $order->invoice_id;
+
+        $customer = Customer::find($request->customer_id);
+        $customer->decrement('total_sales', $order->amount);
+        $customer->decrement('number_of_visits');
+        $order->delete();
+
+        if (!is_null($invoice_id) && !Order::where('invoice_id', $invoice_id)->exists()) {
+            Invoice::find($invoice_id)->delete();
         }
-        Order::find($request->order_id)->delete();
+
+        return response()->json([
+            'ok' => true
+        ]);
+    }
+
+    public function updateTag(Request $request) {
+        Log::debug($request->tag);
+        $model = OrderClothes::find($request->id);
+        $model->tag = $request->tag;
+        $model->save();
 
         return response()->json([
             'ok' => true

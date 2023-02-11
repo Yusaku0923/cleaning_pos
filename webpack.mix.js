@@ -13,7 +13,23 @@ mix.env(process.env.ENV_FILE);
  | file for the application as well as bundling up all the JS files.
  |
  */
+// mix.webpackConfig({
+//     devServer: {
+//         host: '0.0.0.0',
+//         port: 8081,
+//     },
+// });
 
- mix.js('resources/js/app.js', 'public/js')
- .vue()
- .sass('resources/sass/app.scss', 'public/css');
+mix.js('resources/js/app.js', 'public/js')
+    .browserSync({
+        proxy: "laravel.test",
+        files: [
+            './resources/**/*',
+            './public/**/*',
+        ],
+        open: false,
+        port: 3000,
+        reloadOnRestart: true,
+    })
+    .vue()
+    .sass('resources/sass/app.scss', 'public/css');

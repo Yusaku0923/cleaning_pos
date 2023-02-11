@@ -138,6 +138,7 @@
         ></search-modal>
         <detail-modal
             @close="close"
+            @updateTag="updateTag"
             :customer="customer"
             :order="selectedOrder"
             v-if="dispDetail"
@@ -232,6 +233,20 @@ export default ({
             })
             .then(function (response) {
                 location.reload();
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        updateTag: function(id, tag) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return axios.post('/api/order/update_tag', {
+                id: id,
+                tag: tag,
+            })
+            .then(function (response) {
+                return response.data;
             })
             .catch(function (error) {
                 console.log(error);

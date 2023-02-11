@@ -19,7 +19,7 @@ class Clothes extends Model
     }
 
 
-    public function fetchOftenOrdered($customer_id, $limit = 12)
+    public function fetchOftenOrdered($customer_id)
     {
         $clothes = OrderClothes::selectRaw(DB::raw('clothes.*, COUNT(order_clothes.clothes_id) AS count'))
                                 ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
@@ -29,7 +29,6 @@ class Clothes extends Model
                                 ->whereNull('clothes.deleted_at')
                                 ->groupBy('order_clothes.clothes_id')
                                 ->orderByDesc('count')
-                                ->limit($limit)
                                 ->get()->toArray();
 
         return $clothes;

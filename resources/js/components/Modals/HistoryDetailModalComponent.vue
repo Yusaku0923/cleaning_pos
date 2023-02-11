@@ -77,10 +77,25 @@
                                         </div>
                                     </div>
                                     <div class="card col-11 mx-auto my-1 py-2"
-                                        v-for="item in order.items"
+                                        v-for="(item, key) in order.items"
                                         :key="item.id">
                                         <div class="d-flex">
-                                            <div class="col-3 text-center">{{ item.tag }}</div>
+                                            <div class="col-3 text-center">
+                                                <p class="mb-0" @click="changeTagEditor(item.id, item.tag)">{{ item.tag }}</p>
+
+                                                <div class="d-flex ps-3" v-if="showTagEditor == item.id">
+                                                    <input class="col-3" type="number" min="1" max="10" v-model="tagHead"/>
+                                                    <div class="mx-1" style="line-height: 34.8px;font-size:30px">-</div>
+                                                    <input class="col-5" type="number" min="0" max="999" v-model="tagBody"/>
+                                                    <div
+                                                        class="bg-success ms-2 text-white"
+                                                        style="line-height:34px;padding: 0 8px;border-radius: 17px;z-index: 3;"
+                                                        @click="sendUpdate(key)"
+                                                    >
+                                                        <i class="fa-solid fa-arrows-rotate"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-5 text-center">{{ item.name }}</div>
                                             <div class="col-2 text-center">{{ item.price.toLocaleString() }}円</div>
                                             <div class="col-2 text-center">
@@ -130,7 +145,10 @@ export default ({
     data() {
         return {
             openAC: true,
-            hideUpper: false
+            hideUpper: false,
+            showTagEditor: 0,
+            tagHead: 0,
+            tagBody: 0,
         }
     },
     components: {
@@ -160,6 +178,23 @@ export default ({
         },
         toggleAC: function() {
             this.openAC = !this.openAC;
+        },
+        changeTagEditor: function(id, tag) {
+            if (this.showTagEditor === 0) {
+                this.tagHead = tag.substr(0, 1);
+                this.tagBody = tag.substr(2, 3);
+                this.showTagEditor = id;
+            } else {
+                this.showTagEditor = 0;
+                this.tagHead = 0;
+                this.tagBody = 0;
+            }
+        },
+        sendUpdate: function(index) {
+            let tag = this.tagHead + '-' + ('000' + this.tagBody).slice(-3);
+            this.$emit('updateTag', this.showTagEditor, tag);
+            this.order.items[index].tag = tag;
+            this.showTagEditor = 0;
         },
         receiptReissue: function() {
             this.$refs.child.printReceipt(this.order.id);
