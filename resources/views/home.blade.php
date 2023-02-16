@@ -32,7 +32,7 @@
                                 </p>
                             </div>
                         </div>
-    
+
                         <div class="col-12 mt-1 d-flex justify-content-between">
                             <div class="card col-6 p-1">
                                 <p class="mb-0 d-flex">

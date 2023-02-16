@@ -50,11 +50,14 @@ export default ({
             type: Number,
             requied: true,
         },
+        default: {
+            required: false
+        }
     },
     data() {
         return {
             keyword: '',
-            customers: [],
+            customers: this.default,
         }
     },
     methods: {

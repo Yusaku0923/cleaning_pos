@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Customer;
 use App\Models\CustomerInformation;
+use App\Models\Order;
 use App\Http\Requests\Customers\StoreRequest;
 use App\Http\Requests\Customers\UpdateRequest;
 use App\Services\Utility;
@@ -21,9 +22,22 @@ class CustomerController extends Controller
      */
     public function search()
     {
+        $sub_query = Order::select(\DB::raw('max(created_at) as latest_visit'), 'customer_id');
+        $sub_query->groupBy('customer_id');
+
+        $customers = Customer::query();
+        $customers->select('customers.*', 'visits.latest_visit');
+        $customers->leftJoinSub($sub_query, 'visits', 'customers.id', 'visits.customer_id');
+        $customers->where('customers.manager_id', session()->get('manager_id'));
+        $customers->orderBy('visits.latest_visit', 'desc');
+        $customers->orderBy('customers.number_of_visits', 'desc');
+        $customers->limit(20);
+        $customers = $customers->get()->toArray();
+
         return view('customers.search')->with([
             'title' => '顧　客　検　索',
-            'manager_id' => session()->get('manager_id')
+            'manager_id' => session()->get('manager_id'),
+            'customers' => $customers
         ]);
     }
 
