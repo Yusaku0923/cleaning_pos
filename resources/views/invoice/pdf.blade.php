@@ -309,7 +309,7 @@
                     @foreach ($invoice['row'] as $row)
                     @if ($row['is_detail'] === 1)
                     <tr>
-                        <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['ordered_at'])) }}</td>
+                        <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['handed_at'])) }}</td>
                         <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
                         <td class="order-detail text-start"><span class="number-font">@if ($row['tag'] !== '0-000'){{ $row['tag'] }}@endif</span> <span>{{ $row['name'] }}</span></td>
                         <td class="order-div"></td>

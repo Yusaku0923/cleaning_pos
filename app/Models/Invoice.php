@@ -92,7 +92,7 @@ class Invoice extends Model
         foreach ($invoices as $key => $invoice) {
             $query = Order::query();
             $query->where('invoice_id', $invoice['id']);
-            $query->orderBy('created_at', 'asc');
+            $query->orderBy('handed_at', 'asc');
             $orders = $query->get()->toArray();
 
             foreach ($orders as $i => $order) {
@@ -126,6 +126,7 @@ class Invoice extends Model
 
                         $item['order_id'] = $order['id'];
                         $item['ordered_at'] = $order['created_at'];
+                        $item['handed_at'] = $order['handed_at'];
                         $item['count'] = 1;
                         $item['is_detail'] = 1;
 

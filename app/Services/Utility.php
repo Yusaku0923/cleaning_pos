@@ -26,21 +26,21 @@ class Utility
         return $formated_tag;
     }
 
-    public static function currentInvoicePeriod($cutoff_date, $created_at = '') {
-        if (empty($created_at)) {
-            $created_at = date('Y-m-d');
+    public static function currentInvoicePeriod($cutoff_date, $handed_at = '') {
+        if (empty($handed_at)) {
+            $handed_at = date('Y-m-d');
         }
         if ($cutoff_date === 99) {
-            $period_start = date('Y-m-01', strtotime($created_at));
-            $period_end = date('Y-m-t', strtotime($created_at));
+            $period_start = date('Y-m-01', strtotime($handed_at));
+            $period_end = date('Y-m-t', strtotime($handed_at));
         } else {
-            $today = date('d', strtotime($created_at));
+            $today = date('d', strtotime($handed_at));
             if ($cutoff_date < $today) {
-                $period_start = date('Y-m-'. ($cutoff_date + 1), strtotime($created_at));
-                $period_end = date('Y-m-' . ($cutoff_date), strtotime($created_at . ' +1 month'));
+                $period_start = date('Y-m-'. ($cutoff_date + 1), strtotime($handed_at));
+                $period_end = date('Y-m-' . ($cutoff_date), strtotime($handed_at . ' +1 month'));
             } else {
-                $period_start = date('Y-m-'. ($cutoff_date + 1), strtotime($created_at . '-1 month'));
-                $period_end = date('Y-m-' . ($cutoff_date), strtotime($created_at));
+                $period_start = date('Y-m-'. ($cutoff_date + 1), strtotime($handed_at . '-1 month'));
+                $period_end = date('Y-m-' . ($cutoff_date), strtotime($handed_at));
             }
         }
 

@@ -82,7 +82,7 @@
                             </div>
                         </button>
                         <button class="unhanded-operation-btn bg-primary text-white mt-2"
-                            @click="send()"
+                            @click="checkInvoice()"
                             :class="{ 'unhanded-operation-btn-inactive': selectedItems.length === 0, 'unhanded-operation-btn-active': selectedItems.length !== 0 }"
                             :disabled="selectedItems.length === 0">
                             <div class="unhanded-operation-btn-icon">
@@ -128,11 +128,17 @@
                 </template>
             </div>
         </div>
+        <invoice-confirm-component
+            @close = "close"
+            @send = "send"
+            v-if="displayInvoice"
+        ></invoice-confirm-component>
     </div>
 </template>
 
 <script>
 import CustomerInfo from './CustomerInfoComponent';
+import InvoiceConfirmModal from './Modals/InvoiceConfimationModalComponent';
 export default ({
     props: {
         customer: {
@@ -151,6 +157,7 @@ export default ({
     },
     components: {
         'customer-info-component': CustomerInfo,
+        'invoice-confirm-component': InvoiceConfirmModal,
     },
     data() {
         return {
@@ -158,6 +165,7 @@ export default ({
             selectedItems: [],
             items: [],
             allSelected: false,
+            displayInvoice: false,
         }
     },
     methods: {
@@ -207,10 +215,21 @@ export default ({
                 this.allSelected = false;
             }
         },
-        send: function() {
+        checkInvoice: function() {
+            if (this.allSelected && this.orders[this.selectedOrder].is_invoice) {
+                this.displayInvoice = true;
+            } else {
+                this.send();
+            }
+        },
+        close: function() {
+            this.displayInvoice = false;
+        },
+        send: function(handed_at = null) {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
             axios.post('/api/return/update', {
-                items: this.selectedItems
+                items: this.selectedItems,
+                handed_at: handed_at
             })
             .then(function (response) {
                 location.reload();

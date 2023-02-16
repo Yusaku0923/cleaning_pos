@@ -41,29 +41,33 @@ class OrdersController extends Controller
             $paid_at = date('Y-m-d H:i:s');
         }
         $invoice_id = null;
-        // 請求書払いの注文はinvoiceテーブルにレコード追加
-        if ((boolean)$request->invoice) {
+        $is_invoice = (boolean)$request->invoice;
+        if ($is_invoice) {
             $cutoff_date = Customer::where('id', $request->customer_id)->value('cutoff_date');
             list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date, $request->created_at);
             // 入金確認が必要なお客様は「paid_at」を埋めない
             if ((boolean)Customer::where('id', $request->customer_id)->value('needs_payment_confimation')) {
-                $paid_at = null;
-            } else {
                 $paid_at = $period_end;
-            }
-            $model = new Invoice();
-            $invoice_id = $model->existsTargetInvoice($request->customer_id, $period_start, $period_end);
-            if (!is_null($invoice_id)) {
-                $invoice = Invoice::find($invoice_id);
             } else {
-                $invoice = Invoice::query()->create([
-                    'manager_id' => $request->manager_id,
-                    'customer_id' => $request->customer_id,
-                    'period_start' => $period_start,
-                    'period_end' => $period_end,
-                    'paid_at' => $paid_at,
-                ]);
-                $invoice_id = $invoice->id;
+                $paid_at = null;
+            }
+
+            if (!$request->check_return) {
+                // 返却確認しない場合は本日付けで伝票を計上
+                $model = new Invoice();
+                $invoice_id = $model->existsTargetInvoice($request->customer_id, $period_start, $period_end);
+                if (!is_null($invoice_id)) {
+                    $invoice = Invoice::find($invoice_id);
+                } else {
+                    $invoice = Invoice::query()->create([
+                        'manager_id' => $request->manager_id,
+                        'customer_id' => $request->customer_id,
+                        'period_start' => $period_start,
+                        'period_end' => $period_end,
+                        'paid_at' => $paid_at,
+                    ]);
+                    $invoice_id = $invoice->id;
+                }
             }
         } else {
             // 未収の場合は支払い日時をnullに
@@ -77,7 +81,7 @@ class OrdersController extends Controller
             'store_id' => Auth::id(),
             'manager_id' => $request->manager_id,
             'customer_id' => $request->customer_id,
-            'invoice_id' => $invoice_id,
+            'is_invoice' => $is_invoice,
             'amount' => $request->amount,
             'reduction' => $request->reduction,
             'discount' => $request->discount,
@@ -91,6 +95,7 @@ class OrdersController extends Controller
         // 返却日設定
         if (!$request->check_return) {
             $order_record['handed_at'] = date('Y-m-d H:i:s');
+            $order_record['invoice_id'] = $invoice_id;
         }
         $order = Order::query()->create($order_record);
 
@@ -108,7 +113,7 @@ class OrdersController extends Controller
                         'tag' => $converted_tag,
                         'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
                     ]);
-    
+
                     if ($tag_count > 1) {
                         for ($j = 1; $j < $tag_count; $j++) {
                             $tag = $this->addTag($tag);
@@ -137,7 +142,7 @@ class OrdersController extends Controller
                         'tag' => '0-000',
                         'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
                     ]);
-    
+
                     if ($tag_count > 1) {
                         for ($j = 1; $j < $tag_count; $j++) {
                             OrderClothes::query()->create([
