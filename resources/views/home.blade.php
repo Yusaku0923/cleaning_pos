@@ -13,7 +13,7 @@
                         :token="{{ json_encode(Utility::fetchApiToken()) }}"
                     ></customer-info-component>
 
-                    <div class="card card-border col-12 py-2 mt-2 h4 text-center">
+                    <div class="card card-border col-12 py-2 mt-4 h4 text-center">
                         顧　客　情　報
                     </div>
                     <div class="card card-border col-12 p-2 text-start">
@@ -94,11 +94,11 @@
                         </div>
                     </div>
 
-                    <div class="card card-border col-12 fs-20 py-1 px-3 mt-3 {{ session('theme_header') ? session('theme_header') : (session('theme_body') ? session('theme_body') : '') }}">
+                    {{-- <div class="card card-border col-12 fs-20 py-1 px-3 mt-3 {{ session('theme_header') ? session('theme_header') : (session('theme_body') ? session('theme_body') : '') }}">
                         <span class="{{ session('theme_header') ? session('theme_header').'-header' : (session('theme_body') ? session('theme_body').'-header' : '') }}">
                             担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span>
                         </span>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="col-12 d-flex justify-content-between">
                     @if(!empty($latest_order))
@@ -147,9 +147,9 @@
                         顧　客　呼　出
                     </div>
                     <div class="card card-border">
-                        <div class="col-12 d-flex py-4 justify-content-around">
+                        <div class="col-12 d-flex justify-content-around" style="padding: 14px 0">
                             @if (session()->has('manager_id'))
-                                <a href="{{ route('customer.create') }}" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-blue">
+                                <a href="{{ route('customer.create') }}" class="card col-5 text-center cbtn cbtn-lg cbtn-blue" style="padding: 2.5rem 0">
                                     新規登録
                                 </a>
                             @else
@@ -157,7 +157,7 @@
                             @endif
 
                             @if (session()->has('manager_id'))
-                                <a href="{{ route('customer.search') }}" class="card col-5 py-5 text-center cbtn cbtn-lg cbtn-green">
+                                <a href="{{ route('customer.search') }}" class="card col-5 text-center cbtn cbtn-lg cbtn-green"  style="padding: 2.5rem 0">
                                     顧客検索
                                 </a>
                             @else
