@@ -266,11 +266,19 @@
                         <td class="table-header">今回売上額</td>
                     </tr>
                     <tr>
+                        @if ($invoice['page_count'] == 1)
                         <td class="number-font text-end">{{ number_format($invoice['carried_over_amount']) }}</td>
                         <td class="number-font text-end">0</td>
                         <td class="number-font text-end"></td>
                         <td class="number-font text-end">{{ number_format($invoice['carried_over_amount']) }}</td>
                         <td class="number-font text-end">{{ number_format($invoice['amount']) }}</td>
+                        @else
+                        <td class="number-font text-end">0</td>
+                        <td class="number-font text-end">0</td>
+                        <td class="number-font text-end"></td>
+                        <td class="number-font text-end">0</td>
+                        <td class="number-font text-end">0</td>
+                        @endif
                     </tr>
                 </tbody>
             </table>
@@ -282,7 +290,11 @@
                         <td class="table-header">今回御請求額</td>
                     </tr>
                     <tr>
+                        @if ($invoice['page_count'] == 1)
                         <td class="number-font text-end">{{ number_format($invoice['amount'] + $invoice['carried_over_amount']) }}</td>
+                        @else
+                        <td class="number-font text-end">0</td>
+                        @endif
                     </tr>
                 </tbody>
             </table>
