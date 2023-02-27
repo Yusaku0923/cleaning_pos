@@ -15,6 +15,7 @@ use App\Models\OrderClothes;
 use App\Models\TagNumber;
 use App\Models\Tax;
 use App\Models\Invoice;
+use App\Models\Ipaddress;
 use App\Services\Utility;
 
 class OrdersController extends Controller
@@ -260,6 +261,7 @@ class OrdersController extends Controller
 
         $model = new Order;
         list($orders, $total_count) = $model->fetchReciptDetail($order_id);
+        $ip_address = Ipaddress::where('id', 1)->value('ipaddress');
 
         return response()->json([
             'store_name'         => $store->name,
@@ -278,6 +280,7 @@ class OrdersController extends Controller
             'payment'            => $order->payment,
             'tax'                => $tax,
             'paid_at'            => $order->paid_at,
+            'ip_address'         => $ip_address,
         ]);
     }
 
