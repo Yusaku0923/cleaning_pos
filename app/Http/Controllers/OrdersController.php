@@ -12,6 +12,7 @@ use App\Models\Clothes;
 use App\Models\Tax;
 use App\Models\Store;
 use App\Models\Customer;
+use App\Models\TagNumber;
 
 class OrdersController extends Controller
 {
@@ -50,8 +51,7 @@ class OrdersController extends Controller
             $often_ordered = [];
         }
         $tax = Tax::where('store_id', Auth::id())->value('tax');
-        $store = Store::find(Auth::id());
-        $token = $store->createToken(Str::random(10));
+        $latest_tag = TagNumber::where('manager_id', session()->get('manager_id'))->value('tag_number');
 
         return view('orders.create')->with([
             'title' => '預　り　入　力',
@@ -60,7 +60,7 @@ class OrdersController extends Controller
             'customer_name' => $customer->name,
             'is_invoice' => $customer->is_invoice,
             'check_return' => $customer->needs_return_confimation,
-            'auth_token' => $token->plainTextToken,
+            'latest_tag' => $latest_tag,
             'list' => $category_clothes,
             'often_ordered' => $often_ordered,
             'tax' => (1 + $tax / 100),

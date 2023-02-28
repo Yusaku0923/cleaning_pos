@@ -102,9 +102,10 @@ class OrdersController extends Controller
 
         $tag = TagNumber::where('manager_id', $request->manager_id)->value('tag_number');
         $response = [];
-        foreach ($request->order as $clothes_id => $count) {
+        // foreach ($request->order as $clothes_id => $count) {
+        foreach ($request->indexes as $clothes_id) {
             $tag_count = Clothes::where('id', $clothes_id)->value('tag_count');
-            for ($i = 1; $i <= $count; $i++) {
+            for ($i = 1; $i <= $request->order[$clothes_id]; $i++) {
                 if (!in_array($clothes_id, $request->dont_issue_tag_list)) {
                     // タグを発行する場合
                     $converted_tag = Utility::convertTagFormat($tag);
@@ -129,7 +130,7 @@ class OrdersController extends Controller
                     } else {
                         if (!isset($response[$clothes_id])) {
                             $response[$clothes_id] = $converted_tag;
-                        } else if ($i >= 2 && $i === $count) {
+                        } else if ($i >= 2 && $i === $request->order[$clothes_id]) {
                             $response[$clothes_id] .= '～' . $converted_tag;
                         }
                     }
@@ -156,7 +157,7 @@ class OrdersController extends Controller
                     } else {
                         if (!isset($response[$clothes_id])) {
                             $response[$clothes_id] = '0-000';
-                        } else if ($i >= 2 && $i === $count) {
+                        } else if ($i >= 2 && $i === $request->order[$clothes_id]) {
                             $response[$clothes_id] .= '～0-000';
                         }
                     }

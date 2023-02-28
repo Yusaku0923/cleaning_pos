@@ -10,6 +10,7 @@
     :check_return="{{ json_encode((boolean)$check_return) }}"
     :categories='{{ json_encode($list) }}'
     :often_ordered='{{ json_encode($often_ordered) }}'
+    :latest_tag='{{ $latest_tag }}'
     :tax='{{ $tax }}'
     :token="{{ json_encode(Utility::fetchApiToken()) }}"
 ></order-component>
