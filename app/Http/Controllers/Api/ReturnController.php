@@ -22,8 +22,6 @@ class ReturnController extends Controller
                                     ->exists();
         if (!$never_handed_all) {
             $handed_at = empty($request->handed_at) ? date('Y-m-d H:i:s'): date('Y-m-d 00:00:00', strtotime($request->handed_at));
-            Log::debug($handed_at);
-            Log::debug($request->handed_at);
             $order = Order::find($order_id);
             $order->handed_at = $handed_at;
             $order->save();
