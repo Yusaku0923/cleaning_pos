@@ -126,7 +126,7 @@ class Invoice extends Model
 
                         $item['order_id'] = $order['id'];
                         $item['ordered_at'] = $order['created_at'];
-                        $item['handed_at'] = $order['handed_at'];
+                        $item['handed_at'] = !is_null($order['handed_at']) ? $order['handed_at']: $order['created_at'];
                         $item['count'] = 1;
                         $item['is_detail'] = 1;
 
@@ -141,6 +141,7 @@ class Invoice extends Model
                         if (array_key_last($order['items']) == $key || $order['items'][$key + 1]['id'] != $item['id']) {
                             $item['order_id'] = $order['id'];
                             $item['ordered_at'] = $order['created_at'];
+                            $item['handed_at'] = !is_null($order['handed_at']) ? $order['handed_at']: $order['created_at'];
                             $item['count'] = $item_count;
                             $item['start_tag'] = $start_tag;
                             $item['end_tag'] = $item['tag'];

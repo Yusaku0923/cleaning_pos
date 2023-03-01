@@ -332,7 +332,7 @@
                     </tr>
                     @elseif ($row['is_detail'] === 2)
                     <tr>
-                        <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['ordered_at'])) }}</td>
+                        <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['handed_at'])) }}</td>
                         <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
                         <td class="order-detail text-start"><span class="number-font">
                         @if ($row['tag'] !== '0-000')
