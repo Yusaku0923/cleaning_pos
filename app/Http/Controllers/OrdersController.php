@@ -38,7 +38,8 @@ class OrdersController extends Controller
         }
         Utility::sendWebSocket(
             [
-                'event' => 'order'
+                'event' => 'order',
+                'name' => Customer::where('id', session()->get('customer_id'))->value('name')
             ]
         );
 

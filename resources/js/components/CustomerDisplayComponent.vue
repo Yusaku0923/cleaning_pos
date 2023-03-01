@@ -12,11 +12,11 @@
         </div>
 
         <div class="cd-2 position-relative" v-if="phase === 2" :class="{'cd-2-end': phase3_1anim}">
-            <div class="cd-2-bar"></div>
+            <!-- <div class="cd-2-bar"></div> -->
             <div class="col-12 d-flex">
                 <div class="col-6 cd-2-order">
                     <div>
-                        <div class="cd-2-order-bar"></div>
+                        <!-- <div class="cd-2-order-bar"></div> -->
 
                         <div class="col-11 mx-auto px-3 overflow-scroll cd-2-order-list" id="order-area">
                             <div id="list-top"></div>
@@ -35,48 +35,51 @@
                     </div>
                 </div>
                 <div class="col-6 cd-2-result">
-                    <div class="cd-2-result-bar"></div>
-                    <img class="cd-2-result-hanger" src="/img/hanger.svg" alt="">
-                    <img class="cd-2-result-tshorts" src="/img/tshorts.svg" alt="">
-                    <div class="cd-2-result-field">
-                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-total">
-                            <div class="col-6 cd-2-result-field-label">
+                    <!-- <div class="cd-2-result-bar"></div> -->
+                    <!-- <img class="cd-2-result-hanger" src="/img/hanger.svg" alt=""> -->
+                    <!-- <img class="cd-2-result-tshorts" src="/img/tshorts.svg" alt=""> -->
+                    <div class="col-11 mx-auto px-3 cd-2-result-name">
+                        {{ state.customer }} 様
+                    </div>
+                    <div class="col-11 mx-auto px-3 cd-2-result-field">
+                        <div class="col-12 d-flex px-3 pt-3 mb-2 cd-2-result-field-total">
+                            <div class="col-6 cd-2-result-field-label-m">
                                 点数
                             </div>
-                            <div class="col-6 text-end cd-2-result-field-value">
+                            <div class="col-6 text-end cd-2-result-field-value-m">
                                 {{ state.total }}点
                             </div>
                         </div>
                         <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-amount" v-if="state.reduction !== 0">
-                            <div class="col-4 cd-2-result-field-label">
+                            <div class="col-4 cd-2-result-field-label-m">
                                 割引き
                             </div>
-                            <div class="col-8 text-end cd-2-result-field-value">
+                            <div class="col-8 text-end cd-2-result-field-value-m">
                                 <div class="col-12">{{ state.reduction.toLocaleString() }}円</div>
                                 <div class="col-12" v-if="state.discount !== 0">({{ state.discount }}%引き)</div>
                             </div>
                         </div>
-                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-amount">
-                            <div class="col-6 cd-2-result-field-label">
+                        <div class="col-12 d-flex px-3 mt-3 mb-2 cd-2-result-field-amount">
+                            <div class="col-6 cd-2-result-field-label-l">
                                 合計金額
                             </div>
-                            <div class="col-6 text-end cd-2-result-field-value">
+                            <div class="col-6 text-end cd-2-result-field-value-l">
                                 {{ state.amount.toLocaleString() }}円
                             </div>
                         </div>
-                        <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-payment" v-if="state.payment !== 0">
-                            <div class="col-6 cd-2-result-field-label">
+                        <div class="col-12 d-flex px-3 pt-2 mb-2 cd-2-result-field-payment" v-if="state.payment !== 0">
+                            <div class="col-6 cd-2-result-field-label-l">
                                 お預かり
                             </div>
-                            <div class="col-6 text-end cd-2-result-field-value">
+                            <div class="col-6 text-end cd-2-result-field-value-l">
                                 {{ state.payment.toLocaleString() }}円
                             </div>
                         </div>
                         <div class="col-12 d-flex px-3 mb-2 cd-2-result-field-change" v-if="state.payment !== 0">
-                            <div class="col-6 cd-2-result-field-label">
+                            <div class="col-6 cd-2-result-field-label-l">
                                 お釣り
                             </div>
-                            <div class="col-6 text-end cd-2-result-field-value">
+                            <div class="col-6 text-end cd-2-result-field-value-l">
                                 {{ state.change.toLocaleString() }}円
                             </div>
                         </div>
@@ -163,6 +166,7 @@ export default ({
             this.phase1_1anim = true;
         },
         transferOrder: function(req) {
+            this.$set(this.state, 'customer', req.name);
             this.phase1_2anim = true;
             // 注文初期化
             this.$set(this.state, 'total', 0);
