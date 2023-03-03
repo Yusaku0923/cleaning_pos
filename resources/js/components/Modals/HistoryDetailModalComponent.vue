@@ -58,10 +58,10 @@
                                 <div class="col-12 d-flex justify-content-between px-3">
                                     <div class="col-8 fw-bold" style="line-height: 46px;">預り一覧（全{{ order.count }}点）</div>
                                     <div class="col-4 text-end ps-3" v-if="!openAC">
-                                        <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-o" @click="toggleAC()"><i class="fa-solid fa-angle-up pe-2"></i>開く</button>
+                                        <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-c" @click="toggleAC()"><i class="fa-solid fa-angle-up pe-2"></i>閉じる</button>
                                     </div>
                                     <div class="col-4 text-end ps-3" v-else>
-                                        <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-c" @click="toggleAC()"><i class="fa-solid fa-angle-down pe-2"></i>閉じる</button>
+                                        <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-o" @click="toggleAC()"><i class="fa-solid fa-angle-down pe-2"></i>開く</button>
                                     </div>
                                 </div>
                                 <div class="col-12 mt-2 position-relative card modal-cd-list fs-18"

@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('customer_info/delete', [CustomerInformationController::class, 'delete'])->name('customer_info.delete');
 
     Route::post('invoice/search', [InvoiceController::class, 'search'])->name('invoice.search');
+    Route::post('invoice/carry_over', [InvoiceController::class, 'carry_over'])->name('invoice.carry_over');
 
     Route::post('return/update', [ReturnController::class, 'update'])->name('return.update');
 

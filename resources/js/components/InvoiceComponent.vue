@@ -44,7 +44,7 @@
                                         {{ invoice['name'] }}
                                     </div>
                                     <div class="col-4 text-center">
-                                        {{ invoice.amount.toLocaleString() }}円（{{ invoice.carried_over_amount.toLocaleString() }}円）
+                                        {{ Number(invoice.amount).toLocaleString() }}円（{{ Number(invoice.carried_over_amount).toLocaleString() }}円）
                                     </div>
                                 </div>
                             </div>
@@ -75,9 +75,10 @@
                     </div>
                 </div>
             </div>
-            <a class="iv-reset bg-secondary">
-                全選択
-            </a>
+            <div class="iv-operate"
+                @click="dispOperate = true">
+                操作
+            </div>
             <a class="iv-pdf"
                 :href="'/invoice/generate?ids=' + params"
                 target="_blank" rel="noopener noreferrer">
@@ -92,12 +93,20 @@
             :customer_name="customerName"
             v-if="dispSearch"
         ></search-modal>
+        <operate-modal
+            @close="close"
+            @send="carry_over"
+            :invoices="selectedInvoices"
+            v-if="dispOperate"
+        ></operate-modal>
+
     </div>
 </template>
 
 <script>
 import moment from "moment";
 import SearchModal from "./Modals/InvoiceSearchModalComponent";
+import OperateModal from "./Modals/InvoiceOperateModalComponent";
 
 export default ({
     props: {
@@ -120,6 +129,7 @@ export default ({
     data() {
         return {
             dispSearch: false,
+            dispOperate: false,
             cutoffDate: 0,
             targetMonth: this.dateFormater(new Date(), 'YYYY-MM'),
             customerName: '',
@@ -131,6 +141,7 @@ export default ({
     },
     components: {
         'search-modal': SearchModal,
+        'operate-modal': OperateModal,
     },
     methods: {
         dateFormater: function(date, format = 'MM/DD') {
@@ -141,6 +152,7 @@ export default ({
         },
         close: function() {
             this.dispSearch = false;
+            this.dispOperate = false;
         },
         switchSelection: function(invoice) {
             if (this.indexes.includes(invoice.id)) {
@@ -175,6 +187,21 @@ export default ({
             .catch(function (error) {
                 console.log(error);
                 return;
+            });
+        },
+        carry_over: async function() {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/invoice/carry_over', {
+                invoices: this.indexes,
+            })
+            .then(function (response) {
+                // this.$refs.carry_over.CO_message('請求書の繰越処理が完了しました');
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+                // this.$refs.carry_over.CO_message('エラー');
+                return 'エラー';
             });
         },
     },

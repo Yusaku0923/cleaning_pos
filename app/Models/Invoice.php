@@ -45,6 +45,11 @@ class Invoice extends Model
 
         foreach ($invoices as $key => $invoice) {
             $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
+            if ($invoice['has_carried_over']) {
+                $invoices[$key]['carried_over_amount'] = $this->calcCarryOver($invoice['id']);
+            } else {
+                $invoices[$key]['carried_over_amount'] = 0;
+            }
         }
 
         return $invoices;
@@ -77,6 +82,11 @@ class Invoice extends Model
 
         foreach ($invoices as $key => $invoice) {
             $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
+            if ($invoice['has_carried_over']) {
+                $invoices[$key]['carried_over_amount'] = $this->calcCarryOver($invoice['id']);
+            } else {
+                $invoices[$key]['carried_over_amount'] = 0;
+            }
         }
 
         return $invoices;
@@ -105,6 +115,12 @@ class Invoice extends Model
 
             $invoices[$key]['orders'] = $orders;
             $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
+
+            if ($invoice['has_carried_over']) {
+                $invoices[$key]['carried_over_amount'] = $this->calcCarryOver($invoice['id']);
+            } else {
+                $invoices[$key]['carried_over_amount'] = 0;
+            }
         }
 
         // PDF出力用にフォーマットを整える(30行毎)
@@ -189,12 +205,21 @@ class Invoice extends Model
     }
 
     public function existsTargetInvoice($customer_id, $period_start, $period_end) {
-
         $invoice = Invoice::where('customer_id', $customer_id)
                             ->where('period_start', $period_start)
                             ->where('period_end', $period_end)
                             ->first();
 
         return !empty($invoice) ? $invoice->id : null;
+    }
+
+    private function calcCarryOver($invoice_id) {
+        $sum = 0;
+        $invoices = Invoice::where('carry_over_id', $invoice_id)->get()->toArray();
+        foreach ($invoices as $invoice) {
+            $sum += Order::where('invoice_id', $invoice['id'])->sum('amount');
+        }
+
+        return $sum;
     }
 }

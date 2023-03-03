@@ -1,6 +1,6 @@
 <html lang="ja">
     <head>
-        <title>pdf output test</title>
+        <title>日報</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <style>
             @font-face{
