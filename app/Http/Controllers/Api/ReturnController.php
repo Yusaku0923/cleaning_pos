@@ -28,7 +28,7 @@ class ReturnController extends Controller
 
             if ($order->is_invoice) {
                 $cutoff_date = Customer::where('id', $order->customer_id)->value('cutoff_date');
-                list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date, $handed_at);
+                list($period_start, $period_end) = Utility::searchInvoicePeriod($cutoff_date, $handed_at);
                 // 入金確認が必要なお客様は「paid_at」を埋めない
                 if ((boolean)Customer::where('id', $order->customer_id)->value('needs_payment_confimation')) {
                     $paid_at = null;

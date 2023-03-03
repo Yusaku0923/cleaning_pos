@@ -26,7 +26,7 @@ class Utility
         return $formated_tag;
     }
 
-    public static function currentInvoicePeriod($cutoff_date, $handed_at = '') {
+    public static function searchInvoicePeriod($cutoff_date, $handed_at = '') {
         if (empty($handed_at)) {
             $handed_at = date('Y-m-d');
         }

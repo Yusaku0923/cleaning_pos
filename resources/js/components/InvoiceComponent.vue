@@ -47,6 +47,9 @@
                                         {{ Number(invoice.amount).toLocaleString() }}円（{{ Number(invoice.carried_over_amount).toLocaleString() }}円）
                                     </div>
                                 </div>
+                                <div class="iv-left-result-field-list-caution" v-if="invoice.is_mismatch_cutoff_date">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                </div>
                             </div>
                         </div>
                     </div>

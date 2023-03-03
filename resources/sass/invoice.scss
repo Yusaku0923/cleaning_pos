@@ -30,6 +30,13 @@
                     height: 60vh;
                     &-card {
                         font-size: 20px;
+                        position: relative;
+                    }
+                    &-caution {
+                        position: absolute;
+                        top: 11px;
+                        left: -27px;
+                        color: $red;
                     }
                 }
             }

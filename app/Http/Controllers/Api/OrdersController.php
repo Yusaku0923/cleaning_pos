@@ -45,7 +45,7 @@ class OrdersController extends Controller
         $is_invoice = (boolean)$request->invoice;
         if ($is_invoice) {
             $cutoff_date = Customer::where('id', $request->customer_id)->value('cutoff_date');
-            list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date, $request->created_at);
+            list($period_start, $period_end) = Utility::searchInvoicePeriod($cutoff_date, $request->created_at);
             // 入金確認が必要なお客様は「paid_at」を埋めない
             if ((boolean)Customer::where('id', $request->customer_id)->value('needs_payment_confimation')) {
                 $paid_at = $period_end;

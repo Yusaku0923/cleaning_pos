@@ -45,6 +45,8 @@ class Invoice extends Model
 
         foreach ($invoices as $key => $invoice) {
             $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
+            $cutoff_date = Customer::where('id', $invoice['customer_id'])->value('cutoff_date');
+            $invoices[$key]['is_mismatch_cutoff_date'] = $this->isMismatchCutoffDate($cutoff_date, $invoice['period_end']);
             if ($invoice['has_carried_over']) {
                 $invoices[$key]['carried_over_amount'] = $this->calcCarryOver($invoice['id']);
             } else {
@@ -221,5 +223,14 @@ class Invoice extends Model
         }
 
         return $sum;
+    }
+
+    private function isMismatchCutoffDate($cutoff_date, $period_end) {
+        $date = date('d', strtotime($period_end));
+        if ($cutoff_date === 99) {
+            $cutoff_date = date('t', strtotime($period_end));
+        }
+
+        return $date !== $cutoff_date;
     }
 }
