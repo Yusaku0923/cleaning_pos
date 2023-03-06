@@ -43,11 +43,17 @@
                                     <div class="col-5 text-center">
                                         {{ invoice['name'] }}
                                     </div>
-                                    <div class="col-4 text-center">
+                                    <div class="col-4 text-center" v-if="invoice.carry_over_id === null">
                                         {{ Number(invoice.amount).toLocaleString() }}円（{{ Number(invoice.carried_over_amount).toLocaleString() }}円）
                                     </div>
+                                    <div class="col-4 text-center" v-else>
+                                        {{ Number(invoice.amount).toLocaleString() }}円（<span class="text-danger">繰越</span>）
+                                    </div>
                                 </div>
-                                <div class="iv-left-result-field-list-caution" v-if="invoice.is_mismatch_cutoff_date">
+                                <div
+                                    class="iv-left-result-field-list-caution"
+                                    :class="{'iv-left-result-field-list-caution-c': indexes.includes(invoice.id)}"
+                                    v-if="invoice.is_mismatch_cutoff_date">
                                     <i class="fa-solid fa-circle-exclamation"></i>
                                 </div>
                             </div>
@@ -98,7 +104,8 @@
         ></search-modal>
         <operate-modal
             @close="close"
-            @send="carry_over"
+            @co_send="carry_over"
+            @ac_send="align_cutoff_date"
             :invoices="selectedInvoices"
             v-if="dispOperate"
         ></operate-modal>
@@ -199,6 +206,23 @@ export default ({
             })
             .then(function (response) {
                 // this.$refs.carry_over.CO_message('請求書の繰越処理が完了しました');
+                window.location.reload();
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+                // this.$refs.carry_over.CO_message('エラー');
+                return 'エラー';
+            });
+        },
+        align_cutoff_date: async function() {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/invoice/align_cutoff_date', {
+                invoices: this.indexes,
+            })
+            .then(function (response) {
+                // this.$refs.carry_over.CO_message('請求書の繰越処理が完了しました');
+                window.location.reload();
                 return response.data;
             })
             .catch(function (error) {

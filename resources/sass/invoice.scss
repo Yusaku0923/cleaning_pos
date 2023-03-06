@@ -37,6 +37,10 @@
                         top: 11px;
                         left: -27px;
                         color: $red;
+                        &-c {
+                            top: 9px !important;
+                            left: -29px !important;
+                        }
                     }
                 }
             }

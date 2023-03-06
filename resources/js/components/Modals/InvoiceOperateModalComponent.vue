@@ -8,9 +8,17 @@
                         <div class="card-body col-12 modal-iv-list">
                             <div
                                 class="card col-10 mx-auto px-3 py-1 text-center modal-iv-list-btn"
-                                :class="{ 'modal-iv-list-btn-disabled': isNotAbleToCarryOver(), 'modal-iv-list-btn-succeeded': CO_done}"
-                                @click="send()">
+                                :class="{'modal-iv-list-btn-succeeded': CO_done}"
+                                v-if="isAbleToCarryOver()"
+                                @click="CO_send()">
                                 {{ CO_message }}
+                            </div>
+                            <div
+                                class="card col-10 mx-auto mt-2 px-3 py-1 text-center modal-iv-list-btn"
+                                :class="{ 'modal-iv-list-btn-disabled': isAbleToAlignCutoffDate(), 'modal-iv-list-btn-succeeded': AC_done}"
+                                v-if="isAbleToAlignCutoffDate()"
+                                @click="AC_send()">
+                                {{ AC_message }}
                             </div>
                         </div>
                         <div class="col-12 card-footer py-3 d-flex justify-content-end">
@@ -35,27 +43,60 @@ export default ({
     },
     data() {
         return {
+            // CO: Carry Over
             CO_message: '選択中の請求書を繰り越し',
             CO_done: false,
+            // AC: Align Cutoff
+            AC_message: '選択中の請求書を現在の締日に揃える',
+            AC_done: false,
         }
     },
     methods: {
-        isNotAbleToCarryOver: function() {
-            let includeInvalid = false;
+        isAbleToCarryOver: function() {
+            let onlyValid = false;
+            // 管理めんどいから1個に限定
+            if (Object.keys(this.invoices).length !== 1) {
+                return false;
+            }
+
             for (const key in this.invoices) {
                 if(this.invoices.hasOwnProperty(key)) {
-                    if (this.invoices[key].carry_over_id != null) {
-                        includeInvalid = true;
+                    if (this.invoices[key].carry_over_id === null) {
+                        onlyValid = true;
                     }
                 }
             }
 
-            return !Object.keys(this.invoices).length || includeInvalid;
+            return onlyValid;
         },
-        send: function() {
-            if (!this.isNotAbleToCarryOver() && !this.CO_done) {
-                this.$emit('send');
+        isAbleToAlignCutoffDate: function() {
+            let onlyValid = false;
+            // 管理めんどいから1個に限定
+            if (Object.keys(this.invoices).length !== 1) {
+                return false;
+            }
+
+            for (const key in this.invoices) {
+                if(this.invoices.hasOwnProperty(key)) {
+                    if (this.invoices[key].is_mismatch_cutoff_date) {
+                        onlyValid = true;
+                    }
+                }
+            }
+
+            return onlyValid;
+        },
+        CO_send: function() {
+            if (this.isAbleToCarryOver() && !this.CO_done) {
+                this.$emit('co_send');
                 this.CO_message = '繰越処理が完了しました';
+                this.CO_done = true;
+            }
+        },
+        AC_send: function() {
+            if (this.isAbleToAlignCutoffDate() && !this.AC_done) {
+                this.$emit('ac_send');
+                this.CO_message = '締日整列処理が完了しました';
                 this.CO_done = true;
             }
         },

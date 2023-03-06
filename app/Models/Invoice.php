@@ -226,9 +226,9 @@ class Invoice extends Model
     }
 
     private function isMismatchCutoffDate($cutoff_date, $period_end) {
-        $date = date('d', strtotime($period_end));
+        $date = (int)date('d', strtotime($period_end));
         if ($cutoff_date === 99) {
-            $cutoff_date = date('t', strtotime($period_end));
+            $cutoff_date = (int)date('t', strtotime($period_end));
         }
 
         return $date !== $cutoff_date;

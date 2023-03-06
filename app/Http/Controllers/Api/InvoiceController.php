@@ -68,7 +68,8 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function alignCutoffDate(Request $request, Invoice $INVOICE) {
+    public function align_cutoff_date(Request $request, Invoice $INVOICE) {
+        \Log::debug("message");
         $invoices = $request->invoices;
         foreach ($invoices as $invoice_id) {
             // 対象の請求書とその配下の注文を取得
@@ -93,7 +94,8 @@ class InvoiceController extends Controller
                 $order->save();
             }
             // 対象外の請求書は削除
-            $invoice->delete();
+            $invoice->deleted_at = date('Y-m-d H:i:s');
+            $invoice->save();
         }
 
         return response()->json([

@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('invoice/search', [InvoiceController::class, 'search'])->name('invoice.search');
     Route::post('invoice/carry_over', [InvoiceController::class, 'carry_over'])->name('invoice.carry_over');
+    Route::post('invoice/align_cutoff_date', [InvoiceController::class, 'align_cutoff_date'])->name('invoice.align_cutoff_date');
 
     Route::post('return/update', [ReturnController::class, 'update'])->name('return.update');
 
