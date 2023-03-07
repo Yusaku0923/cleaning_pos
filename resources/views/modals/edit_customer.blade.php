@@ -33,7 +33,7 @@
                     <li>{{$error}}</li>
                     @endforeach
                     <hr>
-                    <div class="col-12 overflow-scroll" style="height: 25vh">
+                    <div class="col-12 overflow-scroll" style="height: 25dvh">
                         <div class="col-12 form-group mb-2">
                             <label for="is_invoice" class="form-label fs-20 fw-bold">請求書払い</label>
                             <div class="col-8 d-flex fs-20">

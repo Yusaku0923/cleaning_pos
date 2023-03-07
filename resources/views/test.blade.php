@@ -3,7 +3,7 @@
 @section('content')
 <div class="col-12">
     <div class="col-12 mx-auto">
-        <div class="clothes-bar col-5 border border-secondary position-relative" style="height: 50vh">
+        <div class="clothes-bar col-5 border border-secondary position-relative" style="height: 50dvh">
             <div class="card border border-secondary clothes-card position-relative p-2 mt-3">
                 <div class="text-nowrap overflow-auto">
                     Yシャツ
