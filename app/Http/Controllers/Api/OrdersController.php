@@ -281,6 +281,7 @@ class OrdersController extends Controller
             'payment'            => $order->payment,
             'tax'                => $tax,
             'paid_at'            => $order->paid_at,
+            'is_invoice'         => $order->is_invoice,
             'ip_address'         => $ip_address,
         ]);
     }
