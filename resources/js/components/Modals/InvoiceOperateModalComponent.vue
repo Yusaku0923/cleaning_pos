@@ -15,7 +15,7 @@
                             </div>
                             <div
                                 class="card col-10 mx-auto mt-2 px-3 py-1 text-center modal-iv-list-btn"
-                                :class="{ 'modal-iv-list-btn-disabled': isAbleToAlignCutoffDate(), 'modal-iv-list-btn-succeeded': AC_done}"
+                                :class="{ 'modal-iv-list-btn-succeeded': AC_done}"
                                 v-if="isAbleToAlignCutoffDate()"
                                 @click="AC_send()">
                                 {{ AC_message }}
@@ -78,7 +78,7 @@ export default ({
 
             for (const key in this.invoices) {
                 if(this.invoices.hasOwnProperty(key)) {
-                    if (this.invoices[key].is_mismatch_cutoff_date) {
+                    if (Boolean(this.invoices[key].is_mismatch_cutoff_date)) {
                         onlyValid = true;
                     }
                 }
@@ -96,8 +96,8 @@ export default ({
         AC_send: function() {
             if (this.isAbleToAlignCutoffDate() && !this.AC_done) {
                 this.$emit('ac_send');
-                this.CO_message = '締日整列処理が完了しました';
-                this.CO_done = true;
+                this.AC_message = '締日整列処理が完了しました';
+                this.AC_done = true;
             }
         },
     },
