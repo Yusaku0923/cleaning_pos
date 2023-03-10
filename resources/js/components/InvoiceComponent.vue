@@ -34,7 +34,11 @@
                             <div class="col-11 card mx-auto mt-2 py-2 iv-left-result-field-list-card"
                                 v-for="invoice in invoicesList"
                                 :key="invoice.id"
-                                :class="{ 'iv-selected': indexes.includes(invoice.id), 'iv-unselected': !indexes.includes(invoice.id) }"
+                                :class="{
+                                    'iv-selected': indexes.includes(invoice.id),
+                                    'iv-unselected': !indexes.includes(invoice.id),
+                                    'border-primary': invoice.issued_at !== null && !indexes.includes(invoice.id)
+                                }"
                                 @click="switchSelection(invoice)">
                                 <div class="col-12 d-flex">
                                     <div class="col-3 text-center">

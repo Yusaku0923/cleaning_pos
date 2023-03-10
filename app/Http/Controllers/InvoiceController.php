@@ -46,7 +46,12 @@ class InvoiceController extends Controller
         } else {
             return redirect()->route('invoice.index');
         }
-        // dd($invoices);
+        // 一度PDF化した請求書はチェック
+        $ids_array = explode(',', $request->ids);
+        Invoice::whereIn('id', $ids_array)->update([
+            'issued_at' => date('Y-m-d')
+        ]);
+
         $pdf = \PDF::loadView('invoice.pdf', [
             'invoices' => $invoices
         ]);
