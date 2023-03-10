@@ -9,7 +9,14 @@
         <div class="card card-border p-5 ">
             <form method="POST" action="{{ route('customer.store') }}">
                 {{ csrf_field() }}
-                <customer-create-component></customer-create-component>
+                @php
+                    $cutoff = range(0, 28);
+                    $cutoff[99] = '末';
+                    $cutoff[0] = '日付を選択してください';
+                @endphp
+                <customer-create-component
+                    :cutoff="{{ json_encode($cutoff) }}"
+                ></customer-create-component>
                 @foreach ($errors->all() as $error)
                     <li>{{$error}}</li>
                 @endforeach

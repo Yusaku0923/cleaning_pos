@@ -211,7 +211,7 @@
                         来　店　履　歴
                     </div>
                     <div class="card card-border history-field">
-                        <div class="col-12 d-flex py-2 justify-content-around">
+                        <div class="col-12 d-flex py-1 justify-content-around">
                             @foreach ($orders as $order)
                             <history-card-component
                                 :customer="{{ json_encode($customer) }}"

@@ -90,8 +90,10 @@ class CustomerController extends Controller
             'name' => $request->name,
             'name_kana' => mb_convert_kana($request->name_kana, 'rnk'),
             'phone_number' => $request->phone_number,
-            'birth_day' => $request->birth_day ?? NULL,
-            'sex' => $request->sex ?? NULL,
+            'is_invoice' => $request->is_invoice,
+            'needs_payment_confimation' => $request->check_payment,
+            'needs_return_confimation' => $request->check_return,
+            'cutoff_date' => $request->cutoff_date ?? null,
         ]);
 
         // TODO:遷移先選択
