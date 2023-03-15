@@ -49,12 +49,15 @@ class CustomerController extends Controller
         $query->orderBy('created_at', 'asc');
         $info = $query->get()->toArray();
         session()->put('customer_info', $info);
-        Utility::sendWebSocket(
-            [
-                'event' => 'customer',
-                'name' => Customer::where('id', $id)->value('name')
-            ]
-        );
+        $customer = Customer::find($id);
+        if (!(boolean)$customer->is_invoice) {
+            Utility::sendWebSocket(
+                [
+                    'event' => 'customer',
+                    'name' => $customer->name
+                ]
+            );
+        }
 
         return redirect()->route('home');
     }
@@ -99,12 +102,14 @@ class CustomerController extends Controller
         // TODO:遷移先選択
         session()->put('customer_id', $customer->id);
         session()->put('customer_info', []);
-        Utility::sendWebSocket(
-            [
-                'event' => 'customer',
-                'name' => Customer::where('id', $customer->id)->value('name')
-            ]
-        );
+        if (!(boolean)$customer->is_invoice) {
+            Utility::sendWebSocket(
+                [
+                    'event' => 'customer',
+                    'name' => $customer->name
+                ]
+            );
+        }
         return redirect()->route('home');
     }
 

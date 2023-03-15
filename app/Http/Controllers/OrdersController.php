@@ -36,14 +36,16 @@ class OrdersController extends Controller
         if (!session()->has('manager_id') || !session()->has('customer_id')) {
             return redirect()->route('home');
         }
-        Utility::sendWebSocket(
-            [
-                'event' => 'order',
-                'name' => Customer::where('id', session()->get('customer_id'))->value('name')
-            ]
-        );
-
         $customer = Customer::find(session()->get('customer_id'));
+        if (!(boolean)$customer->is_invoice) {
+            Utility::sendWebSocket(
+                [
+                    'event' => 'order',
+                    'name' => $customer->name
+                ]
+            );
+        }
+
         $category_clothes = Category::with('clothes')->where('id', '!=',  1)->get();
         $model = new Clothes;
         if (Order::where('customer_id', $customer->id)->exists()) {

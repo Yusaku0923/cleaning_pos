@@ -14,7 +14,7 @@ $cdblue: rgb(2, 153, 253);
             top: 40%;
             text-align: center;
             color: $white;
-            font-size: 56px;
+            font-size: 10.6vh;
             animation: welcome-anim-init 1s;
             &-anim-1 {
                 animation: welcome-anim-1 .5s forwards;
@@ -28,7 +28,7 @@ $cdblue: rgb(2, 153, 253);
             top: 47%;
             text-align: center;
             color: $white;
-            font-size: 56px;
+            font-size: 10.6vh;
             opacity: 0;
             &-anim-1 {
                 animation: name-anim-1 1.5s forwards;
@@ -67,7 +67,7 @@ $cdblue: rgb(2, 153, 253);
             //     background: linear-gradient(#ffffff 20%, #f1f1f1 30%, #e9e9e9 45%);
             //     height: 5vh;
             //     width: 12px;
-            //     border-radius: 20px;
+            //     border-radius: 3.8vh;
             // }
             // &:after {
             //     content: "";
@@ -78,7 +78,7 @@ $cdblue: rgb(2, 153, 253);
             //     background: linear-gradient(#ffffff 20%, #f1f1f1 30%, #e9e9e9 45%);
             //     height: 5vh;
             //     width: 12px;
-            //     border-radius: 20px;
+            //     border-radius: 3.8vh;
             // }
         }
         &-order {
@@ -92,15 +92,15 @@ $cdblue: rgb(2, 153, 253);
                 width: 5vw;
                 height:3vh;
                 background: linear-gradient(#e9e9e9 20%, #cecece 30%, #b6b5b5 45%);
-                border-radius: 14px 0 0 0;
+                border-radius: 2.6vh 0 0 0;
                 z-index: 4;
             }
             &-title {
                 height: 8vh;
                 border: 2px solid $white;
                 font-weight: bold;
-                border-radius: 10px;
-                font-size: 26px;
+                border-radius: 1.9vh;
+                font-size: 4.9vh;
                 line-height: 8vh;
                 margin-bottom: 2vh;
             }
@@ -108,8 +108,8 @@ $cdblue: rgb(2, 153, 253);
                 height: 96vh;
                 background-color: $cdblue;
                 border: 8px solid $white;
-                border-radius: 20px;
-                font-size: 30px;
+                border-radius: 3.8vh;
+                font-size: 5.7vh;
                 position: relative;
                 z-index: 3;
                 &-row {
@@ -178,17 +178,17 @@ $cdblue: rgb(2, 153, 253);
                 animation: order-result-anim-move 1s;
                 height: 12vh;
                 margin-bottom: 2vh;
-                border-radius: 20px;
+                border-radius: 3.8vh;
                 background-color: $white;
                 z-index: 5;
                 color: $cdblue;
-                font-size: 42px;
+                font-size: 7.9vh;
                 line-height: 12vh;
             }
             &-field {
                 animation: order-result-anim-move 1s;
                 height: 82vh;
-                border-radius: 20px;
+                border-radius: 3.8vh;
                 background-color: $white;
                 z-index: 5;
                 color: $cdblue;
@@ -202,30 +202,30 @@ $cdblue: rgb(2, 153, 253);
                 //     // border-bottom: 2px solid $cdblue;
                 // }
                 &-payment {
-                    border-top: 2px solid $cdblue;
+                    border-top: .5vh solid $cdblue;
                 }
                 // &-change {
                 //     // border-bottom: 2px solid $cdblue;
                 // }
                 &-label {
                     &-m {
-                        font-size: 34px;
-                        line-height: 50px;
+                        font-size: 6.4vh;
+                        line-height: 9.4vh;
                     }
                     &-l {
-                        font-size: 42px;
-                        line-height: 50px;
+                        font-size: 7.9vh;
+                        line-height: 9.4vh;
                     }
                 }
                 &-value {
                     &-m {
-                        font-size: 34px;
-                        line-height: 50px;
+                        font-size: 6.4vh;
+                        line-height: 9.4vh;
                         font-weight: bold;
                     }
                     &-l {
-                        font-size: 42px;
-                        line-height: 50px;
+                        font-size: 7.9vh;
+                        line-height: 9.4vh;
                         font-weight: bold;
                     }
                 }
@@ -262,10 +262,10 @@ $cdblue: rgb(2, 153, 253);
             height: 40vh;
             background-color: $white;
             color: $cdblue;
-            font-size: 38px;
+            font-size: 6.5vh;
             padding: 7vh 0;
             border: 3vh solid rgb(108, 196, 255);
-            border-radius: 20px;
+            border-radius: 3.8vh;
             &-text {
                 line-height: 10vh;
             }

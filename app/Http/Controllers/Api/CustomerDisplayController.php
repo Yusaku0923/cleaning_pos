@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Events\CustomerDisplay;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Auth;
 
 class CustomerDisplayController extends Controller
 {
@@ -64,8 +64,10 @@ class CustomerDisplayController extends Controller
      * ⇒一旦案2でやってみよ
      */
     public function broadcast(Request $request) {
-        broadcast(new CustomerDisplay($request->all()));
+        if (!(boolean)Auth::user()->is_invoice) {
+            broadcast(new CustomerDisplay($request->all()));
+        }
 
-        return response()->json([]);
+            return response()->json([]);
     }
 }

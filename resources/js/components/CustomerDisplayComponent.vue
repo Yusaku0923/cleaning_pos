@@ -247,12 +247,13 @@ export default ({
         account: function(req) {
             this.$set(this.state, 'payment', req.payment);
             this.$set(this.state, 'change', req.change);
-            // 会計後１分放置していた場合、強制終了
+            // 会計後2分放置していた場合、強制終了
             this.finishOrderEvent = setTimeout(() => {
                 this.finishOrder();
-            }, 60000);
+            }, 120000);
         },
         finishOrder: function() {
+            if (this.phase !== 2) return;
             this.phase3_1anim = true;
             if (this.scrollEvent !== -1) {
                 clearInterval(this.scrollEvent);
