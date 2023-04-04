@@ -15,7 +15,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'name_kana' => 'required|regex:/^[ァ-ヴーｦ-ﾟ 　]+$/u',
+            'name_kana' => 'required',
             'phone_number' => 'nullable|numeric|digits_between:6,11',
             'birth_day' => '',
             'sex' => '',
