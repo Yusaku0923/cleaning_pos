@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\OrdersController;
 use App\Http\Controllers\Api\ReturnController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ClothesController;
 use App\Http\Controllers\Api\CustomerInformationController;
 use App\Http\Controllers\Api\CustomerDisplayController;
@@ -22,6 +23,8 @@ use App\Http\Controllers\Api\CustomerDisplayController;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('category/store', [CategoryController::class, 'store'])->name('category.store');
+
     Route::post('clothes/store', [ClothesController::class, 'store'])->name('clothes.store');
     Route::post('clothes/update', [ClothesController::class, 'update'])->name('clothes.update');
     Route::post('clothes/delete', [ClothesController::class, 'delete'])->name('clothes.delete');
@@ -39,6 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('customer_info/delete', [CustomerInformationController::class, 'delete'])->name('customer_info.delete');
 
     Route::post('invoice/search', [InvoiceController::class, 'search'])->name('invoice.search');
+    Route::post('invoice/carry_over', [InvoiceController::class, 'carry_over'])->name('invoice.carry_over');
+    Route::post('invoice/align_cutoff_date', [InvoiceController::class, 'align_cutoff_date'])->name('invoice.align_cutoff_date');
 
     Route::post('return/update', [ReturnController::class, 'update'])->name('return.update');
 

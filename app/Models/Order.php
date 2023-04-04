@@ -204,7 +204,7 @@ class Order extends Model
     public function fetchUnhandedOrders($customer_id) {
         $orders = Order::where('customer_id', $customer_id)
                         ->whereNull('handed_at')
-                        ->orderBy('created_at', 'asc')
+                        ->orderBy('created_at', 'desc')
                         ->get()->toArray();
         
         if (empty($orders)) {

@@ -45,6 +45,13 @@ class Invoice extends Model
 
         foreach ($invoices as $key => $invoice) {
             $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
+            $cutoff_date = Customer::where('id', $invoice['customer_id'])->value('cutoff_date');
+            $invoices[$key]['is_mismatch_cutoff_date'] = $this->isMismatchCutoffDate($cutoff_date, $invoice['period_end']);
+            if ($invoice['has_carried_over']) {
+                $invoices[$key]['carried_over_amount'] = $this->calcCarryOver($invoice['id']);
+            } else {
+                $invoices[$key]['carried_over_amount'] = 0;
+            }
         }
 
         return $invoices;
@@ -77,6 +84,11 @@ class Invoice extends Model
 
         foreach ($invoices as $key => $invoice) {
             $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
+            if ($invoice['has_carried_over']) {
+                $invoices[$key]['carried_over_amount'] = $this->calcCarryOver($invoice['id']);
+            } else {
+                $invoices[$key]['carried_over_amount'] = 0;
+            }
         }
 
         return $invoices;
@@ -105,6 +117,12 @@ class Invoice extends Model
 
             $invoices[$key]['orders'] = $orders;
             $invoices[$key]['amount'] = Order::where('invoice_id', $invoice['id'])->sum('amount');
+
+            if ($invoice['has_carried_over']) {
+                $invoices[$key]['carried_over_amount'] = $this->calcCarryOver($invoice['id']);
+            } else {
+                $invoices[$key]['carried_over_amount'] = 0;
+            }
         }
 
         // PDF出力用にフォーマットを整える(30行毎)
@@ -126,7 +144,7 @@ class Invoice extends Model
 
                         $item['order_id'] = $order['id'];
                         $item['ordered_at'] = $order['created_at'];
-                        $item['handed_at'] = $order['handed_at'];
+                        $item['handed_at'] = !is_null($order['handed_at']) ? $order['handed_at']: $order['created_at'];
                         $item['count'] = 1;
                         $item['is_detail'] = 1;
 
@@ -141,6 +159,7 @@ class Invoice extends Model
                         if (array_key_last($order['items']) == $key || $order['items'][$key + 1]['id'] != $item['id']) {
                             $item['order_id'] = $order['id'];
                             $item['ordered_at'] = $order['created_at'];
+                            $item['handed_at'] = !is_null($order['handed_at']) ? $order['handed_at']: $order['created_at'];
                             $item['count'] = $item_count;
                             $item['start_tag'] = $start_tag;
                             $item['end_tag'] = $item['tag'];
@@ -188,12 +207,30 @@ class Invoice extends Model
     }
 
     public function existsTargetInvoice($customer_id, $period_start, $period_end) {
-
         $invoice = Invoice::where('customer_id', $customer_id)
                             ->where('period_start', $period_start)
                             ->where('period_end', $period_end)
                             ->first();
 
         return !empty($invoice) ? $invoice->id : null;
+    }
+
+    private function calcCarryOver($invoice_id) {
+        $sum = 0;
+        $invoices = Invoice::where('carry_over_id', $invoice_id)->get()->toArray();
+        foreach ($invoices as $invoice) {
+            $sum += Order::where('invoice_id', $invoice['id'])->sum('amount');
+        }
+
+        return $sum;
+    }
+
+    private function isMismatchCutoffDate($cutoff_date, $period_end) {
+        $date = (int)date('d', strtotime($period_end));
+        if ($cutoff_date === 99) {
+            $cutoff_date = (int)date('t', strtotime($period_end));
+        }
+
+        return $date !== $cutoff_date;
     }
 }

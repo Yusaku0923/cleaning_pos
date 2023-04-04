@@ -34,7 +34,11 @@
                             <div class="col-11 card mx-auto mt-2 py-2 iv-left-result-field-list-card"
                                 v-for="invoice in invoicesList"
                                 :key="invoice.id"
-                                :class="{ 'iv-selected': indexes.includes(invoice.id), 'iv-unselected': !indexes.includes(invoice.id) }"
+                                :class="{
+                                    'iv-selected': indexes.includes(invoice.id),
+                                    'iv-unselected': !indexes.includes(invoice.id),
+                                    'border-primary': invoice.issued_at !== null && !indexes.includes(invoice.id)
+                                }"
                                 @click="switchSelection(invoice)">
                                 <div class="col-12 d-flex">
                                     <div class="col-3 text-center">
@@ -43,9 +47,18 @@
                                     <div class="col-5 text-center">
                                         {{ invoice['name'] }}
                                     </div>
-                                    <div class="col-4 text-center">
-                                        {{ invoice.amount.toLocaleString() }}円（{{ invoice.carried_over_amount.toLocaleString() }}円）
+                                    <div class="col-4 text-center" v-if="invoice.carry_over_id === null">
+                                        {{ Number(invoice.amount).toLocaleString() }}円（{{ Number(invoice.carried_over_amount).toLocaleString() }}円）
                                     </div>
+                                    <div class="col-4 text-center" v-else>
+                                        {{ Number(invoice.amount).toLocaleString() }}円（<span class="text-danger">繰越</span>）
+                                    </div>
+                                </div>
+                                <div
+                                    class="iv-left-result-field-list-caution"
+                                    :class="{'iv-left-result-field-list-caution-c': indexes.includes(invoice.id)}"
+                                    v-if="invoice.is_mismatch_cutoff_date">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
                                 </div>
                             </div>
                         </div>
@@ -75,9 +88,10 @@
                     </div>
                 </div>
             </div>
-            <a class="iv-reset bg-secondary">
-                全選択
-            </a>
+            <div class="iv-operate"
+                @click="dispOperate = true">
+                操作
+            </div>
             <a class="iv-pdf"
                 :href="'/invoice/generate?ids=' + params"
                 target="_blank" rel="noopener noreferrer">
@@ -92,17 +106,26 @@
             :customer_name="customerName"
             v-if="dispSearch"
         ></search-modal>
+        <operate-modal
+            @close="close"
+            @co_send="carry_over"
+            @ac_send="align_cutoff_date"
+            :invoices="selectedInvoices"
+            v-if="dispOperate"
+        ></operate-modal>
+
     </div>
 </template>
 
 <script>
 import moment from "moment";
 import SearchModal from "./Modals/InvoiceSearchModalComponent";
+import OperateModal from "./Modals/InvoiceOperateModalComponent";
 
 export default ({
     props: {
         invoices: {
-            type: Array,
+            Type: Array,
             required: true
         },
         manager_id: {
@@ -113,13 +136,14 @@ export default ({
             required: true,
         },
         theme: {
-            Typr: String,
+            Type: String,
             required: true
         }
     },
     data() {
         return {
             dispSearch: false,
+            dispOperate: false,
             cutoffDate: 0,
             targetMonth: this.dateFormater(new Date(), 'YYYY-MM'),
             customerName: '',
@@ -131,6 +155,7 @@ export default ({
     },
     components: {
         'search-modal': SearchModal,
+        'operate-modal': OperateModal,
     },
     methods: {
         dateFormater: function(date, format = 'MM/DD') {
@@ -141,6 +166,7 @@ export default ({
         },
         close: function() {
             this.dispSearch = false;
+            this.dispOperate = false;
         },
         switchSelection: function(invoice) {
             if (this.indexes.includes(invoice.id)) {
@@ -175,6 +201,38 @@ export default ({
             .catch(function (error) {
                 console.log(error);
                 return;
+            });
+        },
+        carry_over: async function() {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/invoice/carry_over', {
+                invoices: this.indexes,
+            })
+            .then(function (response) {
+                // this.$refs.carry_over.CO_message('請求書の繰越処理が完了しました');
+                window.location.reload();
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+                // this.$refs.carry_over.CO_message('エラー');
+                return 'エラー';
+            });
+        },
+        align_cutoff_date: async function() {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/invoice/align_cutoff_date', {
+                invoices: this.indexes,
+            })
+            .then(function (response) {
+                // this.$refs.carry_over.CO_message('請求書の繰越処理が完了しました');
+                window.location.reload();
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+                // this.$refs.carry_over.CO_message('エラー');
+                return 'エラー';
             });
         },
     },

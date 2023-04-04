@@ -1,6 +1,6 @@
 <html lang="ja">
     <head>
-        <title>pdf output test</title>
+        <title>請求書</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <style>
             @font-face{
@@ -266,11 +266,19 @@
                         <td class="table-header">今回売上額</td>
                     </tr>
                     <tr>
+                        @if ($invoice['page_count'] == 1)
                         <td class="number-font text-end">{{ number_format($invoice['carried_over_amount']) }}</td>
                         <td class="number-font text-end">0</td>
                         <td class="number-font text-end"></td>
                         <td class="number-font text-end">{{ number_format($invoice['carried_over_amount']) }}</td>
                         <td class="number-font text-end">{{ number_format($invoice['amount']) }}</td>
+                        @else
+                        <td class="number-font text-end">0</td>
+                        <td class="number-font text-end">0</td>
+                        <td class="number-font text-end"></td>
+                        <td class="number-font text-end">0</td>
+                        <td class="number-font text-end">0</td>
+                        @endif
                     </tr>
                 </tbody>
             </table>
@@ -282,7 +290,11 @@
                         <td class="table-header">今回御請求額</td>
                     </tr>
                     <tr>
+                        @if ($invoice['page_count'] == 1)
                         <td class="number-font text-end">{{ number_format($invoice['amount'] + $invoice['carried_over_amount']) }}</td>
+                        @else
+                        <td class="number-font text-end">0</td>
+                        @endif
                     </tr>
                 </tbody>
             </table>
@@ -320,7 +332,7 @@
                     </tr>
                     @elseif ($row['is_detail'] === 2)
                     <tr>
-                        <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['ordered_at'])) }}</td>
+                        <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['handed_at'])) }}</td>
                         <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
                         <td class="order-detail text-start"><span class="number-font">
                         @if ($row['tag'] !== '0-000')

@@ -38,7 +38,7 @@
     @livewireStyles
 </head>
 <body>
-    <div id="app" class="{{ session('theme_body') ?? session('theme_body') }}">
+    <div id="app" class="{{ session('theme_body') ?? session('theme_body') }}" style="height: 100dvh;">
         @if (!request()->is('*customer_display*'))
         <main class="pt-4 position-relative">
             <div class="col-12 mb-4 px-2 position-sticky">

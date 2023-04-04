@@ -15,6 +15,7 @@ use App\Models\OrderClothes;
 use App\Models\TagNumber;
 use App\Models\Tax;
 use App\Models\Invoice;
+use App\Models\Ipaddress;
 use App\Services\Utility;
 
 class OrdersController extends Controller
@@ -44,7 +45,7 @@ class OrdersController extends Controller
         $is_invoice = (boolean)$request->invoice;
         if ($is_invoice) {
             $cutoff_date = Customer::where('id', $request->customer_id)->value('cutoff_date');
-            list($period_start, $period_end) = Utility::currentInvoicePeriod($cutoff_date, $request->created_at);
+            list($period_start, $period_end) = Utility::searchInvoicePeriod($cutoff_date, $request->created_at);
             // 入金確認が必要なお客様は「paid_at」を埋めない
             if ((boolean)Customer::where('id', $request->customer_id)->value('needs_payment_confimation')) {
                 $paid_at = $period_end;
@@ -101,9 +102,10 @@ class OrdersController extends Controller
 
         $tag = TagNumber::where('manager_id', $request->manager_id)->value('tag_number');
         $response = [];
-        foreach ($request->order as $clothes_id => $count) {
+        // foreach ($request->order as $clothes_id => $count) {
+        foreach ($request->indexes as $clothes_id) {
             $tag_count = Clothes::where('id', $clothes_id)->value('tag_count');
-            for ($i = 1; $i <= $count; $i++) {
+            for ($i = 1; $i <= $request->order[$clothes_id]; $i++) {
                 if (!in_array($clothes_id, $request->dont_issue_tag_list)) {
                     // タグを発行する場合
                     $converted_tag = Utility::convertTagFormat($tag);
@@ -128,7 +130,7 @@ class OrdersController extends Controller
                     } else {
                         if (!isset($response[$clothes_id])) {
                             $response[$clothes_id] = $converted_tag;
-                        } else if ($i >= 2 && $i === $count) {
+                        } else if ($i >= 2 && $i === $request->order[$clothes_id]) {
                             $response[$clothes_id] .= '～' . $converted_tag;
                         }
                     }
@@ -155,7 +157,7 @@ class OrdersController extends Controller
                     } else {
                         if (!isset($response[$clothes_id])) {
                             $response[$clothes_id] = '0-000';
-                        } else if ($i >= 2 && $i === $count) {
+                        } else if ($i >= 2 && $i === $request->order[$clothes_id]) {
                             $response[$clothes_id] .= '～0-000';
                         }
                     }
@@ -260,6 +262,7 @@ class OrdersController extends Controller
 
         $model = new Order;
         list($orders, $total_count) = $model->fetchReciptDetail($order_id);
+        $ip_address = Ipaddress::where('id', 1)->value('ipaddress');
 
         return response()->json([
             'store_name'         => $store->name,
@@ -278,6 +281,8 @@ class OrdersController extends Controller
             'payment'            => $order->payment,
             'tax'                => $tax,
             'paid_at'            => $order->paid_at,
+            'is_invoice'         => $order->is_invoice,
+            'ip_address'         => $ip_address,
         ]);
     }
 

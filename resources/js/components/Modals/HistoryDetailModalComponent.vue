@@ -29,7 +29,7 @@
                                 </div>
                                 <div class="col-12 d-flex my-1">
                                     <div class="col-4 fw-bold">お支払方法</div>
-                                    <div class="col-8 " v-if="order.invoice_id !== null"><span class="modal-cd-detail-invoice">請求書払い</span></div>
+                                    <div class="col-8 " v-if="order.is_invoice"><span class="modal-cd-detail-invoice">請求書払い</span></div>
                                     <div class="col-8 " v-else-if="isPaidLater()"><span class="modal-cd-detail-later">後払い</span></div>
                                     <div class="col-8 " v-else><span class="modal-cd-detail-cash">現金払い</span></div>
                                 </div>
@@ -58,10 +58,10 @@
                                 <div class="col-12 d-flex justify-content-between px-3">
                                     <div class="col-8 fw-bold" style="line-height: 46px;">預り一覧（全{{ order.count }}点）</div>
                                     <div class="col-4 text-end ps-3" v-if="!openAC">
-                                        <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-o" @click="toggleAC()"><i class="fa-solid fa-angle-up pe-2"></i>開く</button>
+                                        <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-c" @click="toggleAC()"><i class="fa-solid fa-angle-up pe-2"></i>閉じる</button>
                                     </div>
                                     <div class="col-4 text-end ps-3" v-else>
-                                        <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-c" @click="toggleAC()"><i class="fa-solid fa-angle-down pe-2"></i>閉じる</button>
+                                        <button class="px-2 border border-3 border-dark modal-cd-btn modal-cd-btn-toggle-o" @click="toggleAC()"><i class="fa-solid fa-angle-down pe-2"></i>開く</button>
                                     </div>
                                 </div>
                                 <div class="col-12 mt-2 position-relative card modal-cd-list fs-18"
@@ -159,7 +159,7 @@ export default ({
             return moment(date).format(format);
         },
         isPaidLater: function() {
-            if (this.order.invoice_id === null && this.order.payment === 0 && this.order.paid_at === null) return true;
+            if (!this.order.is_invoice && this.order.payment === 0 && this.order.paid_at === null) return true;
             // 後払いの定義としては (支払い日時) - (預り日時) > 60min とする
             let dateReceived = moment(this.order.created_at);
             let datePaid = moment(this.order.paid_at);

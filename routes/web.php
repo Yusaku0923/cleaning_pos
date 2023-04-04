@@ -11,6 +11,7 @@ use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\TagNumberController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\IpaddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +83,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('clothes')->group(function () {
         Route::get('create', [ClothesController::class, 'create'])->name('clothes.create');
+    });
+
+    Route::prefix('receipt')->group(function () {
+        Route::get('edit', [IpaddressController::class, 'edit'])->name('receipt.edit');
+        Route::post('update', [IpaddressController::class, 'update'])->name('receipt.update');
     });
 
     if (config('app.env') === 'local') {

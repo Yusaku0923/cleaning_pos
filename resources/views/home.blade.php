@@ -6,7 +6,7 @@
         <div class="col-12 row justify-content-between">
             {{-- Left Block --}}
             <div class="col-6 left-block position-relative">
-                <div style="height: 74vh">
+                <div style="height: 73dvh">
                     <customer-info-component
                         :customer="{{ json_encode($customer) }}"
                         :info="{{ json_encode(session('customer_info') ?? []) }}"
@@ -141,8 +141,8 @@
             </div>
 
             {{-- Right Block --}}
-            <div class="col-6 right-block position-relative" style="height: 84vh">
-                <div style="height: 74vh;">
+            <div class="col-6 right-block position-relative">
+                <div style="height: 73dvh;">
                     <div class="card card-border col-12 py-2 h4 text-center">
                         顧　客　呼　出
                     </div>
@@ -211,7 +211,7 @@
                         来　店　履　歴
                     </div>
                     <div class="card card-border history-field">
-                        <div class="col-12 d-flex py-2 justify-content-around">
+                        <div class="col-12 d-flex py-1 justify-content-around">
                             @foreach ($orders as $order)
                             <history-card-component
                                 :customer="{{ json_encode($customer) }}"

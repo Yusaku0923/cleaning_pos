@@ -26,7 +26,7 @@ class Utility
         return $formated_tag;
     }
 
-    public static function currentInvoicePeriod($cutoff_date, $handed_at = '') {
+    public static function searchInvoicePeriod($cutoff_date, $handed_at = '') {
         if (empty($handed_at)) {
             $handed_at = date('Y-m-d');
         }
@@ -35,6 +35,7 @@ class Utility
             $period_end = date('Y-m-t', strtotime($handed_at));
         } else {
             $today = date('d', strtotime($handed_at));
+            $handed_at = date('Y-m-01', strtotime($handed_at));
             if ($cutoff_date < $today) {
                 $period_start = date('Y-m-'. ($cutoff_date + 1), strtotime($handed_at));
                 $period_end = date('Y-m-' . ($cutoff_date), strtotime($handed_at . ' +1 month'));

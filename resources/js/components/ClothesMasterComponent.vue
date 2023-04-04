@@ -64,14 +64,20 @@
             @delete="deleteClothes"
             :mode="modalMode"
             :info="modalInfo"
-            v-if="showModal"
+            v-if="showClothesModal"
         ></clothes-edit-modal>
+        <category-create-modal
+            @close="close"
+            @create="createCategory"
+            v-if="showCategoryModal"
+        ></category-create-modal>
         <!-- modal -->
     </div>
 </template>
 
 <script>
 import ClothesEditModal from './Modals/ClothesEditModalComponent';
+import CategoryCreateModal from './Modals/CategoryCreateModalComponent';
 
 export default {
     props: {
@@ -87,7 +93,8 @@ export default {
             mode: 'category',
             categoryName: 'カテゴリー',
             cards: this.category_clothes,
-            showModal: false,
+            showCategoryModal: false,
+            showClothesModal: false,
             selectedCategory: '',
             selectedClothes: '',
             modalMode: '',
@@ -96,10 +103,12 @@ export default {
     },
     components: {
         'clothes-edit-modal': ClothesEditModal,
+        'category-create-modal': CategoryCreateModal,
     },
     methods: {
         close: function() {
-            this.showModal = false;
+            this.showCategoryModal = false;
+            this.showClothesModal = false;
         },
         switchClothes: function(index) {
             this.mode = 'clothes';
@@ -113,19 +122,41 @@ export default {
             this.cards = this.category_clothes;
         },
         showCreate: function() {
-            this.modalMode = 'create';
-            this.modalInfo = [];
-            this.showModal = true;
-            this.selectedClothes = '';
+            if (this.mode === 'category') {
+                this.showCategoryModal = true;
+            } else if (this.mode === 'clothes') {
+                this.modalMode = 'create';
+                this.modalInfo = [];
+                this.showClothesModal = true;
+                this.selectedClothes = '';
+            }
         },
         selectClothes: function(index) {
             this.modalMode = 'edit';
             this.modalInfo = this.cards[index];
-            this.showModal = true;
+            this.showClothesModal = true;
             this.selectedClothes = this.cards[index]['id'];
         },
+        createCategory: function(name) {
+            this.showCategoryModal = false;
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return axios.post('/api/category/store', {
+                name: name,
+            })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                // self.updateState(response.data.category);
+                window.location.reload();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
         createClothes: function(name, name_kana, price, tag_count) {
-            this.showModal = false;
+            this.showClothesModal = false;
             let self = this;
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
             return axios.post('/api/clothes/store', {
@@ -147,7 +178,7 @@ export default {
             });
         },
         updateClothes: async function(name, name_kana, price, tag_count) {
-            this.showModal = false;
+            this.showClothesModal = false;
             let self = this;
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
             return await axios.post('/api/clothes/update', {
@@ -170,7 +201,7 @@ export default {
             });
         },
         deleteClothes: function(name, name_kana, price, tag_count) {
-            this.showModal = false;
+            this.showClothesModal = false;
             let self = this;
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
             return axios.post('/api/clothes/delete', {

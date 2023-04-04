@@ -91,7 +91,7 @@
 
             <div class="order-list">
                 <div class="col-12 py-3 px-2 border border-secondary bg-white position-relative"
-                    v-for="i in indexes"
+                    v-for="i in reverseIndexes()"
                     :key="i">
                     <div class="col-12 px-2 order-title">{{ order[i].name }}</div>
                     <div class="col-12 mt-2 d-flex justify-content-between order-detail">
@@ -111,18 +111,26 @@
                             {{ (order[i].count * order[i].price).toLocaleString() }} 円
                         </div>
                     </div>
-                    <div class="col-12 text-end">
-                        <label class="fs-18">
-                            <input
-                                type="checkbox"
-                                class="me-2"
-                                style="transform: scale(1.5);"
-                                :id="order[i].id"
-                                :value="order[i].id"
-                                v-model="dontIssueTagList"
-                            >
-                            タグを発行しない
-                        </label>
+                    <div class="d-flex">
+                        <div class="col-6 text-start pt-2">
+                            <span class="fs-22 fw-bold" v-if="(typeof tags[i] != 'undefined')">{{ tags[i] }}</span>
+                            <span class="fs-22 fw-bold" v-else>なし</span>
+                            
+                        </div>
+                        <div class="col-6 text-end pt-2">
+                            <label class="fs-18">
+                                <input
+                                    type="checkbox"
+                                    class="me-2"
+                                    style="transform: scale(1.5);"
+                                    :id="order[i].id"
+                                    :value="order[i].id"
+                                    v-model="dontIssueTagList"
+                                    @change="issueTag()"
+                                >
+                                タグを発行しない
+                            </label>
+                        </div>
                     </div>
                     <div class="position-absolute odcreate-selected-tag fs-24"
                         :class="{
@@ -357,6 +365,10 @@ export default ({
             type: Array,
             required: true
         },
+        latest_tag: {
+            Type: String,
+            required: true
+        },
         tax: {
             required: true
         },
@@ -378,6 +390,7 @@ export default ({
             order: {},
             orderForSend: {},
             dontIssueTagList: [],
+            tags: {},
             total: 0,
             amount: 0, // with tax
             reduction: 0,
@@ -398,7 +411,7 @@ export default ({
     mounted() {
         // ローカルIPは.envに
         let ePosDev = new epson.ePOSDevice();
-        ePosDev.connect('192.168.0.214', 8008, function(data) {
+        ePosDev.connect('192.168.0.214', 8043, function(data) {
             if(data == 'OK' || data == 'SSL_CONNECT_OK') {
                 console.log('printer connected');
             } else {
@@ -438,6 +451,7 @@ export default ({
                 this.amount += this.order[clothes.id].price;
 
                 this.CD_updateClothes(clothes.id);
+                this.issueTag();
             }
         },
         increace: function (clothes) {
@@ -452,6 +466,7 @@ export default ({
             this.amount += this.order[clothes.id].price;
 
             this.CD_updateClothes(clothes.id);
+            this.issueTag();
         },
         decreace: function (clothes) {
             this.total -= clothes.tag_count;
@@ -471,6 +486,44 @@ export default ({
                 this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
                 delete this.orderForSend[clothes.id];
             }
+            this.issueTag();
+        },
+        reverseIndexes: function() {
+            return this.indexes.slice().reverse();
+        },
+        issueTag: function() {
+            // タグ初期化
+            Object.keys(this.tags).forEach(key => {
+                this.$delete(this.tags, key)
+            });
+            let tag_num = this.latest_tag;
+            let tag = '';
+
+            for (const i of this.indexes) {
+                if (this.dontIssueTagList.includes(i)) {
+                    continue;
+                }
+                if (this.orderForSend[i] === 1 && this.order[i].tag_count === 1) {
+                    tag = String(tag_num).slice(0, -3) + '-' + String(tag_num).slice(-3);
+                    tag_num = this.addTag(tag_num, 1);
+                } else {
+                    tag = String(tag_num).slice(0, -3) + '-' + String(tag_num).slice(-3);
+                    tag_num = this.addTag(tag_num, this.orderForSend[i] * this.order[i].tag_count - 1);
+                    tag += ' ~ ' + String(tag_num).slice(0, -3) + '-' + String(tag_num).slice(-3);
+                    tag_num = this.addTag(tag_num, 1);
+                }
+                this.$set(this.tags, i, tag);
+            }
+        },
+        addTag: function(num, count) {
+            for (let i = 0; i < count; i++) {
+                if (num >= 10999) {
+                    num = 1000;
+                } else {
+                    num++;
+                }
+            }
+            return num;
         },
 
         updateDiscount: function(reduction, discount) {
@@ -516,6 +569,7 @@ export default ({
             return await axios.post('/api/order/store', {
                 manager_id: this.manager_id,
                 customer_id: this.customer_id,
+                indexes: this.indexes,
                 order: this.orderForSend,
                 amount: this.amount - this.reduction,
                 reduction: this.reduction,
@@ -616,6 +670,9 @@ export default ({
                 return;
             });
         },
+        
+    },
+    computed: {
     }
 });
 </script>

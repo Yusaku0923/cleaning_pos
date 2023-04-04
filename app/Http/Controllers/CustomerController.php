@@ -49,12 +49,15 @@ class CustomerController extends Controller
         $query->orderBy('created_at', 'asc');
         $info = $query->get()->toArray();
         session()->put('customer_info', $info);
-        Utility::sendWebSocket(
-            [
-                'event' => 'customer',
-                'name' => Customer::where('id', $id)->value('name')
-            ]
-        );
+        $customer = Customer::find($id);
+        if (!(boolean)$customer->is_invoice) {
+            Utility::sendWebSocket(
+                [
+                    'event' => 'customer',
+                    'name' => $customer->name
+                ]
+            );
+        }
 
         return redirect()->route('home');
     }
@@ -90,19 +93,23 @@ class CustomerController extends Controller
             'name' => $request->name,
             'name_kana' => mb_convert_kana($request->name_kana, 'rnk'),
             'phone_number' => $request->phone_number,
-            'birth_day' => $request->birth_day ?? NULL,
-            'sex' => $request->sex ?? NULL,
+            'is_invoice' => $request->is_invoice,
+            'needs_payment_confimation' => $request->check_payment,
+            'needs_return_confimation' => $request->check_return,
+            'cutoff_date' => $request->cutoff_date ?? null,
         ]);
 
         // TODO:遷移先選択
         session()->put('customer_id', $customer->id);
         session()->put('customer_info', []);
-        Utility::sendWebSocket(
-            [
-                'event' => 'customer',
-                'name' => Customer::where('id', $customer->id)->value('name')
-            ]
-        );
+        if (!(boolean)$customer->is_invoice) {
+            Utility::sendWebSocket(
+                [
+                    'event' => 'customer',
+                    'name' => $customer->name
+                ]
+            );
+        }
         return redirect()->route('home');
     }
 
@@ -143,6 +150,7 @@ class CustomerController extends Controller
         $customer->phone_number = $request->phone_number;
         $customer->is_invoice = (boolean)$request->is_invoice;
         $customer->needs_payment_confimation = (boolean)$request->check_payment;
+        $customer->needs_return_confimation = (boolean)$request->check_return;
         $customer->cutoff_date = $request->cutoff_date;
         $customer->save();
 

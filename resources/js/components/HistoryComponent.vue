@@ -19,9 +19,10 @@
                                 <div class="d-flex">
                                     <div class="col-2 text-center">伝票No.</div>
                                     <div class="col-3 text-center">預り日</div>
-                                    <div class="col-3 text-center">顧客名</div>
+                                    <div class="col-3 text-center">お渡し日</div>
                                     <div class="col-2 text-center">金額</div>
-                                    <div class="col-2 text-center">支払<span class="px-1">|</span>渡し</div>
+                                    <div class="col-1 text-center">支払</div>
+                                    <div class="col-1 text-center">渡し</div>
                                 </div>
                             </div>
                         </div>
@@ -33,12 +34,13 @@
                             <div class="d-flex">
                                 <div class="col-2 text-center">{{ order.id }}</div>
                                 <div class="col-3 text-center">{{ dateFormater(order.created_at, 'YYYY/MM/DD') }}</div>
-                                <div class="col-3 text-center">{{ customer.name }}</div>
+                                <div class="col-3 text-center">{{ order.handed_at !== null ? dateFormater(order.handed_at, 'YYYY/MM/DD'): '-' }}</div>
                                 <div class="col-2 text-center">{{ order.amount.toLocaleString() }}円</div>
-                                <div class="col-2 text-center">
+                                <div class="col-1 text-center">
                                     <i class="fa-solid fa-check text-success col-5" v-if="order.paid_at !== null"></i>
                                     <i class="fa-solid fa-xmark text-danger col-5" v-else></i>
-                                    <span class="col-2 text-center">|</span>
+                                </div>
+                                <div class="col-1 text-center">
                                     <i class="fa-solid fa-check text-success col-5" v-if="order.handed_at !== null"></i>
                                     <i class="fa-solid fa-xmark text-danger col-5" v-else></i>
                                 </div>

@@ -39,10 +39,12 @@ export default ({
             let payment            = receipt['payment'];
             let tax                = receipt['tax'];
             let paid_at            = receipt['paid_at'];
+            let is_invoice         = receipt['is_invoice'];
+            let ip_address         = receipt['ip_address'];
 
             let printer = null;
             let ePosDev = new epson.ePOSDevice();
-            ePosDev.connect('192.168.0.214', 8043, cbConnect, {"eposprint" : true});
+            ePosDev.connect(ip_address, 8043, cbConnect, {"eposprint" : true});
 
             function cbConnect(data) {
                 if(data == 'OK' || data == 'SSL_CONNECT_OK') {
@@ -118,7 +120,7 @@ export default ({
                 // customer tel
                 printer.addText('お電話 ' + customer_tel);
 
-                printer.addTextPosition(250);
+                printer.addTextPosition(230);
 
                 // manager_name
                 printer.addText('担当者:' + manager_name);
@@ -242,7 +244,11 @@ export default ({
                 printer.addFeed();
                 printer.addTextSize(2, 2);
                 printer.addTextPosition(50);
-                if (paid_at !== null) {
+                if (is_invoice) {
+                    printer.addTextAlign(printer.ALIGN_CENTER);
+                    printer.addTextSize(1, 2);
+                    printer.addText('請求書払い');
+                } else if (paid_at !== null) {
                     printer.addText('合計額');
                     printer.addTextPosition(240);
 

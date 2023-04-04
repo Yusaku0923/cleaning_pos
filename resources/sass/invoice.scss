@@ -30,6 +30,17 @@
                     height: 60vh;
                     &-card {
                         font-size: 20px;
+                        position: relative;
+                    }
+                    &-caution {
+                        position: absolute;
+                        top: 11px;
+                        left: -27px;
+                        color: $red;
+                        &-c {
+                            top: 9px !important;
+                            left: -29px !important;
+                        }
                     }
                 }
             }
@@ -59,6 +70,27 @@
         height: 150px;
         border-radius: 50%;
         background-color: $orange;
+        text-align: center;
+        font-size: 28px;
+        line-height: 150px;
+        text-decoration: none;
+        color: #fff;
+        &:hover {
+            color: #fff;
+        }
+    }
+    &-operate {
+        position:absolute;
+        // right: 226.5px;
+        // right: 216.5px;
+        right: 18.35%;
+        bottom: 0;
+        transition: 1s;
+        width: 150px;
+        height: 150px;
+        border: 3px solid #000;
+        border-radius: 50%;
+        background-color: $deepblue;
         text-align: center;
         font-size: 28px;
         line-height: 150px;
