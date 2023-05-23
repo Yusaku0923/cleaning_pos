@@ -31,7 +31,7 @@ class CustomerController extends Controller
         $customers->where('customers.manager_id', session()->get('manager_id'));
         $customers->orderBy('visits.latest_visit', 'desc');
         $customers->orderBy('customers.number_of_visits', 'desc');
-        $customers->limit(20);
+        $customers->limit(50);
         $customers = $customers->get()->toArray();
 
         return view('customers.search')->with([
