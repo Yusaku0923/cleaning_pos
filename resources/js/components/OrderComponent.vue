@@ -536,9 +536,9 @@ export default ({
 
         issueSlip: async function() {
             this.order_id = await this.storeOrder();
-            if (this.notPaid && !this.isInvoice) {
-                this.$refs.child.printReceipt(this.order_id);
-            }
+            // if (this.notPaid && !this.isInvoice) {
+            // }
+            this.$refs.child.printReceipt(this.order_id);
             this.step = 5;
         },
 
