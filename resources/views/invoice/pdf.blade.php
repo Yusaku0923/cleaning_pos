@@ -111,7 +111,7 @@
             }
             .invoice_num {
                 position: absolute;
-                top: 120px;
+                top: 130px;
                 left: 400px;
             }
             .tel {
@@ -250,7 +250,7 @@
 
         <div class="customer_name bold-font">{{ $invoice['customer_name'] }}　様</div>
 
-        <div class="invoice_num">T8810957628818</div>
+        <div class="invoice_num number-font">T8810957628818</div>
 
         <div class="tel">TEL <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
         <div class="fax">FAX <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
