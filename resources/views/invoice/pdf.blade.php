@@ -109,6 +109,11 @@
                 top: 95px;
                 left: 100px;
             }
+            .invoice_num {
+                position: absolute;
+                top: 120px;
+                left: 400px;
+            }
             .tel {
                 position: absolute;
                 top: 95px;
@@ -244,6 +249,8 @@
         <div class="address">〒<span class="number-font">{{ Auth::user()->postal_code }}</span>　{{ Auth::user()->address }}</div>
 
         <div class="customer_name bold-font">{{ $invoice['customer_name'] }}　様</div>
+
+        <div class="invoice_num">T8810957628818</div>
 
         <div class="tel">TEL <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
         <div class="fax">FAX <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
