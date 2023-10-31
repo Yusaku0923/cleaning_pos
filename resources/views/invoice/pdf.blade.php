@@ -374,11 +374,11 @@
                         <td></td>
                         <td></td>
                         <td colspan="3">
-                            (<span class="number-font">{{$tax}}</span>%対象) <span class="number-font">{{ number_format($invoice['amount']) }}</span>
+                            <span class="number-font">{{$tax}}</span>%対象: <span class="number-font">{{ number_format($invoice['amount']) }}</span>
                         </td>
                         <td colspan="2">
                             <span>
-                                (消費税 <span class="number-font">{{number_format($invoice['amount'] - round($invoice['amount'] / (1 + $tax / 100)))}}</span>)
+                                消費税: <span class="number-font">{{number_format($invoice['amount'] - round($invoice['amount'] / (1 + $tax / 100)))}}</span>
                             </span>
                         </td>
                     </tr>
