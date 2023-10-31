@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Invoice;
+use App\Models\Tax;
 use App\Models\Store;
 use App\Models\Customer;
 class InvoiceController extends Controller
@@ -51,9 +52,11 @@ class InvoiceController extends Controller
         Invoice::whereIn('id', $ids_array)->update([
             'issued_at' => date('Y-m-d')
         ]);
+        $tax = Tax::where('store_id', 1)->value('tax');
 
         $pdf = \PDF::loadView('invoice.pdf', [
-            'invoices' => $invoices
+            'invoices' => $invoices,
+            'tax' => $tax
         ]);
         $pdf->setPaper('A4');
         return $pdf->stream('日報');

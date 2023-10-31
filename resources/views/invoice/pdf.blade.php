@@ -250,7 +250,7 @@
 
         <div class="customer_name bold-font">{{ $invoice['customer_name'] }}　様</div>
 
-        <div class="invoice_num number-font">T8810957628818</div>
+        <div class="invoice_num">登録番号<span class="number-font">T8810957628818</span></div>
 
         <div class="tel">TEL <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
         <div class="fax">FAX <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
@@ -356,7 +356,13 @@
                     <tr style="border-bottom: 2px solid #000000;">
                         <td style="border-right: none;"></td>
                         <td style="border-right: none;border-left: none;"></td>
-                        <td style="border-right: none;border-left: none;"></td>
+                        <td style="border-right: none;border-left: none;">
+                            (<span class="number-font">{{$tax}}</span>%対象)
+                            <span class="number-font">{{ number_format($row['amount']) }}</span>
+                            <span>
+                                （消費税<span class="number-font">{{number_format($row['amount'] - round($row['amount'] / (1 + $tax / 100)))}}</span>）
+                            </span>
+                        </td>
                         <td style="border-right: none;border-left: none;"></td>
                         <td style="border-right: none;border-left: none;">{{ '<<合計>>' }}</td>
                         <td class="number-font text-end number-height" style="border-right: none;border-left: none;">{{ count($row['items']) }}</td>
