@@ -378,7 +378,7 @@
                         </td>
                         <td colspan="2">
                             <span>
-                                (消費税 <span class="number-font">{{number_format($row['amount'] - round($invoice['amount'] / (1 + $tax / 100)))}}</span>)
+                                (消費税 <span class="number-font">{{number_format($invoice['amount'] - round($invoice['amount'] / (1 + $tax / 100)))}}</span>)
                             </span>
                         </td>
                     </tr>
