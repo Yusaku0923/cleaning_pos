@@ -326,54 +326,65 @@
                         $line = 0;
                     @endphp
                     @foreach ($invoice['row'] as $row)
-                    @if ($row['is_detail'] === 1)
-                    <tr>
-                        <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['handed_at'])) }}</td>
-                        <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
-                        <td class="order-detail text-start"><span class="number-font">@if ($row['tag'] !== '0-000'){{ $row['tag'] }}@endif</span> <span>{{ $row['name'] }}</span></td>
-                        <td class="order-div"></td>
-                        <td class="order-price text-end number-font number-height">{{ number_format($row['price']) }}</td>
-                        <td class="order-count text-end number-font number-height">{{ number_format($row['count']) }}</td>
-                        <td class="order-amount text-end number-font number-height">{{ number_format($row['price']) }}</td>
-                        <td class="order-payment text-end number-font number-height"></td>
-                    </tr>
-                    @elseif ($row['is_detail'] === 2)
-                    <tr>
-                        <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['handed_at'])) }}</td>
-                        <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
-                        <td class="order-detail text-start"><span class="number-font">
-                        @if ($row['tag'] !== '0-000')
-                            {{ $row['start_tag'] }}~{{ $row['end_tag'] }}
+                        @if ($row['is_detail'] === 1)
+                        <tr>
+                            <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['handed_at'])) }}</td>
+                            <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
+                            <td class="order-detail text-start"><span class="number-font">@if ($row['tag'] !== '0-000'){{ $row['tag'] }}@endif</span> <span>{{ $row['name'] }}</span></td>
+                            <td class="order-div"></td>
+                            <td class="order-price text-end number-font number-height">{{ number_format($row['price']) }}</td>
+                            <td class="order-count text-end number-font number-height">{{ number_format($row['count']) }}</td>
+                            <td class="order-amount text-end number-font number-height">{{ number_format($row['price']) }}</td>
+                            <td class="order-payment text-end number-font number-height"></td>
+                        </tr>
+                        @elseif ($row['is_detail'] === 2)
+                        <tr>
+                            <td class="order-date number-font number-height">{{ date('y/m/d', strtotime($row['handed_at'])) }}</td>
+                            <td class="order-no text-center number-font number-height">{{ $row['order_id'] }}</td>
+                            <td class="order-detail text-start"><span class="number-font">
+                            @if ($row['tag'] !== '0-000')
+                                {{ $row['start_tag'] }}~{{ $row['end_tag'] }}
+                            @endif
+                            </span> <span>{{ $row['name'] }}</span></td>
+                            <td class="order-div"></td>
+                            <td class="order-price text-end number-font number-height">{{ number_format($row['price']) }}</td>
+                            <td class="order-count text-end number-font number-height">{{ number_format($row['count']) }}</td>
+                            <td class="order-amount text-end number-font number-height">{{ number_format($row['price'] * $row['count']) }}</td>
+                            <td class="order-payment text-end number-font number-height"></td>
+                        </tr>
+                        @else
+                        <tr style="border-bottom: 2px solid #000000;">
+                            <td style="border-right: none;"></td>
+                            <td style="border-right: none;border-left: none;"></td>
+                            <td style="border-right: none;border-left: none;"></td>
+                            <td style="border-right: none;border-left: none;"></td>
+                            <td style="border-right: none;border-left: none;">{{ '<<合計>>' }}</td>
+                            <td class="number-font text-end number-height" style="border-right: none;border-left: none;">{{ count($row['items']) }}</td>
+                            <td class="number-font text-end number-height" style="border-right: none;border-left: none;">{{ number_format($row['amount']) }}</td>
+                            <td class="number-font" style="border-left: none;"></td>
+                        </tr>
                         @endif
-                        </span> <span>{{ $row['name'] }}</span></td>
-                        <td class="order-div"></td>
-                        <td class="order-price text-end number-font number-height">{{ number_format($row['price']) }}</td>
-                        <td class="order-count text-end number-font number-height">{{ number_format($row['count']) }}</td>
-                        <td class="order-amount text-end number-font number-height">{{ number_format($row['price'] * $row['count']) }}</td>
-                        <td class="order-payment text-end number-font number-height"></td>
-                    </tr>
-                    @else
-                    <tr style="border-bottom: 2px solid #000000;">
-                        <td style="border-right: none;"></td>
-                        <td style="border-right: none;border-left: none;"></td>
-                        <td style="border-right: none;border-left: none;">
-                            (<span class="number-font">{{$tax}}</span>%対象)
-                            <span class="number-font">{{ number_format($row['amount']) }}</span>
+                        @php
+                            $line++;
+                        @endphp
+                    @endforeach
+                    {{-- For invoice --}}
+                    <tr style="border-top: 2px solid #000000;">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td colspan="3">
+                            (<span class="number-font">{{$tax}}</span>%対象) <span class="number-font">{{ number_format($invoice['amount']) }}</span>
+                        </td>
+                        <td colspan="2">
                             <span>
-                                （消費税<span class="number-font">{{number_format($row['amount'] - round($row['amount'] / (1 + $tax / 100)))}}</span>）
+                                (消費税 <span class="number-font">{{number_format($row['amount'] - round($invoice['amount'] / (1 + $tax / 100)))}}</span>)
                             </span>
                         </td>
-                        <td style="border-right: none;border-left: none;"></td>
-                        <td style="border-right: none;border-left: none;">{{ '<<合計>>' }}</td>
-                        <td class="number-font text-end number-height" style="border-right: none;border-left: none;">{{ count($row['items']) }}</td>
-                        <td class="number-font text-end number-height" style="border-right: none;border-left: none;">{{ number_format($row['amount']) }}</td>
-                        <td class="number-font" style="border-left: none;"></td>
                     </tr>
-                    @endif
                     @php
                         $line++;
                     @endphp
-                    @endforeach
                     @if ($line < 30)
                     @for ($i = $line; $i <= 30; $i++)
                         <tr>
