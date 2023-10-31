@@ -369,6 +369,37 @@
                         @endphp
                     @endforeach
                     {{-- For invoice --}}
+                    
+                    @if ($line < 30)
+                        <tr style="border-top: 2px solid #000000;">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td colspan="3">
+                                <span class="number-font">{{$tax}}</span>%対象: <span class="number-font">{{ number_format($invoice['amount']) }}</span>
+                            </td>
+                            <td colspan="2">
+                                <span>
+                                    消費税: <span class="number-font">{{number_format($invoice['amount'] - round($invoice['amount'] / (1 + $tax / 100)))}}</span>
+                                </span>
+                            </td>
+                        </tr>
+                        @php
+                            $line++;
+                        @endphp
+                        @for ($i = $line; $i <= 30; $i++)
+                            <tr>
+                                <td class="empty-column"></td>
+                                <td class="empty-column"></td>
+                                <td class="empty-column"></td>
+                                <td class="empty-column"></td>
+                                <td class="empty-column"></td>
+                                <td class="empty-column"></td>
+                                <td class="empty-column"></td>
+                                <td class="empty-column"></td>
+                            </tr>
+                        @endfor
+                    @elseif($invoice['page_count'] == array_count_values(array_column($invoices, 'id'))[$invoice['id']])
                     <tr style="border-top: 2px solid #000000;">
                         <td></td>
                         <td></td>
@@ -382,22 +413,6 @@
                             </span>
                         </td>
                     </tr>
-                    @php
-                        $line++;
-                    @endphp
-                    @if ($line < 30)
-                    @for ($i = $line; $i <= 30; $i++)
-                        <tr>
-                            <td class="empty-column"></td>
-                            <td class="empty-column"></td>
-                            <td class="empty-column"></td>
-                            <td class="empty-column"></td>
-                            <td class="empty-column"></td>
-                            <td class="empty-column"></td>
-                            <td class="empty-column"></td>
-                            <td class="empty-column"></td>
-                        </tr>
-                    @endfor
                     @endif
                 </tbody>
             </table>
