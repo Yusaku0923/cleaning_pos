@@ -89,10 +89,6 @@ class OrdersController extends Controller
      */
     public function all_show()
     {
-        if (!session()->has('manager_id') || !session()->has('customer_id')) {
-            return redirect()->route('home');
-        }
-
         $model = new Order();
 
         return view('orders.all_show')->with([
