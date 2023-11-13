@@ -30,6 +30,7 @@ Vue.component('payment-confimation-component', require('./components/PaymentConf
 Vue.component('customer-create-component', require('./components/CustomerCreateComponent.vue').default);
 Vue.component('customer-search-component', require('./components/CustomerSearchComponent.vue').default);
 Vue.component('history-component', require('./components/HistoryComponent.vue').default);
+Vue.component('all-history-component', require('./components/AllHistoryComponent.vue').default);
 Vue.component('history-card-component', require('./components/HistoryCardComponent.vue').default);
 Vue.component('clothes-mst-component', require('./components/ClothesMasterComponent.vue').default);
 Vue.component('manager-select-btn-component', require('./components/ManagerSelectButtonComponent.vue').default);

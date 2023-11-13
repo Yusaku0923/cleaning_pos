@@ -87,6 +87,7 @@ class Order extends Model
             $query->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id');
             $query->where('order_clothes.order_id', $array['id']);
             $query->orderBy('order_clothes.id', 'asc');
+            $orders[$key]['customer_name'] = Customer::where('id', $array['customer_id'])->value('name');
             $orders[$key]['items'] = $query->get()->toArray();
             $orders[$key]['count'] = OrderClothes::where('order_id', $array['id'])->count();
         }

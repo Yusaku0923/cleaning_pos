@@ -230,7 +230,7 @@
                         <div class="card col-3 col-3-custom lh-rightbtn text-center lh-leftbtn bg-secondary"></div>
                     @endif
                     <div class="card col-3 col-3-custom lh-rightbtn text-center bg-secondary"></div>
-                    <div class="card col-3 col-3-custom lh-rightbtn text-center bg-secondary"></div>
+                    <a href="{{ route('order.all_show') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-green fs-20">全体検索</a>
                     @if (session()->has('customer_id'))
                         <a href="{{ route('order.create') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue fs-20">預り入力</a>
                     @else

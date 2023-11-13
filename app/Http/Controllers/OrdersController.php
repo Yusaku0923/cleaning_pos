@@ -87,6 +87,25 @@ class OrdersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function all_show()
+    {
+        if (!session()->has('manager_id') || !session()->has('customer_id')) {
+            return redirect()->route('home');
+        }
+
+        $model = new Order();
+
+        return view('orders.all_show')->with([
+            'title' => '預　り　一　覧',
+        ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function show()
     {
         if (!session()->has('manager_id') || !session()->has('customer_id')) {

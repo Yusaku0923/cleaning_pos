@@ -3,6 +3,9 @@
         height: 50vh;
         overflow: scroll;
         white-space:nowrap;
+        &-all {
+            height: 76vh !important;
+        }
         &-column {
             top: 0;
             z-index: 2;
