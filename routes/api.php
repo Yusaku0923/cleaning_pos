@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\CustomerDisplayController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('category/store', [CategoryController::class, 'store'])->name('category.store');
 
+    Route::post('clothes/search', [ClothesController::class, 'search'])->name('clothes.search');
     Route::post('clothes/store', [ClothesController::class, 'store'])->name('clothes.store');
     Route::post('clothes/update', [ClothesController::class, 'update'])->name('clothes.update');
     Route::post('clothes/delete', [ClothesController::class, 'delete'])->name('clothes.delete');

@@ -11,6 +11,16 @@ use App\Models\Category;
 
 class ClothesController extends Controller
 {
+    public function search(Request $request) {
+        $model = new Clothes();
+        $clothes = $model->searchItemName($request->name);
+        
+        return response()->json([
+            'ok' => true,
+            'clothes' => $clothes
+        ]);
+    }
+
     public function store(Request $request, Clothes $model) {
         $sort_key = Clothes::where('category_id', $request->category_id)->max('sort_key') + 1;
         $model->store_id = Auth::id();

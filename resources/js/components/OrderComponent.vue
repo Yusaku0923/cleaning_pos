@@ -9,6 +9,13 @@
                 よく注文される項目
             </div>
 
+            <div class="card py-5 px-2 border border-secondary" 
+                @click="changeCategory(-2)"
+                :class="{'odcreate-category-active': isActive === -2}"
+            >
+                検索
+            </div>
+
             <div class="card py-5 px-2 border border-secondary"
                 v-for="(category, index) in categories"
                 :key="category.id"
@@ -19,33 +26,14 @@
             </div>
         </div>
 
-        <div class="clothes-bar bg-light col-5 border border-secondary pb-5">
-            <template v-if="isActive === -1">
-                <div class="card border border-secondary clothes-card position-relative p-2"
-                    v-for="clothes in often_ordered"
-                    :key="clothes.id"
-                    @click="add(clothes)">
-                    <div class="text-nowrap overflow-auto">
-                        {{ clothes.name }}
-                    </div>
-                    <div class="position-absolute bottom-0 text-primary">
-                        {{ clothes.price.toLocaleString() }} 円
-                    </div>
-                    <div class="position-absolute odcreate-clothes-tag"
-                        :class="{
-                            'odcreate-clothes-tag-one': clothes.tag_count === 1,
-                            'odcreate-clothes-tag-two': clothes.tag_count === 2,
-                            'odcreate-clothes-tag-more': clothes.tag_count >= 3,
-                        }">
-                        <i class="fa-solid fa-tag"></i>
-                    </div>
-                </div>
-            </template>
-
-            <template v-for="(category, index) in categories">
-                <template v-if="isActive === index">
+        <div class="bg-light col-5 border border-secondary pb-5">
+            <div class="col-12 p-2 mb-3" v-if="isActive === -2">
+                <input type="text" class="form-control-lg col-12" v-model="searchText" @change="searchClothes">
+            </div>
+            <div class="clothes-bar">
+                <template v-if="isActive === -1">
                     <div class="card border border-secondary clothes-card position-relative p-2"
-                        v-for="clothes in category.clothes"
+                        v-for="clothes in often_ordered"
                         :key="clothes.id"
                         @click="add(clothes)">
                         <div class="text-nowrap overflow-auto">
@@ -64,21 +52,67 @@
                         </div>
                     </div>
                 </template>
-            </template>
-
-            <div class="col-5 bg-white position-absolute odcreate-clothes-tagintro px-3">
-                <div class="col-12 d-flex fs-18">
-                    <div class="col-3 fw-bold">
-                        タグ枚数
+    
+                <template v-if="isActive === -2">         
+                    <div class="col-12 card border border-secondary clothes-card position-relative p-2"
+                        v-for="clothes in searchResult"
+                        :key="clothes.id"
+                        @click="add(clothes)">
+                        <div class="text-nowrap overflow-auto">
+                            {{ clothes.name }}
+                        </div>
+                        <div class="position-absolute bottom-0 text-primary">
+                            {{ clothes.price.toLocaleString() }} 円
+                        </div>
+                        <div class="position-absolute odcreate-clothes-tag"
+                            :class="{
+                                'odcreate-clothes-tag-one': clothes.tag_count === 1,
+                                'odcreate-clothes-tag-two': clothes.tag_count === 2,
+                                'odcreate-clothes-tag-more': clothes.tag_count >= 3,
+                            }">
+                            <i class="fa-solid fa-tag"></i>
+                        </div>
                     </div>
-                    <div class="col-3 odcreate-clothes-tag odcreate-clothes-tag-one">
-                        <i class="fa-solid fa-tag"></i><span class="ps-1">:１枚</span>
-                    </div>
-                    <div class="col-3 odcreate-clothes-tag odcreate-clothes-tag-two">
-                        <i class="fa-solid fa-tag"></i><span class="ps-1">:２枚</span>
-                    </div>
-                    <div class="col-3 odcreate-clothes-tag odcreate-clothes-tag-more">
-                        <i class="fa-solid fa-tag"></i><span class="ps-1">:３枚以上</span>
+                </template>
+    
+                <template v-for="(category, index) in categories">
+                    <template v-if="isActive === index">
+                        <div class="card border border-secondary clothes-card position-relative p-2"
+                            v-for="clothes in category.clothes"
+                            :key="clothes.id"
+                            @click="add(clothes)">
+                            <div class="text-nowrap overflow-auto">
+                                {{ clothes.name }}
+                            </div>
+                            <div class="position-absolute bottom-0 text-primary">
+                                {{ clothes.price.toLocaleString() }} 円
+                            </div>
+                            <div class="position-absolute odcreate-clothes-tag"
+                                :class="{
+                                    'odcreate-clothes-tag-one': clothes.tag_count === 1,
+                                    'odcreate-clothes-tag-two': clothes.tag_count === 2,
+                                    'odcreate-clothes-tag-more': clothes.tag_count >= 3,
+                                }">
+                                <i class="fa-solid fa-tag"></i>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+    
+                <div class="col-5 bg-white position-absolute odcreate-clothes-tagintro px-3">
+                    <div class="col-12 d-flex fs-18">
+                        <div class="col-3 fw-bold">
+                            タグ枚数
+                        </div>
+                        <div class="col-3 odcreate-clothes-tag odcreate-clothes-tag-one">
+                            <i class="fa-solid fa-tag"></i><span class="ps-1">:１枚</span>
+                        </div>
+                        <div class="col-3 odcreate-clothes-tag odcreate-clothes-tag-two">
+                            <i class="fa-solid fa-tag"></i><span class="ps-1">:２枚</span>
+                        </div>
+                        <div class="col-3 odcreate-clothes-tag odcreate-clothes-tag-more">
+                            <i class="fa-solid fa-tag"></i><span class="ps-1">:３枚以上</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -387,6 +421,8 @@ export default ({
             checkReturn: this.check_return,
             showDiscount: false,
             indexes: [],
+            searchText: '',
+            searchResult: [],
             order: {},
             orderForSend: {},
             dontIssueTagList: [],
@@ -430,6 +466,21 @@ export default ({
         },
         switchDiscount: function () {
             this.showDiscount = !this.showDiscount;
+        },
+        searchClothes: async function() {
+            let self = this;
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
+            return await axios.post('/api/clothes/search', {
+                name: this.searchText
+            })
+            .then(function (response) {
+                console.log(response.data.clothes);
+                self.searchResult = response.data.clothes;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
         },
         add: function(clothes) {
             if (this.step === 1) {

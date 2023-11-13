@@ -33,4 +33,12 @@ class Clothes extends Model
 
         return $clothes;
     }
+
+    public function searchItemName($name)
+    {
+        $clothes = Clothes::where("name", "LIKE", '%'.$name.'%')
+                            ->get()->toArray();
+
+        return $clothes;
+    }
 }
