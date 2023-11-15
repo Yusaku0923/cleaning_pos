@@ -501,7 +501,7 @@ export default ({
                 this.total += clothes.tag_count;
                 this.amount += this.order[clothes.id].price;
 
-                this.CD_updateClothes(clothes.id);
+                // this.CD_updateClothes(clothes.id);
                 this.issueTag();
             }
         },
@@ -516,7 +516,7 @@ export default ({
             this.total += clothes.tag_count;
             this.amount += this.order[clothes.id].price;
 
-            this.CD_updateClothes(clothes.id);
+            // this.CD_updateClothes(clothes.id);
             this.issueTag();
         },
         decreace: function (clothes) {
@@ -531,9 +531,9 @@ export default ({
             this.$delete(this.order, clothes.id);
             if (clothes.count !== 0) {
                 this.$set(this.order, clothes.id, clothes);
-                this.CD_updateClothes(clothes.id);
+                // this.CD_updateClothes(clothes.id);
             } else {
-                this.CD_deleteClothes(clothes.id);
+                // this.CD_deleteClothes(clothes.id);
                 this.indexes.splice(this.indexes.indexOf(clothes.id), 1);
                 delete this.orderForSend[clothes.id];
             }
@@ -581,7 +581,7 @@ export default ({
             this.reduction = reduction;
             this.discount = discount;
 
-            this.CD_discount();
+            // this.CD_discount();
             this.switchDiscount();
         },
 
@@ -601,7 +601,7 @@ export default ({
             this.payment = payment;
             this.change = payment - Math.trunc((this.amount - this.reduction));
 
-            this.CD_account();
+            // this.CD_account();
 
             // order登録API
             let order_id = await this.storeOrder();
