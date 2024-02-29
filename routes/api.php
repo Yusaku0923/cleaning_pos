@@ -37,16 +37,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('order/delete', [OrdersController::class, 'delete'])->name('order.delete');
     Route::post('order/update_tag', [OrdersController::class, 'updateTag'])->name('order.update_tag');
     Route::post('payment', [OrdersController::class, 'payment'])->name('order.payment');
-    Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
-
+    
     Route::post('customer_info/store', [CustomerInformationController::class, 'store'])->name('customer_info.store');
     Route::post('customer_info/delete', [CustomerInformationController::class, 'delete'])->name('customer_info.delete');
-
+    
     Route::post('invoice/search', [InvoiceController::class, 'search'])->name('invoice.search');
     Route::post('invoice/carry_over', [InvoiceController::class, 'carry_over'])->name('invoice.carry_over');
     Route::post('invoice/align_cutoff_date', [InvoiceController::class, 'align_cutoff_date'])->name('invoice.align_cutoff_date');
-
+    
     Route::post('return/update', [ReturnController::class, 'update'])->name('return.update');
-
+    
     Route::post('broadcast', [CustomerDisplayController::class, 'broadcast'])->name('customer_display.broadcast');
 });
+Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
