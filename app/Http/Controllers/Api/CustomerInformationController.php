@@ -14,7 +14,7 @@ class CustomerInformationController extends Controller
         $model->information = $request->information;
         $model->save();
 
-        $info = $this->setSession();
+        $info = $this->setSession($request->customer_id);
 
         return response()->json([
             'info' => $info
@@ -24,16 +24,16 @@ class CustomerInformationController extends Controller
     public function delete(Request $request) {
         CustomerInformation::find($request->id)->delete();
 
-        $info = $this->setSession();
+        $info = $this->setSession($request->customer_id);
 
         return response()->json([
             'info' => $info
         ]);
     }
 
-    private function setSession() {
+    private function setSession($customer_id) {
         $query = CustomerInformation::query();
-        $query->where('customer_id', session()->get('customer_id'));
+        $query->where('customer_id', $customer_id);
         $query->orderBy('created_at', 'asc');
         $info = $query->get()->toArray();
         session()->put('customer_info', $info);

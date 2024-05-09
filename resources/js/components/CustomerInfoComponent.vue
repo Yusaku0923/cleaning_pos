@@ -116,6 +116,7 @@ export default ({
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
             return axios.post('/api/customer_info/delete', {
                 id: id,
+                customer_id: this.customer.id
             })
             .then(function (response) {
                 self.base = response.data.info;
