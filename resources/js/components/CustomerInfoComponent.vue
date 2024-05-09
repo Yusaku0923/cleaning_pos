@@ -95,6 +95,7 @@ export default ({
             let self = this;
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
             return await axios.post('/api/customer_info/store', {
+                customer_id: this.customer.id,
                 information: inputInformation,
             })
             .then(function (response) {

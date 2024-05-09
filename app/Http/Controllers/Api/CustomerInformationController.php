@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class CustomerInformationController extends Controller
 {
     public function store(Request $request, CustomerInformation $model) {
-        $model->customer_id = session()->get('customer_id');
+        $model->customer_id = $request->customer_id;
         $model->information = $request->information;
         $model->save();
 
