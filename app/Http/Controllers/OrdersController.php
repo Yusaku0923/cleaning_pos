@@ -109,7 +109,7 @@ class OrdersController extends Controller
         }
 
         $model = new Order();
-        $orders = $model->fetchOrders(session()->get('customer_id'), 20);
+        $orders = $model->fetchOrders(session()->get('customer_id'), -1);
         $customer = Customer::find(session()->get('customer_id'));
 
         return view('orders.show')->with([

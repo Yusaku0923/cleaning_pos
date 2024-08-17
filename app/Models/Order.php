@@ -78,7 +78,9 @@ class Order extends Model
                 }
             }
         }
-        $query->limit($limit);
+        if ($limit > 0) {
+            $query->limit($limit);
+        }
         $query->orderBy('orders.created_at', 'desc');
         $orders = $query->get()->toArray();
 

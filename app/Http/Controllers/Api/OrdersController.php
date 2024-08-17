@@ -179,7 +179,7 @@ class OrdersController extends Controller
     }
 
     public function search(Request $request, Order $model) {
-        $orders = $model->fetchOrders($request->customer_id, 20, $request->conditions);
+        $orders = $model->fetchOrders($request->customer_id, -1, $request->conditions);
         $conditions = [];
         foreach ($request->conditions as $key => $val) {
             switch ($key) {
