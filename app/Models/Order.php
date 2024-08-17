@@ -48,7 +48,6 @@ class Order extends Model
             }
             // has paid
             if (!empty($where['has_paid']) && $where['has_paid'] !== 'neither') {
-                Log::debug($where['has_paid']);
                 if ($where['has_paid'] === 'paid') {
                     $query->whereNotNull('paid_at');
                 } else if ($where['has_paid'] === 'unpaid') {
@@ -69,7 +68,9 @@ class Order extends Model
             }
             // has specified tag item
             if (!empty($where['tag'])) {
+                Log::debug($where['tag']);
                 $ids = $this->hasSpecifiedTag($customer_id, $where['tag']);
+                Log::debug($ids);
                 if (is_null($ids)) {
                     return [];
                 } else {
@@ -227,8 +228,11 @@ class Order extends Model
     public function hasSpecifiedTag($customer_id, $tag) {
         $query = OrderClothes::select('orders.id');
         $query->join('orders', 'order_clothes.order_id', '=', 'orders.id');
-        $query->where('orders.customer_id', $customer_id);
+        if (!is_null($customer_id)) {
+            $query->where('orders.customer_id', $customer_id);
+        }
         $query->where('order_clothes.tag', $tag);
+        Log::debug($query->toSql());
 
         return $query->get('id')->toArray();
     }
