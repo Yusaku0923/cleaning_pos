@@ -1,12 +1,12 @@
 {
     "migmix": {
-        "normal": "migmix_normal_4345e4974f794ef09fcd31c1162aaab8",
+        "normal": "migmix_normal_f58e84a30bd786a7405a223e79c02b00",
         "bold": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-regular",
         "italic": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-regular",
         "bold_italic": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-regular"
     },
     "migmix-bold": {
-        "normal": "migmix_bold_normal_d8f2b4ed3c1355259288d46196aca0cb",
+        "normal": "migmix_bold_normal_cb9d9559209d8638b062acbacf60c3fb",
         "bold": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-bold",
         "italic": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-bold",
         "bold_italic": "\/var\/www\/html\/vendor\/dompdf\/dompdf\/lib\/fonts\/migmix-2m-bold"

@@ -1,3 +1,15 @@
+<?php
+function replaceSpaceWithNewline($input) {
+    // 文字数をチェック
+    if (mb_strlen($input) >= 10) {
+        // 半角・全角スペースを正規表現で改行コードに置き換え
+        $output = preg_replace('/[ 　]/u', PHP_EOL, $input);
+        return $output;
+    }
+    // 条件を満たさない場合はそのまま返す
+    return $input;
+}
+?>
 <html lang="ja">
     <head>
         <title>請求書</title>
@@ -105,6 +117,7 @@
                 left: 400px;
             }
             .customer_name {
+                white-space: pre-wrap;
                 position: absolute;
                 top: 95px;
                 left: 100px;
@@ -248,7 +261,7 @@
 
         <div class="address">〒<span class="number-font">{{ Auth::user()->postal_code }}</span>　{{ Auth::user()->address }}</div>
 
-        <div class="customer_name bold-font">{{ $invoice['customer_name'] }}　様</div>
+        <div class="customer_name bold-font">{{ replaceSpaceWithNewline($invoice['customer_name']) }}　様</div>
 
         <div class="invoice_num">登録番号<span class="number-font">T8810957628818</span></div>
 
