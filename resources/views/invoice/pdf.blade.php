@@ -257,7 +257,7 @@ function replaceSpaceWithNewline($input) {
 
         <div class="store_name">{{ Auth::user()->name }}</div>
 
-        <div class="manager_name">担当:{{ session()->get('manager_name') }}</div>
+        <div class="manager_name">担当:中山謙二</div>
 
         <div class="address">〒<span class="number-font">{{ Auth::user()->postal_code }}</span>　{{ Auth::user()->address }}</div>
 
