@@ -8,7 +8,8 @@
                 <div class="form-group col-6 mx-auto">
                     <input type="text" class="form-control form-control-lg" placeholder="名前、フリガナ、電話番号"
                         v-model="keyword"
-                        @keydown.enter="search($event.keyCode)"/>
+                        @input="onInput"
+                        @keydown.enter="search"/>
                 </div>
             </div>
         </div>
@@ -58,15 +59,37 @@ export default ({
         return {
             keyword: '',
             customers: this.default,
+            searchTimeout: null,
         }
     },
     methods: {
-        search: async function(keyCode) {
-            if (keyCode !== 13) return;
+        onInput: function() {
+            // 既存のタイマーをクリア
+            if (this.searchTimeout) {
+                clearTimeout(this.searchTimeout);
+            }
+            
+            // 入力が空の場合はデフォルトの顧客リストを表示
+            if (this.keyword.trim() === '') {
+                this.customers = this.default;
+                return;
+            }
+            
+            // 500ms後に検索実行（デバウンス）
+            this.searchTimeout = setTimeout(() => {
+                this.search();
+            }, 500);
+        },
+        search: async function() {
+            // キーワードが空の場合はデフォルトリストを表示
+            if (this.keyword.trim() === '') {
+                this.customers = this.default;
+                return;
+            }
+            
             let result = await this.send();
-            if (result !== undefined || result.length !== 0) {
+            if (result !== undefined && result.length >= 0) {
                 this.customers = result;
-                this.customers.splice();
             }
         },
         send: async function() {
@@ -90,6 +113,12 @@ export default ({
         dateFormater: function(date, format = 'MM/DD') {
             return moment(date).format(format);
         },
+    },
+    beforeDestroy() {
+        // コンポーネント破棄時にタイマーをクリア
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
     }
 })
 </script>
