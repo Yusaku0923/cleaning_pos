@@ -400,7 +400,7 @@ export default ({
             required: true
         },
         latest_tag: {
-            Type: String,
+            type: String,
             required: true
         },
         tax: {

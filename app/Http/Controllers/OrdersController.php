@@ -53,19 +53,19 @@ class OrdersController extends Controller
         } else {
             $often_ordered = [];
         }
-        $tax = Tax::where('store_id', Auth::id())->value('tax');
-        $latest_tag = TagNumber::where('manager_id', session()->get('manager_id'))->value('tag_number');
+        $tax = Tax::where('store_id', Auth::id())->value('tax') ?? 10;
+        $latest_tag = TagNumber::where('manager_id', session()->get('manager_id'))->value('tag_number') ?? '1000';
 
         return view('orders.create')->with([
             'title' => '預　り　入　力',
             'manager_id' => session()->get('manager_id'),
             'customer_id' => session()->get('customer_id'),
-            'customer_name' => $customer->name,
-            'is_invoice' => $customer->is_invoice,
-            'check_return' => $customer->needs_return_confimation,
+            'customer_name' => $customer->name ?? '',
+            'is_invoice' => $customer->is_invoice ?? false,
+            'check_return' => $customer->needs_return_confimation ?? false,
             'latest_tag' => $latest_tag,
-            'list' => $category_clothes,
-            'often_ordered' => $often_ordered,
+            'list' => $category_clothes ?? [],
+            'often_ordered' => $often_ordered ?? [],
             'tax' => (1 + $tax / 100),
         ]);
     }
