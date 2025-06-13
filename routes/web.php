@@ -74,12 +74,14 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('customer')->group(function () {
-        Route::get('search', [CustomerController::class, 'search'])->name('customer.search');
-        Route::get('select/{id}', [CustomerController::class, 'select'])->name('customer.select');
-        Route::get('clear', [CustomerController::class, 'clear'])->name('customer.clear');
-        Route::get('create', [CustomerController::class, 'create'])->name('customer.create');
-        Route::post('store', [CustomerController::class, 'store'])->name('customer.store');
-        Route::post('update/{id}', [CustomerController::class, 'update'])->name('customer.update');
+Route::get('list', [CustomerController::class, 'list'])->name('customer.list');
+Route::get('search', [CustomerController::class, 'search'])->name('customer.search');
+Route::get('select/{id}', [CustomerController::class, 'select'])->name('customer.select');
+Route::get('clear', [CustomerController::class, 'clear'])->name('customer.clear');
+Route::get('create', [CustomerController::class, 'create'])->name('customer.create');
+Route::post('store', [CustomerController::class, 'store'])->name('customer.store');
+Route::post('update/{id}', [CustomerController::class, 'update'])->name('customer.update');
+Route::delete('delete/{id}', [CustomerController::class, 'destroy'])->name('customer.delete');
     });
 
     Route::prefix('clothes')->group(function () {

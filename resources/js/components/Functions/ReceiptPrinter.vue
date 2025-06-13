@@ -68,6 +68,8 @@ export default ({
             }
             
             function print() {
+                printer.addPulse(printer.DRAWER_1, printer.PULSE_100);
+                
                 printer.addFeed();
                 printer.addFeed();
                 printer.addTextFont(printer.FONT_B);

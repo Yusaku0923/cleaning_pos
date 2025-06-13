@@ -229,7 +229,11 @@
                     @else
                         <div class="card col-3 col-3-custom lh-rightbtn text-center lh-leftbtn bg-secondary"></div>
                     @endif
-                    <div class="card col-3 col-3-custom lh-rightbtn text-center bg-secondary"></div>
+                    @if (session()->has('manager_id'))
+                        <a href="{{ route('customer.list') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-teal fs-20">顧客一覧</a>
+                    @else
+                        <div class="card col-3 col-3-custom lh-rightbtn text-center bg-secondary"></div>
+                    @endif
                     <a href="{{ route('order.all_show') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-green fs-20">全体検索</a>
                     @if (session()->has('customer_id'))
                         <a href="{{ route('order.create') }}" class="card col-3 col-3-custom lh-rightbtn text-center text-decoration-none cbtn-blue fs-20">預り入力</a>

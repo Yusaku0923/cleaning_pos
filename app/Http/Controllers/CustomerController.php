@@ -20,6 +20,22 @@ class CustomerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function list()
+    {
+        if (!session()->exists('manager_id')) {
+            return redirect()->route('home');
+        }
+
+        $customers = Customer::where('manager_id', session()->get('manager_id'))
+                            ->orderBy('name_kana', 'asc')
+                            ->get();
+
+        return view('customers.list')->with([
+            'title' => '顧　客　一　覧',
+            'customers' => $customers
+        ]);
+    }
+
     public function search()
     {
         $sub_query = Order::select(\DB::raw('max(created_at) as latest_visit'), 'customer_id');
@@ -165,6 +181,29 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $customer = Customer::find($id);
+        
+        if (!$customer) {
+            return redirect()->route('customer.list')->with('error', '顧客が見つかりません。');
+        }
+
+        // 現在選択中の顧客の場合はセッションをクリア
+        if (session('customer_id') == $id) {
+            session()->forget('customer_id');
+            session()->forget('customer_info');
+        }
+
+        // 関連する注文があるかチェック
+        $orderCount = Order::where('customer_id', $id)->count();
+        
+        if ($orderCount > 0) {
+            // 注文がある場合はソフトデリート
+            $customer->delete();
+            return redirect()->route('customer.list')->with('success', '顧客を削除しました。（注文履歴は保持されます）');
+        } else {
+            // 注文がない場合は完全削除
+            $customer->forceDelete();
+            return redirect()->route('customer.list')->with('success', '顧客を削除しました。');
+        }
     }
 }

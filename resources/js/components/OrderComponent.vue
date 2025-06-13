@@ -605,9 +605,21 @@ export default ({
 
             // order登録API
             let order_id = await this.storeOrder();
-
+            
             // レシート発行
+            console.log('printReceipt1');
             this.$refs.child.printReceipt(order_id);
+            
+            // manager_id = 1の場合は二回印刷
+            if (this.manager_id === 1) {
+                // 少し間隔を空けて二回目を印刷
+                
+                setTimeout(() => {
+                    console.log('printReceipt2');
+                    this.$refs.child.printReceipt(order_id);
+                }, 1000);
+            }
+            
             this.orderId = order_id;
         },
 
