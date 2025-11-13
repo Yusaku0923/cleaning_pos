@@ -228,8 +228,11 @@ export default {
                 printer.addText("小計");
                 printer.addTextPosition(340);
 
-                // subtotal
-                printer.addText((amount + discount).toLocaleString());
+                // subtotal (小計が0の場合は空にする)
+                const subtotal = amount + discount;
+                if (subtotal !== 0) {
+                    printer.addText(subtotal.toLocaleString());
+                }
                 printer.addFeed();
                 printer.addHLine(0, 575, printer.LINE_THIN);
                 printer.addFeed();
@@ -356,11 +359,12 @@ export default {
             });
             console.log("----------------------------------------");
             console.log("点数:", receipt["total_count"].toLocaleString());
-            console.log(
-                "小計:",
-                (receipt["amount"] + receipt["discount"]).toLocaleString() +
-                    "円"
-            );
+            const subtotal = receipt["amount"] + receipt["discount"];
+            if (subtotal !== 0) {
+                console.log("小計:", subtotal.toLocaleString() + "円");
+            } else {
+                console.log("小計: (空)");
+            }
             console.log("----------------------------------------");
             console.log("点数:", receipt["total_count"]);
             console.log("伝票合計:", receipt["amount"].toLocaleString() + "円");
