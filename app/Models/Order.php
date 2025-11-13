@@ -161,6 +161,12 @@ class Order extends Model
                             ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
                             ->where('order_id', $order_id)
                             ->get()->toArray();
+        
+        // タグを数値として解釈してソートする関数
+        usort($list, function($a, $b) {
+            return $this->compareTags($a['tag'], $b['tag']);
+        });
+        
         foreach ($list as $row) {
             $index = array_search($row['clothes_id'], array_column($result, 'id'));
             if ($index === false) {
@@ -180,6 +186,113 @@ class Order extends Model
         }
 
         return [$result, $total_count];
+    }
+
+    /**
+     * タグを比較する（例：8-873 と 8-874 を比較）
+     * 9-999が最大で、次は0-001に戻るルールを考慮
+     * 戻り値: 負の値（$tagA < $tagB）、0（等しい）、正の値（$tagA > $tagB）
+     */
+    private function compareTags($tagA, $tagB) {
+        // タグが数値形式（例：8873）の場合は文字列形式に変換
+        if (is_numeric($tagA)) {
+            $tagA = $this->formatTagFromNumber($tagA);
+        }
+        if (is_numeric($tagB)) {
+            $tagB = $this->formatTagFromNumber($tagB);
+        }
+        
+        // タグを分割（例：8-873 → [8, 873]）
+        $partsA = explode('-', $tagA);
+        $partsB = explode('-', $tagB);
+        
+        // フォーマットが異なる場合は文字列として比較
+        if (count($partsA) !== 2 || count($partsB) !== 2) {
+            return strcmp($tagA, $tagB);
+        }
+        
+        // 最初の部分（例：8）を比較
+        $firstA = (int)$partsA[0];
+        $firstB = (int)$partsB[0];
+        
+        // 2番目の部分（例：873）を比較
+        $secondA = (int)$partsA[1];
+        $secondB = (int)$partsB[1];
+        
+        // 9-999が最大で、次は0-001に戻るルールを考慮
+        // 0-001は9-999の直後に来るようにする
+        $isMaxA = ($firstA === 9 && $secondA === 999);
+        $isMaxB = ($firstB === 9 && $secondB === 999);
+        $isMinA = ($firstA === 0 && $secondA === 1);
+        $isMinB = ($firstB === 0 && $secondB === 1);
+        
+        // 両方が最大値または最小値の場合
+        if ($isMaxA && $isMaxB) {
+            return 0;
+        }
+        if ($isMinA && $isMinB) {
+            return 0;
+        }
+        
+        // 片方が最大値、もう片方が最小値の場合
+        if ($isMaxA && $isMinB) {
+            return -1; // 9-999が先、0-001が後
+        }
+        if ($isMinA && $isMaxB) {
+            return 1; // 9-999が先、0-001が後
+        }
+        
+        // 片方が最大値の場合、最大値が最後に来る（ただし0-001よりは前）
+        if ($isMaxA && !$isMinB) {
+            return 1;
+        }
+        if ($isMaxB && !$isMinA) {
+            return -1;
+        }
+        
+        // 片方が最小値の場合、最小値は最大値の直後に来る
+        // 0-001は9-999の後に来るが、他のタグ（1-000以上）の前には来ない
+        if ($isMinA) {
+            // 比較対象が最大値の場合は、最小値が後
+            if ($isMaxB) {
+                return 1;
+            }
+            // 比較対象が1-000以上の場合は、最小値が前（0-001は1-000より前）
+            if ($firstB >= 1) {
+                return -1;
+            }
+        }
+        if ($isMinB) {
+            // 比較対象が最大値の場合は、最小値が後
+            if ($isMaxA) {
+                return -1;
+            }
+            // 比較対象が1-000以上の場合は、最小値が前（0-001は1-000より前）
+            if ($firstA >= 1) {
+                return 1;
+            }
+        }
+        
+        // 通常の比較
+        if ($firstA !== $firstB) {
+            return $firstA <=> $firstB;
+        }
+        
+        return $secondA <=> $secondB;
+    }
+    
+    /**
+     * 数値タグ（例：8873）を文字列形式（例：8-873）に変換
+     */
+    private function formatTagFromNumber($tag) {
+        if ($tag >= 10000) {
+            $first = substr((string)$tag, 0, 2);
+            $second = (int)substr((string)$tag, 2);
+        } else {
+            $first = substr((string)$tag, 0, 1);
+            $second = (int)substr((string)$tag, 1);
+        }
+        return $first . '-' . str_pad((string)$second, 3, '0', STR_PAD_LEFT);
     }
 
     public function fetchUnpaidOrders($customer_id) {

@@ -1,80 +1,93 @@
 <template></template>
 
 <script>
-export default ({
+export default {
     props: {
         token: {
             type: String,
-            required: true
+            required: true,
         },
     },
     methods: {
-        fetchReceipt: async function(order_id) {
-            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.token;
-            return await axios.get('/api/receipt/' + order_id)
-            .then(function (response) {
-                return response.data;
-            })
-            .catch(function (error) {
-                console.log(error);
-                return;
-            });
+        fetchReceipt: async function (order_id) {
+            axios.defaults.headers.common["Authorization"] =
+                "Bearer " + this.token;
+            return await axios
+                .get("/api/receipt/" + order_id)
+                .then(function (response) {
+                    return response.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    return;
+                });
         },
 
         printReceipt: async function (order_id) {
             let receipt = await this.fetchReceipt(order_id);
 
-            let store_name         = receipt['store_name'];
-            let store_address      = receipt['store_address'];
-            let store_tel          = receipt['store_tel'];
-            let customer_name_kana = receipt['customer_name_kana'];
-            let customer_name      = receipt['customer_name'];
-            let customer_tel       = receipt['customer_tel'] ?? '';
-            let manager_name       = receipt['manager_name'];
-            let ordered_at         = receipt['ordered_at'];
-            let order_list         = receipt['order_list'];
-            let total_count        = receipt['total_count'];
-            let amount             = receipt['amount'];
-            let discount           = receipt['discount'];
-            let payment            = receipt['payment'];
-            let tax                = receipt['tax'];
-            let paid_at            = receipt['paid_at'];
-            let is_invoice         = receipt['is_invoice'];
-            let ip_address         = receipt['ip_address'];
+            let store_name = receipt["store_name"];
+            let store_address = receipt["store_address"];
+            let store_tel = receipt["store_tel"];
+            let customer_name_kana = receipt["customer_name_kana"];
+            let customer_name = receipt["customer_name"];
+            let customer_tel = receipt["customer_tel"] ?? "";
+            let manager_name = receipt["manager_name"];
+            let ordered_at = receipt["ordered_at"];
+            let order_list = receipt["order_list"];
+            let total_count = receipt["total_count"];
+            let amount = receipt["amount"];
+            let discount = receipt["discount"];
+            let payment = receipt["payment"];
+            let tax = receipt["tax"];
+            let paid_at = receipt["paid_at"];
+            let is_invoice = receipt["is_invoice"];
+            let ip_address = receipt["ip_address"];
+
+            // デバッグ: レシート内容をコンソールに表示
+            this.debugReceipt(receipt, order_id);
 
             let printer = null;
             let ePosDev = new epson.ePOSDevice();
             // ePosDev.connect(ip_address, 8043, cbConnect, {"eposprint" : true});
-            ePosDev.connect(ip_address, 8008, cbConnect, {"eposprint" : true});
+            ePosDev.connect(ip_address, 8008, cbConnect, { eposprint: true });
 
             function cbConnect(data) {
-                if(data == 'OK' || data == 'SSL_CONNECT_OK') {
-                    ePosDev.createDevice('local_printer', ePosDev.DEVICE_TYPE_PRINTER,
-                                        {'crypto':false, 'buffer':false}, cbCreateDevice_printer);
+                if (data == "OK" || data == "SSL_CONNECT_OK") {
+                    ePosDev.createDevice(
+                        "local_printer",
+                        ePosDev.DEVICE_TYPE_PRINTER,
+                        { crypto: false, buffer: false },
+                        cbCreateDevice_printer
+                    );
                 } else {
                     console.log(data);
                 }
             }
             function cbCreateDevice_printer(devobj, retcode) {
-                if( retcode == 'OK' ) {
+                if (retcode == "OK") {
                     printer = devobj;
                     printer.timeout = 60000;
-                    printer.onreceive = function (res) { console.log(res.success); };
-                    printer.oncoveropen = function () { console.log('coveropen'); };
+                    printer.onreceive = function (res) {
+                        console.log(res.success);
+                    };
+                    printer.oncoveropen = function () {
+                        console.log("coveropen");
+                    };
                     print();
                 } else {
                     console.log(retcode);
                 }
             }
-            
+
             function print() {
                 printer.addPulse(printer.DRAWER_1, printer.PULSE_100);
-                
+
                 printer.addFeed();
                 printer.addFeed();
                 printer.addTextFont(printer.FONT_B);
                 printer.addTextLineSpace(30);
-                printer.addTextLang('ja');
+                printer.addTextLang("ja");
                 printer.addTextSmooth(true);
                 printer.addTextAlign(printer.ALIGN_CENTER);
                 printer.addTextSize(1, 2);
@@ -88,20 +101,20 @@ export default ({
                 printer.addTextSize(1, 1);
 
                 // store address, store tel
-                printer.addText(store_address + ' (TEL' + store_tel + ')');
+                printer.addText(store_address + " (TEL" + store_tel + ")");
 
                 printer.addFeed();
                 printer.addFeed();
                 printer.addTextStyle(true, false, true, printer.COLOR_1);
                 printer.addTextSize(2, 2);
-                printer.addText('お預り票');
+                printer.addText("お預り票");
                 printer.addFeed();
                 printer.addFeed();
                 printer.addTextAlign(printer.ALIGN_LEFT);
                 printer.addTextPosition(20);
                 printer.addTextSize(1, 1);
                 printer.addTextStyle(false, false, false, printer.COLOR_1);
-                printer.addText('お名前');
+                printer.addText("お名前");
                 printer.addFeed();
                 printer.addTextPosition(40);
 
@@ -113,7 +126,7 @@ export default ({
                 printer.addTextSize(2, 2);
 
                 // customer name
-                printer.addText(customer_name + ' 様');
+                printer.addText(customer_name + " 様");
 
                 printer.addFeed();
                 printer.addFeed();
@@ -121,12 +134,12 @@ export default ({
                 printer.addTextPosition(20);
 
                 // customer tel
-                printer.addText('お電話 ' + customer_tel);
+                printer.addText("お電話 " + customer_tel);
 
                 printer.addTextPosition(230);
 
                 // manager_name
-                printer.addText('担当者:' + manager_name);
+                printer.addText("担当者:" + manager_name);
 
                 printer.addFeed();
                 printer.addHLine(0, 575, printer.LINE_MEDIUM);
@@ -146,24 +159,24 @@ export default ({
 
                 // order list
                 for (const order of order_list) {
-                    if (order['count'] <= 1) {
+                    if (order["count"] <= 1) {
                         // one line
                         printer.addTextPosition(10);
                         printer.addTextSize(2, 2);
 
                         // tag start
-                        printer.addText(order['tag_start']);
+                        printer.addText(order["tag_start"]);
 
                         printer.addTextSize(1, 2);
                         printer.addTextPosition(130);
 
                         // clothes name
-                        printer.addText(order['name']);
+                        printer.addText(order["name"]);
 
                         printer.addTextPosition(350);
 
                         // clothes price
-                        printer.addText(order['price'].toLocaleString());
+                        printer.addText(order["price"].toLocaleString());
 
                         printer.addFeed();
                     } else {
@@ -172,29 +185,29 @@ export default ({
                         printer.addTextSize(2, 2);
 
                         // tag start
-                        printer.addText(order['tag_start']);
-                        
+                        printer.addText(order["tag_start"]);
+
                         printer.addTextSize(1, 2);
                         printer.addTextPosition(130);
-                        
+
                         // clothes name
-                        printer.addText(order['name']);
+                        printer.addText(order["name"]);
                         printer.addTextPosition(340);
 
                         // clothes count
-                        printer.addText('X ' + order['count']);
+                        printer.addText("X " + order["count"]);
 
                         printer.addFeed();
                         printer.addTextSize(2, 2);
 
                         // tag end
-                        printer.addText('～' + order['tag_end']);
+                        printer.addText("～" + order["tag_end"]);
 
                         printer.addTextPosition(350);
                         printer.addTextSize(1, 2);
 
                         // clothes price
-                        printer.addText(order['price'].toLocaleString());
+                        printer.addText(order["price"].toLocaleString());
 
                         printer.addFeed();
                     }
@@ -205,14 +218,14 @@ export default ({
                 printer.addFeed();
                 printer.addTextPosition(10);
                 printer.addTextSize(1, 1);
-                printer.addText('点数　');
+                printer.addText("点数　");
                 printer.addTextPosition(100);
 
                 // total count
                 printer.addText(total_count.toLocaleString());
 
                 printer.addTextPosition(200);
-                printer.addText('小計');
+                printer.addText("小計");
                 printer.addTextPosition(340);
 
                 // subtotal
@@ -221,14 +234,14 @@ export default ({
                 printer.addHLine(0, 575, printer.LINE_THIN);
                 printer.addFeed();
                 printer.addTextPosition(10);
-                printer.addText('点数');
+                printer.addText("点数");
                 printer.addTextPosition(100);
 
                 // total count
                 printer.addText(total_count);
 
                 printer.addTextPosition(200);
-                printer.addText('伝票合計');
+                printer.addText("伝票合計");
                 printer.addTextPosition(340);
 
                 // total
@@ -236,11 +249,11 @@ export default ({
                 printer.addFeed();
                 printer.addFeed();
                 printer.addTextPosition(200);
-                printer.addText('(うち消費税');
+                printer.addText("(うち消費税");
                 printer.addTextPosition(360);
 
                 // tax
-                printer.addText(tax + '）');
+                printer.addText(tax + "）");
 
                 printer.addFeed();
                 printer.addHLine(0, 575, printer.LINE_MEDIUM);
@@ -250,9 +263,9 @@ export default ({
                 if (is_invoice) {
                     printer.addTextAlign(printer.ALIGN_CENTER);
                     printer.addTextSize(1, 2);
-                    printer.addText('請求書払い');
+                    printer.addText("請求書払い");
                 } else if (paid_at !== null) {
-                    printer.addText('合計額');
+                    printer.addText("合計額");
                     printer.addTextPosition(240);
 
                     // total
@@ -263,16 +276,16 @@ export default ({
                     printer.addTextSize(1, 1);
                     printer.addTextAlign(printer.ALIGN_LEFT);
                     printer.addTextPosition(10);
-                    printer.addText('お預り');
+                    printer.addText("お預り");
                     printer.addTextPosition(120);
                     printer.addText(payment.toLocaleString());
                     printer.addTextPosition(240);
-                    printer.addText('お釣り');
+                    printer.addText("お釣り");
                     printer.addTextAlign(printer.ALIGN_RIGHT);
                     printer.addTextPosition(340);
                     printer.addText((payment - amount).toLocaleString());
                 } else {
-                    printer.addText('未収額');
+                    printer.addText("未収額");
                     printer.addTextPosition(240);
                     printer.addText((amount - payment).toLocaleString());
                     printer.addFeed();
@@ -282,17 +295,17 @@ export default ({
                 printer.addFeed();
                 printer.addTextSize(1, 1);
                 printer.addTextPosition(0);
-                printer.addText('いつもご利用ありがとうございます。');
+                printer.addText("いつもご利用ありがとうございます。");
                 printer.addFeed();
                 printer.addTextPosition(0);
-                printer.addText('今後ともよろしくお願いいたします。');
+                printer.addText("今後ともよろしくお願いいたします。");
                 printer.addFeed();
                 printer.addHLine(0, 575, printer.LINE_THIN);
                 printer.addFeed();
                 if (paid_at === null) {
                     printer.addTextAlign(printer.ALIGN_CENTER);
                     printer.addTextSize(2, 2);
-                    printer.addText('未　収');
+                    printer.addText("未　収");
                 }
                 printer.addFeed();
                 printer.addFeed();
@@ -300,6 +313,93 @@ export default ({
                 printer.send();
             }
         },
+
+        debugReceipt: function (receipt, order_id) {
+            console.log("========================================");
+            console.log("【レシートデバッグ情報】");
+            console.log("========================================");
+            console.log("店舗名:", receipt["store_name"]);
+            console.log("住所:", receipt["store_address"]);
+            console.log("電話番号:", receipt["store_tel"]);
+            console.log("----------------------------------------");
+            console.log("お預り票");
+            console.log("----------------------------------------");
+            console.log("お名前（カナ）:", receipt["customer_name_kana"]);
+            console.log("お名前:", receipt["customer_name"] + " 様");
+            console.log("お電話:", receipt["customer_tel"] || "");
+            console.log("担当者:", receipt["manager_name"]);
+            console.log("----------------------------------------");
+            console.log("受付日時:", receipt["ordered_at"]);
+            console.log("伝票番号:", order_id);
+            console.log("----------------------------------------");
+            console.log("【明細一覧】");
+            console.log("----------------------------------------");
+            receipt["order_list"].forEach((order, index) => {
+                if (order["count"] <= 1) {
+                    console.log(
+                        `${index + 1}. ${order["tag_start"]} | ${
+                            order["name"]
+                        } | ${order["price"].toLocaleString()}円`
+                    );
+                } else {
+                    console.log(
+                        `${index + 1}. ${order["tag_start"]} | ${
+                            order["name"]
+                        } | X ${order["count"]}`
+                    );
+                    console.log(
+                        `   ～${order["tag_end"]} | ${order[
+                            "price"
+                        ].toLocaleString()}円`
+                    );
+                }
+            });
+            console.log("----------------------------------------");
+            console.log("点数:", receipt["total_count"].toLocaleString());
+            console.log(
+                "小計:",
+                (receipt["amount"] + receipt["discount"]).toLocaleString() +
+                    "円"
+            );
+            console.log("----------------------------------------");
+            console.log("点数:", receipt["total_count"]);
+            console.log("伝票合計:", receipt["amount"].toLocaleString() + "円");
+            console.log("(うち消費税", receipt["tax"] + "）");
+            console.log("----------------------------------------");
+            if (receipt["is_invoice"]) {
+                console.log("請求書払い");
+            } else if (receipt["paid_at"] !== null) {
+                console.log(
+                    "合計額:",
+                    receipt["amount"].toLocaleString() + "円"
+                );
+                console.log(
+                    "お預り:",
+                    receipt["payment"].toLocaleString() + "円"
+                );
+                console.log(
+                    "お釣り:",
+                    (receipt["payment"] - receipt["amount"]).toLocaleString() +
+                        "円"
+                );
+            } else {
+                console.log(
+                    "未収額:",
+                    (receipt["amount"] - receipt["payment"]).toLocaleString() +
+                        "円"
+                );
+            }
+            console.log("----------------------------------------");
+            console.log("いつもご利用ありがとうございます。");
+            console.log("今後ともよろしくお願いいたします。");
+            if (receipt["paid_at"] === null) {
+                console.log("未　収");
+            }
+            console.log("========================================");
+            console.log("【生データ】");
+            console.log(JSON.stringify(receipt, null, 2));
+            console.log("========================================");
+        },
     },
-})
+};
 </script>
