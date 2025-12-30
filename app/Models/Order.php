@@ -157,7 +157,8 @@ class Order extends Model
     public function fetchReciptDetail($order_id) {
         $result = [];
         $total_count = 0;
-        $list = OrderClothes::join('orders', 'order_clothes.order_id', '=', 'orders.id')
+        $list = OrderClothes::select('order_clothes.*', 'clothes.name_kana', 'clothes.price', 'clothes.tag_count')
+                            ->join('orders', 'order_clothes.order_id', '=', 'orders.id')
                             ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
                             ->where('order_id', $order_id)
                             ->get()->toArray();
@@ -167,7 +168,10 @@ class Order extends Model
             return $this->compareTags($a['tag'], $b['tag']);
         });
         
-        // 統合せず、個別に表示するが、clothes_id=999の場合は前のレコードと結合
+        // ロジック：
+        // - tag_count=1（単一タグ発行）: 連続していても統合表示
+        // - tag_count>1（複数タグ発行）: 連続している場合は個別表示（例外措置）
+        // - clothes_id=999: 前のレコードと結合（スリーピース）
         $i = 0;
         while ($i < count($list)) {
             $row = $list[$i];
@@ -180,20 +184,68 @@ class Order extends Model
                     $result[$lastIndex]['tag_end'] = $row['tag'];
                 }
             } else {
-                // 通常のレコードは個別に追加
-                $result[] = [
-                    'id' => $row['clothes_id'],
-                    'name' => $row['name_kana'],
-                    'tag_start' => $row['tag'],
-                    'tag_end' => $row['tag'],
-                    'price' => $row['price'],
-                    'count' => 1,
-                ];
+                // 直前のレコードを取得（同じclothes_idで最後のもの）
+                $lastIndex = null;
+                for ($j = count($result) - 1; $j >= 0; $j--) {
+                    if ($result[$j]['id'] == $row['clothes_id']) {
+                        $lastIndex = $j;
+                        break;
+                    }
+                }
+                
+                // tag_countを取得（デフォルトは1）
+                $tag_count = isset($row['tag_count']) ? (int)$row['tag_count'] : 1;
+                
+                // 複数タグ発行商品（tag_count>1）で、同じ商品でタグが連続している場合は個別表示
+                if ($tag_count > 1 && $lastIndex !== null && $this->isConsecutiveTag($result[$lastIndex]['tag_end'], $row['tag'])) {
+                    // 連続している場合は個別に追加
+                    $result[] = [
+                        'id' => $row['clothes_id'],
+                        'name' => $row['name_kana'],
+                        'tag_start' => $row['tag'],
+                        'tag_end' => $row['tag'],
+                        'price' => $row['price'],
+                        'count' => 1,
+                    ];
+                } else {
+                    // 単一タグ発行商品、または連続していない場合は統合処理
+                    $index = array_search($row['clothes_id'], array_column($result, 'id'));
+                    
+                    if ($index === false) {
+                        // 新しいアイテムとして追加
+                        $result[] = [
+                            'id' => $row['clothes_id'],
+                            'name' => $row['name_kana'],
+                            'tag_start' => $row['tag'],
+                            'tag_end' => $row['tag'],
+                            'price' => $row['price'],
+                            'count' => 1,
+                        ];
+                    } else {
+                        // 既存のアイテムに統合
+                        $result[$index]['count']++;
+                        // tag_startより前のタグが来た場合はtag_startを更新
+                        if ($this->compareTags($row['tag'], $result[$index]['tag_start']) < 0) {
+                            $result[$index]['tag_start'] = $row['tag'];
+                        }
+                        // tag_endより後のタグが来た場合はtag_endを更新
+                        if ($this->compareTags($row['tag'], $result[$index]['tag_end']) > 0) {
+                            $result[$index]['tag_end'] = $row['tag'];
+                        }
+                        // 価格を合計（各レコードの価格を加算）
+                        $result[$index]['price'] += $row['price'];
+                    }
+                }
             }
             
             $total_count++;
             $i++;
         }
+
+        // tag_startの順序でソートして、タグ順を厳守する
+        usort($result, function($a, $b) {
+            return $this->compareTags($a['tag_start'], $b['tag_start']);
+        });
 
         return [$result, $total_count];
     }
@@ -303,6 +355,44 @@ class Order extends Model
             $second = (int)substr((string)$tag, 1);
         }
         return $first . '-' . str_pad((string)$second, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * 2つのタグが連続しているかどうかを判定
+     * 例：9-580と9-581は連続、9-580と9-582は連続していない
+     */
+    private function isConsecutiveTag($tagA, $tagB) {
+        // タグを数値形式に変換
+        $numA = $this->tagToNumber($tagA);
+        $numB = $this->tagToNumber($tagB);
+        
+        // 連続しているかチェック（9-999の次は0-001に戻る）
+        if ($numA == 9999 && $numB == 1000) {
+            return true; // 9-999の次が0-001の場合
+        }
+        
+        return ($numB - $numA) == 1;
+    }
+
+    /**
+     * タグを数値に変換（例：9-580 → 9580）
+     */
+    private function tagToNumber($tag) {
+        // タグが数値形式の場合はそのまま返す
+        if (is_numeric($tag)) {
+            return (int)$tag;
+        }
+        
+        // タグを分割（例：9-580 → [9, 580]）
+        $parts = explode('-', $tag);
+        if (count($parts) !== 2) {
+            return 0;
+        }
+        
+        $first = (int)$parts[0];
+        $second = (int)$parts[1];
+        
+        return $first * 1000 + $second;
     }
 
     public function fetchUnpaidOrders($customer_id) {

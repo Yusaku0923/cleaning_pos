@@ -159,11 +159,45 @@ export default {
 
                 // order list
                 for (const order of order_list) {
+                    // countが1より大きい場合は統合表示（X count形式）
                     // tag_startとtag_endが異なる場合は範囲表記（スリーピースなど）
+                    const isMultiple = order["count"] > 1;
                     const isRange = order["tag_start"] !== order["tag_end"];
                     
-                    if (isRange) {
-                        // 範囲表記（例：9-587～9-589）
+                    if (isMultiple) {
+                        // 統合表示（例：9-580 X 3 ～9-584）
+                        printer.addTextPosition(10);
+                        printer.addTextSize(2, 2);
+
+                        // tag start
+                        printer.addText(order["tag_start"]);
+
+                        printer.addTextSize(1, 2);
+                        printer.addTextPosition(130);
+
+                        // clothes name
+                        printer.addText(order["name"]);
+                        
+                        printer.addTextPosition(340);
+
+                        // count
+                        printer.addText("X " + order["count"]);
+
+                        printer.addFeed();
+                        printer.addTextSize(2, 2);
+
+                        // tag end
+                        printer.addText("～" + order["tag_end"]);
+
+                        printer.addTextPosition(350);
+                        printer.addTextSize(1, 2);
+
+                        // clothes price (合計金額)
+                        printer.addText(order["price"].toLocaleString());
+
+                        printer.addFeed();
+                    } else if (isRange) {
+                        // 範囲表記（スリーピースなど、例：9-587～9-589）
                         printer.addTextPosition(10);
                         printer.addTextSize(2, 2);
 
@@ -190,7 +224,7 @@ export default {
 
                         printer.addFeed();
                     } else {
-                        // 単一タグ
+                        // 単一タグまたは複数タグ発行商品の個別表示
                         printer.addTextPosition(10);
                         printer.addTextSize(2, 2);
 
