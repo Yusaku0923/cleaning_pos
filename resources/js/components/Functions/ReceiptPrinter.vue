@@ -239,6 +239,8 @@ export default {
                         printer.addText("X " + order["count"]);
 
                         printer.addFeed();
+                        // 次行の開始位置を左に戻す（機種によってはLF後にX座標が戻らず、2行目が用紙外に出るため）
+                        printer.addTextPosition(10);
                         printer.addTextSize(2, 2);
 
                         // tag end
@@ -266,6 +268,8 @@ export default {
                         printer.addText(order["name"]);
 
                         printer.addFeed();
+                        // 次行の開始位置を左に戻す（機種によってはLF後にX座標が戻らず、2行目が用紙外に出るため）
+                        printer.addTextPosition(10);
                         printer.addTextSize(2, 2);
 
                         // tag end
