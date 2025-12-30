@@ -12,7 +12,9 @@
     </div>
     <div class="col-12 d-flex justify-content-around mx-auto mb-3">
         <a href="{{ route('receipt.edit') }}" class="card col-5 fs-26 p-4 cbtn cbtn-blue text-center">レシート設定</a>
-        <div class="col-5 fs-26 p-4 text-center"></div>
+        <button id="browser-cache-clear-btn" class="card col-5 fs-26 p-4 cbtn cbtn-yellow text-center" style="border: none; cursor: pointer;">
+            ブラウザキャッシュクリア
+        </button>
     </div>
     @if(config('app.env') === 'local')
     <div class="col-12 d-flex justify-content-around mx-auto mb-3">
@@ -98,4 +100,35 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endif
+
+{{-- ブラウザキャッシュクリアボタン（本番環境でも表示） --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const browserCacheBtn = document.getElementById('browser-cache-clear-btn');
+    if (browserCacheBtn) {
+        browserCacheBtn.addEventListener('click', function() {
+            // localStorageとsessionStorageをクリア
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+            } catch (e) {
+                console.log('Storage clear error:', e);
+            }
+            
+            // Service Workerのキャッシュをクリア（もし使用している場合）
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+            
+            // キャッシュバスティング付きでページをリロード
+            const timestamp = new Date().getTime();
+            window.location.href = window.location.pathname + '?v=' + timestamp;
+        });
+    }
+});
+</script>
 @endsection

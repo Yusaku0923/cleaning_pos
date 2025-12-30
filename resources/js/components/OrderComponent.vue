@@ -624,7 +624,7 @@ export default ({
         },
 
         receiptReissue: function() {
-            this.$refs.child.printReceipt(this.orderId);
+            this.$refs.child.printReceipt(this.orderId, true); // 再発行のためisReissue=true
         },
 
         storeOrder: async function() {

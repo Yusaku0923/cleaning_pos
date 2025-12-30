@@ -23,11 +23,12 @@ export default {
                 });
         },
 
-        printReceipt: async function (order_id) {
+        printReceipt: async function (order_id, isReissue = false) {
             console.log("========================================");
             console.log("【レシート印刷開始】");
             console.log("========================================");
             console.log("注文ID:", order_id);
+            console.log("再発行:", isReissue ? "はい" : "いいえ");
             console.log("レシートデータ取得中...");
             
             let receipt = await this.fetchReceipt(order_id);
@@ -56,6 +57,10 @@ export default {
             let paid_at = receipt["paid_at"];
             let is_invoice = receipt["is_invoice"];
             let ip_address = receipt["ip_address"];
+            
+            // ドロワー開錠の条件判定
+            // 初回発行（isReissue = false）かつ現金支払い（is_invoice = false かつ paid_at !== null）の場合のみ開錠
+            const shouldOpenDrawer = !isReissue && !is_invoice && paid_at !== null;
 
             console.log("プリンターIPアドレス:", ip_address);
             console.log("明細数:", order_list.length);
@@ -116,11 +121,20 @@ export default {
             function print() {
                 console.log("【印刷処理開始】");
                 
-                // ドロワー開錠
-                printer.addPulse(
-                    printer.DRAWER_1, // DKポート1（通常これ）
-                    printer.PULSE_100 // パルス幅（標準）
-                );
+                // ドロワー開錠（初回発行かつ現金支払いの場合のみ）
+                if (shouldOpenDrawer) {
+                    console.log("【ドロワー開錠】初回発行かつ現金支払いのため、ドロワーを開きます");
+                    printer.addPulse(
+                        printer.DRAWER_1, // DKポート1（通常これ）
+                        printer.PULSE_100 // パルス幅（標準）
+                    );
+                } else {
+                    console.log("【ドロワー開錠スキップ】", 
+                        isReissue ? "再発行のため" : 
+                        is_invoice ? "請求書払いのため" : 
+                        paid_at === null ? "未収のため" : 
+                        "条件不一致");
+                }
 
                 printer.addFeed();
                 printer.addFeed();
