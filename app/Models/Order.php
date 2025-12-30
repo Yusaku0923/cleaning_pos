@@ -167,9 +167,20 @@ class Order extends Model
             return $this->compareTags($a['tag'], $b['tag']);
         });
         
-        foreach ($list as $row) {
-            $index = array_search($row['clothes_id'], array_column($result, 'id'));
-            if ($index === false) {
+        // 統合せず、個別に表示するが、clothes_id=999の場合は前のレコードと結合
+        $i = 0;
+        while ($i < count($list)) {
+            $row = $list[$i];
+            
+            // clothes_id=999（スリーピースの追加パーツ）の場合は、前のレコードと結合
+            if ($row['clothes_id'] == 999 && count($result) > 0) {
+                $lastIndex = count($result) - 1;
+                // 前のレコードのtag_endを更新
+                if ($this->compareTags($row['tag'], $result[$lastIndex]['tag_end']) > 0) {
+                    $result[$lastIndex]['tag_end'] = $row['tag'];
+                }
+            } else {
+                // 通常のレコードは個別に追加
                 $result[] = [
                     'id' => $row['clothes_id'],
                     'name' => $row['name_kana'],
@@ -178,24 +189,11 @@ class Order extends Model
                     'price' => $row['price'],
                     'count' => 1,
                 ];
-            } else {
-                $result[$index]['count']++;
-                // tag_endを更新する際、tag_startより前のタグが来た場合はtag_startも更新
-                if ($this->compareTags($row['tag'], $result[$index]['tag_start']) < 0) {
-                    $result[$index]['tag_start'] = $row['tag'];
-                }
-                // tag_endを更新する際、tag_endより後のタグが来た場合はtag_endを更新
-                if ($this->compareTags($row['tag'], $result[$index]['tag_end']) > 0) {
-                    $result[$index]['tag_end'] = $row['tag'];
-                }
             }
+            
             $total_count++;
+            $i++;
         }
-
-        // tag_startの順序でソートして、タグ順を厳守する
-        usort($result, function($a, $b) {
-            return $this->compareTags($a['tag_start'], $b['tag_start']);
-        });
 
         return [$result, $total_count];
     }
