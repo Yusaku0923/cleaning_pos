@@ -24,7 +24,20 @@ export default {
         },
 
         printReceipt: async function (order_id) {
+            console.log("========================================");
+            console.log("【レシート印刷開始】");
+            console.log("========================================");
+            console.log("注文ID:", order_id);
+            console.log("レシートデータ取得中...");
+            
             let receipt = await this.fetchReceipt(order_id);
+            
+            if (!receipt) {
+                console.error("【エラー】レシートデータの取得に失敗しました");
+                return;
+            }
+
+            console.log("レシートデータ取得成功");
 
             let store_name = receipt["store_name"];
             let store_address = receipt["store_address"];
@@ -44,16 +57,24 @@ export default {
             let is_invoice = receipt["is_invoice"];
             let ip_address = receipt["ip_address"];
 
+            console.log("プリンターIPアドレス:", ip_address);
+            console.log("明細数:", order_list.length);
+            console.log("合計金額:", amount);
+
             // デバッグ: レシート内容をコンソールに表示
             this.debugReceipt(receipt, order_id);
 
             let printer = null;
             let ePosDev = new epson.ePOSDevice();
+            
+            console.log("プリンターに接続中... (IP: " + ip_address + ", Port: 8008)");
             // ePosDev.connect(ip_address, 8043, cbConnect, {"eposprint" : true});
             ePosDev.connect(ip_address, 8008, cbConnect, { eposprint: true });
 
             function cbConnect(data) {
+                console.log("【接続結果】", data);
                 if (data == "OK" || data == "SSL_CONNECT_OK") {
+                    console.log("プリンターデバイス作成中...");
                     ePosDev.createDevice(
                         "local_printer",
                         ePosDev.DEVICE_TYPE_PRINTER,
@@ -61,27 +82,45 @@ export default {
                         cbCreateDevice_printer
                     );
                 } else {
-                    console.log(data);
+                    console.error("【エラー】プリンターへの接続に失敗しました:", data);
                 }
             }
             function cbCreateDevice_printer(devobj, retcode) {
+                console.log("【デバイス作成結果】", retcode);
                 if (retcode == "OK") {
+                    console.log("プリンターデバイス作成成功");
                     printer = devobj;
                     printer.timeout = 60000;
                     printer.onreceive = function (res) {
-                        console.log(res.success);
+                        console.log("========================================");
+                        console.log("【レシート印刷完了】");
+                        console.log("========================================");
+                        console.log("印刷結果:", res.success ? "成功" : "失敗");
+                        if (res.success) {
+                            console.log("レシートが正常に印刷されました");
+                        } else {
+                            console.error("印刷エラー:", res);
+                        }
+                        console.log("========================================");
                     };
                     printer.oncoveropen = function () {
-                        console.log("coveropen");
+                        console.warn("【警告】プリンターのカバーが開いています");
                     };
+                    console.log("印刷コマンド送信中...");
                     print();
                 } else {
-                    console.log(retcode);
+                    console.error("【エラー】プリンターデバイスの作成に失敗しました:", retcode);
                 }
             }
 
             function print() {
-                printer.addPulse(printer.DRAWER_1, printer.PULSE_100);
+                console.log("【印刷処理開始】");
+                
+                // ドロワー開錠
+                printer.addPulse(
+                    printer.DRAWER_1, // DKポート1（通常これ）
+                    printer.PULSE_100 // パルス幅（標準）
+                );
 
                 printer.addFeed();
                 printer.addFeed();
@@ -346,7 +385,17 @@ export default {
                 printer.addFeed();
                 printer.addFeed();
                 printer.addCut(printer.CUT_FEED);
-                printer.send();
+                
+                console.log("【印刷コマンド送信実行中...】");
+                console.log("明細行数:", order_list.length);
+                console.log("合計金額:", amount);
+                
+                try {
+                    printer.send();
+                    console.log("【印刷コマンド送信完了】プリンターからの応答を待機中...");
+                } catch (error) {
+                    console.error("【エラー】印刷コマンド送信中にエラーが発生しました:", error);
+                }
             }
         },
 
