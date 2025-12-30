@@ -203,6 +203,8 @@ export default {
                     const isMultiple = order["count"] > 1;
                     const isRange = order["tag_start"] !== order["tag_end"];
                     
+                    console.log(`【印刷処理】${order["name"]} - count: ${order["count"]}, tag_start: ${order["tag_start"]}, tag_end: ${order["tag_end"]}, isMultiple: ${isMultiple}, isRange: ${isRange}`);
+                    
                     if (isMultiple) {
                         // 統合表示（例：9-580 X 3 ～9-584）
                         printer.addTextPosition(10);
@@ -420,13 +422,11 @@ export default {
             console.log("【明細一覧】");
             console.log("----------------------------------------");
             receipt["order_list"].forEach((order, index) => {
-                if (order["count"] <= 1) {
-                    console.log(
-                        `${index + 1}. ${order["tag_start"]} | ${
-                            order["name"]
-                        } | ${order["price"].toLocaleString()}円`
-                    );
-                } else {
+                const isMultiple = order["count"] > 1;
+                const isRange = order["tag_start"] !== order["tag_end"];
+                
+                if (isMultiple) {
+                    // 統合表示（例：9-580 X 3 ～9-584）
                     console.log(
                         `${index + 1}. ${order["tag_start"]} | ${
                             order["name"]
@@ -436,6 +436,25 @@ export default {
                         `   ～${order["tag_end"]} | ${order[
                             "price"
                         ].toLocaleString()}円`
+                    );
+                } else if (isRange) {
+                    // 範囲表記（スリーピースなど、例：9-587～9-589）
+                    console.log(
+                        `${index + 1}. ${order["tag_start"]} | ${
+                            order["name"]
+                        }`
+                    );
+                    console.log(
+                        `   ～${order["tag_end"]} | ${order[
+                            "price"
+                        ].toLocaleString()}円`
+                    );
+                } else {
+                    // 単一タグ
+                    console.log(
+                        `${index + 1}. ${order["tag_start"]} | ${
+                            order["name"]
+                        } | ${order["price"].toLocaleString()}円`
                     );
                 }
             });
