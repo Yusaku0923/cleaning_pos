@@ -59,7 +59,9 @@ export default {
             let ip_address = receipt["ip_address"];
             
             // ドロワー開錠の条件判定
-            // 初回発行（isReissue = false）かつ現金支払い（is_invoice = false かつ paid_at !== null）の場合のみ開錠
+            // Orderパネルで現金での注文をしたときのみ開錠
+            // 条件：初回発行（!isReissue）かつ現金支払い（!is_invoice）かつ支払い済み（paid_at !== null）
+            // 領収書払い（is_invoice = true）やレシート再発行（isReissue = true）では開かない
             const shouldOpenDrawer = !isReissue && !is_invoice && paid_at !== null;
 
             console.log("プリンターIPアドレス:", ip_address);
@@ -121,17 +123,17 @@ export default {
             function print() {
                 console.log("【印刷処理開始】");
                 
-                // ドロワー開錠（初回発行かつ現金支払いの場合のみ）
+                // ドロワー開錠（Orderパネルで現金での注文をしたときのみ）
                 if (shouldOpenDrawer) {
-                    console.log("【ドロワー開錠】初回発行かつ現金支払いのため、ドロワーを開きます");
+                    console.log("【ドロワー開錠】現金での注文（初回発行）のため、ドロワーを開きます");
                     printer.addPulse(
                         printer.DRAWER_1, // DKポート1（通常これ）
                         printer.PULSE_100 // パルス幅（標準）
                     );
                 } else {
                     console.log("【ドロワー開錠スキップ】", 
-                        isReissue ? "再発行のため" : 
-                        is_invoice ? "請求書払いのため" : 
+                        isReissue ? "レシート再発行のため" : 
+                        is_invoice ? "領収書払いのため" : 
                         paid_at === null ? "未収のため" : 
                         "条件不一致");
                 }
