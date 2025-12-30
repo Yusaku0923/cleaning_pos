@@ -180,10 +180,22 @@ class Order extends Model
                 ];
             } else {
                 $result[$index]['count']++;
-                $result[$index]['tag_end'] = $row['tag'];
+                // tag_endを更新する際、tag_startより前のタグが来た場合はtag_startも更新
+                if ($this->compareTags($row['tag'], $result[$index]['tag_start']) < 0) {
+                    $result[$index]['tag_start'] = $row['tag'];
+                }
+                // tag_endを更新する際、tag_endより後のタグが来た場合はtag_endを更新
+                if ($this->compareTags($row['tag'], $result[$index]['tag_end']) > 0) {
+                    $result[$index]['tag_end'] = $row['tag'];
+                }
             }
             $total_count++;
         }
+
+        // tag_startの順序でソートして、タグ順を厳守する
+        usort($result, function($a, $b) {
+            return $this->compareTags($a['tag_start'], $b['tag_start']);
+        });
 
         return [$result, $total_count];
     }

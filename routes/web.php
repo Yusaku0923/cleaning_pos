@@ -12,6 +12,7 @@ use App\Http\Controllers\TagNumberController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\IpaddressController;
+use App\Http\Controllers\CacheController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,6 +92,12 @@ Route::delete('delete/{id}', [CustomerController::class, 'destroy'])->name('cust
     Route::prefix('receipt')->group(function () {
         Route::get('edit', [IpaddressController::class, 'edit'])->name('receipt.edit');
         Route::post('update', [IpaddressController::class, 'update'])->name('receipt.update');
+    });
+
+    Route::prefix('cache')->group(function () {
+        Route::post('clear', [CacheController::class, 'clearCache'])->name('cache.clear');
+        Route::post('build-vue', [CacheController::class, 'buildVue'])->name('cache.build-vue');
+        Route::post('clear-and-build', [CacheController::class, 'clearAndBuild'])->name('cache.clear-and-build');
     });
 
     if (config('app.env') === 'local') {

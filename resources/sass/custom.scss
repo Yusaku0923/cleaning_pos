@@ -166,6 +166,11 @@
     background-color: #6c757d;
     border: 2px solid $black;
 }
+.cbtn-orange, .cbtn-orange:hover {
+    color: $white;
+    background-color: #fd7e00;
+    border: 2px solid $black;
+}
 .cbtn-yghalf, .cbtn-yghalf:hover {
     color: $black;
     background: linear-gradient(90deg, $yellow 0%, $yellow 50%, $green 50%, $green 100%);
