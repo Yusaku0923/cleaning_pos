@@ -6,6 +6,11 @@
 
 require('./bootstrap');
 
+// クライアントエラー収集の初期化
+import errorLogger from './utils/ErrorLogger';
+errorLogger.init();
+window.errorLogger = errorLogger; // グローバルからもアクセス可能に
+
 window.Vue = require('vue').default;
 
 /**

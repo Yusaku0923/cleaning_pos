@@ -8,6 +8,12 @@ export default {
             required: true,
         },
     },
+    data() {
+        return {
+            // 接続中のデバイスを保持（disconnect用）
+            currentDevice: null,
+        };
+    },
     methods: {
         fetchReceipt: async function (order_id) {
             axios.defaults.headers.common["Authorization"] =
@@ -73,14 +79,33 @@ export default {
 
             let printer = null;
             let ePosDev = new epson.ePOSDevice();
-            
-            console.log("プリンターに接続中... (IP: " + ip_address + ", Port: 8008)");
-            // ePosDev.connect(ip_address, 8043, cbConnect, {"eposprint" : true});
-            ePosDev.connect(ip_address, 8008, cbConnect, { eposprint: true });
+            const self = this;
+
+            // 前回の接続が残っていたら切断
+            if (this.currentDevice) {
+                console.log("【接続クリーンアップ】前回の接続を切断します");
+                try {
+                    this.currentDevice.disconnect();
+                } catch (e) {
+                    console.warn("前回の接続切断でエラー（無視）:", e);
+                }
+                this.currentDevice = null;
+            }
+
+            // リトライ設定
+            const maxRetry = 3;
+            let retryCount = 0;
+
+            function tryConnect() {
+                console.log("プリンターに接続中... (IP: " + ip_address + ", Port: 8008)" + (retryCount > 0 ? ` [リトライ ${retryCount}/${maxRetry}]` : ""));
+                ePosDev.connect(ip_address, 8008, cbConnect, { eposprint: true });
+            }
 
             function cbConnect(data) {
                 console.log("【接続結果】", data);
                 if (data == "OK" || data == "SSL_CONNECT_OK") {
+                    // 接続成功 - デバイスを保持
+                    self.currentDevice = ePosDev;
                     console.log("プリンターデバイス作成中...");
                     ePosDev.createDevice(
                         "local_printer",
@@ -89,9 +114,30 @@ export default {
                         cbCreateDevice_printer
                     );
                 } else {
-                    console.error("【エラー】プリンターへの接続に失敗しました:", data);
+                    // 接続失敗 - リトライ
+                    if (retryCount < maxRetry) {
+                        retryCount++;
+                        console.warn(`【接続失敗】${retryCount}秒後にリトライします...`);
+                        setTimeout(tryConnect, 1000 * retryCount);
+                    } else {
+                        console.error("【エラー】プリンターへの接続に失敗しました（リトライ上限）:", data);
+                        alert("プリンターに接続できませんでした。\nプリンターの電源とネットワーク接続を確認してください。");
+                    }
                 }
             }
+
+            function disconnectDevice() {
+                if (self.currentDevice) {
+                    console.log("【接続終了】プリンターから切断します");
+                    try {
+                        self.currentDevice.disconnect();
+                    } catch (e) {
+                        console.warn("切断でエラー（無視）:", e);
+                    }
+                    self.currentDevice = null;
+                }
+            }
+
             function cbCreateDevice_printer(devobj, retcode) {
                 console.log("【デバイス作成結果】", retcode);
                 if (retcode == "OK") {
@@ -109,6 +155,8 @@ export default {
                             console.error("印刷エラー:", res);
                         }
                         console.log("========================================");
+                        // 印刷完了後に切断
+                        disconnectDevice();
                     };
                     printer.oncoveropen = function () {
                         console.warn("【警告】プリンターのカバーが開いています");
@@ -117,8 +165,13 @@ export default {
                     print();
                 } else {
                     console.error("【エラー】プリンターデバイスの作成に失敗しました:", retcode);
+                    // デバイス作成失敗時も切断
+                    disconnectDevice();
                 }
             }
+
+            // 接続開始
+            tryConnect();
 
             function print() {
                 console.log("【印刷処理開始】");
@@ -417,6 +470,8 @@ export default {
                     console.log("【印刷コマンド送信完了】プリンターからの応答を待機中...");
                 } catch (error) {
                     console.error("【エラー】印刷コマンド送信中にエラーが発生しました:", error);
+                    // エラー時も切断
+                    disconnectDevice();
                 }
             }
         },

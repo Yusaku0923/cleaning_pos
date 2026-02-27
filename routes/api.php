@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ClothesController;
 use App\Http\Controllers\Api\CustomerInformationController;
 use App\Http\Controllers\Api\CustomerDisplayController;
+use App\Http\Controllers\Api\ClientErrorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,3 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('broadcast', [CustomerDisplayController::class, 'broadcast'])->name('customer_display.broadcast');
 });
 Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
+
+// クライアントエラー収集（認証なしで受け付ける）
+Route::post('client-error', [ClientErrorController::class, 'store'])->name('client_error.store');
+// エラー一覧は認証必須
+Route::middleware('auth:sanctum')->get('client-errors', [ClientErrorController::class, 'index'])->name('client_error.index');
