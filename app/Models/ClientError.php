@@ -32,7 +32,11 @@ class ClientError extends Model
     {
         try {
             if (random_int(1, 10) === 1) {
-                static::pruneExpired();
+                try {
+                    static::pruneExpired();
+                } catch (\Throwable $e) {
+                    Log::error('ClientError::pruneExpired failed: ' . $e->getMessage());
+                }
             }
             static::create($data);
         } catch (\Throwable $e) {

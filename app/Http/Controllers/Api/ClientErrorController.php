@@ -18,17 +18,17 @@ class ClientErrorController extends Controller
             'extra_data' => 'nullable|array',
         ]);
 
-        $error = ClientError::create([
+        ClientError::log([
             'error_type' => $validated['error_type'],
-            'message' => $validated['message'],
-            'stack' => $validated['stack'] ?? null,
-            'url' => $validated['url'] ?? $request->header('Referer'),
+            'message'    => $validated['message'],
+            'stack'      => $validated['stack'] ?? null,
+            'url'        => $validated['url'] ?? $request->header('Referer'),
             'user_agent' => $request->userAgent(),
             'manager_id' => $request->user()?->id,
             'extra_data' => $validated['extra_data'] ?? null,
         ]);
 
-        return response()->json(['success' => true, 'id' => $error->id]);
+        return response()->json(['success' => true]);
     }
 
     public function index(Request $request)
