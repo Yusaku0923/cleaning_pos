@@ -41,7 +41,8 @@
 <body>
     <div id="app" class="{{ session('theme_body') ?? session('theme_body') }}" style="height: 100dvh;">
         @if (!request()->is('*customer_display*'))
-        <main class="pt-4 position-relative">
+        <main class="{{ request()->is('delivery/sp*') ? '' : 'pt-4' }} position-relative">
+            @if (!request()->is('delivery/sp*'))
             <div class="col-12 mb-4 px-2 position-sticky">
                 @if ( !request()->is('*login*') )
                 <a href="{{ route('home') }}" class="card text-decoration-none text-body border border-2 border-dark {{ session('theme_header') ? session('theme_header') : '' }}">
@@ -53,6 +54,7 @@
                 </a>
                 @endif
             </div>
+            @endif
             @yield('content')
         </main>
         @else
