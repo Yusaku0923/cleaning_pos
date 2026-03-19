@@ -3,11 +3,14 @@
 
     <!-- 入力状況一覧 -->
     <div v-if="!selectedDate">
-      <div class="d-flex align-items-center justify-content-between mb-3">
-        <h5 class="mb-0">入力状況</h5>
-        <button class="btn btn-primary" style="font-size:18px; padding: 10px 20px;" @click="selectDate(today)">
-          今日 ({{ today }}) を入力
-        </button>
+      <div class="mb-3">
+        <h5 class="mb-3">入力状況</h5>
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <input type="date" v-model="pickerDate" class="form-control" style="font-size:18px; height:52px; flex:1;">
+          <button class="btn btn-primary" style="font-size:18px; padding: 10px 18px; white-space:nowrap;" @click="selectDate(pickerDate)">
+            入力
+          </button>
+        </div>
       </div>
 
       <!-- 顧客選択（複数社ある場合） -->
@@ -100,6 +103,7 @@ export default {
     return {
       selectedCustomer: this.customers.length === 1 ? this.customers[0] : null,
       selectedDate: null,
+      pickerDate: new Date().toISOString().slice(0, 10),
       quantities: {},
       entryDates: [],
       loadingDates: false,

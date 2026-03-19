@@ -128,7 +128,7 @@ class DeliveryNoteController extends Controller
     /** SP入力画面コンテナ */
     public function spEntry()
     {
-        $customers = DeliveryCustomer::all();
+        $customers = DeliveryCustomer::with('departments.products')->get();
         return view('delivery.sp_entry', compact('customers'));
     }
 

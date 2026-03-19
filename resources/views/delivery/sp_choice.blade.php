@@ -12,5 +12,10 @@
        style="width: 80%; max-width: 320px; padding: 30px; font-size: 22px; border-radius: 16px;">
         納品書記帳
     </a>
+    <a href="{{ route('delivery.index') }}"
+       class="btn btn-outline-secondary"
+       style="width: 80%; max-width: 320px; padding: 20px; font-size: 18px; border-radius: 16px;">
+        タブレット管理画面
+    </a>
 </div>
 @endsection
