@@ -23,7 +23,9 @@
         .text-center { text-align: center; }
 
         .doc-title { font-family: migmix-bold; font-size: 24px; text-align: center; margin-bottom: 5px; border-bottom: 1px solid #000; display: inline-block; padding: 0 20px 3px 20px; }
-        .doc-title-wrap { text-align: center; margin-bottom: 8px; }
+        .doc-title-wrap { text-align: center; margin-bottom: 4px; }
+        .date-field { text-align: center; margin-bottom: 8px; font-size: 14px; }
+        .date-blank { display: inline-block; border-bottom: 1px solid #000; min-width: 30px; text-align: center; margin: 0 2px; }
         .doc-meta-inner { width: 100%; }
         .customer-block { font-size: 18px; }
         .store-block { text-align: right; font-size: 13px; }
@@ -43,12 +45,17 @@
         .tax-section { margin-top: 10px; }
         .tax-table { width: 50%; margin-left: 50%; border-collapse: collapse; border: 2px solid #000; }
         .tax-table td { border: 1px solid #000; padding: 3px 8px; }
-        .total-row td { font-size: 13px; border-top: 2px solid #000; }
+        .total-row td { border-top: 2px solid #000; }
     </style>
 </head>
 <body>
     <div class="doc-title-wrap">
         <span class="doc-title">納　品　書</span>
+    </div>
+    <div class="date-field">
+        <span class="date-blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>年
+        <span class="date-blank">&nbsp;&nbsp;</span>月
+        <span class="date-blank">&nbsp;&nbsp;</span>日
     </div>
 
     <table class="doc-meta-inner" style="border:none; margin-bottom:6px;">

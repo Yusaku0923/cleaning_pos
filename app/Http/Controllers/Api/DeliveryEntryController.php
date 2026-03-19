@@ -161,11 +161,17 @@ class DeliveryEntryController extends Controller
         foreach ($entries as $dept) {
             foreach ($dept['products'] as $p) {
                 $rate = $p['tax_rate'];
-                $groups[$rate] = ($groups[$rate] ?? 0) + $p['amount'];
+                $key = number_format($rate, 4);
+                if (!isset($groups[$key])) {
+                    $groups[$key] = ['rate' => $rate, 'subtotal' => 0];
+                }
+                $groups[$key]['subtotal'] += $p['amount'];
             }
         }
         $taxGroups = [];
-        foreach ($groups as $rate => $subtotal) {
+        foreach ($groups as $group) {
+            $rate = $group['rate'];
+            $subtotal = $group['subtotal'];
             $tax = (int) floor($subtotal * $rate);
             $taxGroups[] = [
                 'rate' => $rate,

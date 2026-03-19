@@ -174,12 +174,18 @@ class DeliveryNoteController extends Controller
         foreach ($entries as $dept) {
             foreach ($dept['products'] as $product) {
                 $rate = $product['tax_rate'];
-                $groups[$rate] = ($groups[$rate] ?? 0) + $product['amount'];
+                $key = number_format($rate, 4);
+                if (!isset($groups[$key])) {
+                    $groups[$key] = ['rate' => $rate, 'subtotal' => 0];
+                }
+                $groups[$key]['subtotal'] += $product['amount'];
             }
         }
 
         $result = [];
-        foreach ($groups as $rate => $subtotal) {
+        foreach ($groups as $group) {
+            $rate = $group['rate'];
+            $subtotal = $group['subtotal'];
             $tax = (int) floor($subtotal * $rate);
             $result[] = [
                 'rate' => $rate,
