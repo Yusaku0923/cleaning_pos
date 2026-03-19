@@ -34,6 +34,11 @@ class HomeController extends Controller
                 $customer = [];
             } else {
                 $orders = $model->fetchOrders($customer->id, 4);
+                $unpaid_amount = Order::where('customer_id', $customer->id)
+                                    ->whereNull('paid_at')
+                                    ->sum('amount');
+                $latest_visit = Order::where('customer_id', $customer->id)
+                                    ->max('created_at');
             }
         }
 
@@ -44,6 +49,8 @@ class HomeController extends Controller
             'orders' => $orders ?? [],
             'tag' => $tag ?? null,
             'latest_order' => $latest_order ?? [],
+            'unpaid_amount' => $unpaid_amount ?? null,
+            'latest_visit' => $latest_visit ?? null,
         ]);
     }
 

@@ -13,6 +13,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\IpaddressController;
 use App\Http\Controllers\CacheController;
+use App\Http\Controllers\DeliveryNoteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +99,17 @@ Route::delete('delete/{id}', [CustomerController::class, 'destroy'])->name('cust
         Route::post('clear', [CacheController::class, 'clearCache'])->name('cache.clear');
         Route::post('build-vue', [CacheController::class, 'buildVue'])->name('cache.build-vue');
         Route::post('clear-and-build', [CacheController::class, 'clearAndBuild'])->name('cache.clear-and-build');
+    });
+
+    Route::prefix('delivery')->group(function () {
+        Route::get('/', [DeliveryNoteController::class, 'index'])->name('delivery.index');
+        Route::get('notes/{customer}', [DeliveryNoteController::class, 'notes'])->name('delivery.notes');
+        Route::post('notes/{customer}/pdf', [DeliveryNoteController::class, 'downloadPdf'])->name('delivery.pdf');
+        Route::get('notes/{customer}/email', [DeliveryNoteController::class, 'emailForm'])->name('delivery.email_form');
+        Route::post('notes/{customer}/email', [DeliveryNoteController::class, 'sendEmail'])->name('delivery.email_send');
+        Route::get('email-logs', [DeliveryNoteController::class, 'emailLogs'])->name('delivery.email_logs');
+        Route::get('sp/choice', [DeliveryNoteController::class, 'spChoice'])->name('delivery.sp.choice');
+        Route::get('sp/entry', [DeliveryNoteController::class, 'spEntry'])->name('delivery.sp.entry');
     });
 
     if (config('app.env') === 'local') {

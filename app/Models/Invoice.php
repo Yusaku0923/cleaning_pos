@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Log;
 use App\Services\Utility;
 
 class Invoice extends Model
@@ -13,7 +12,16 @@ class Invoice extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'manager_id',
+        'customer_id',
+        'period_start',
+        'period_end',
+        'paid_at',
+        'issued_at',
+        'has_carried_over',
+        'carry_over_id',
+    ];
 
     public static function boot()
     {
@@ -227,7 +235,7 @@ class Invoice extends Model
 
     private function isMismatchCutoffDate($cutoff_date, $period_end) {
         $date = (int)date('d', strtotime($period_end));
-        if ($cutoff_date === 99) {
+        if ((int)$cutoff_date === Utility::MONTH_END_CUTOFF) {
             $cutoff_date = (int)date('t', strtotime($period_end));
         }
 

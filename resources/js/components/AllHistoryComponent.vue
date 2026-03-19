@@ -152,7 +152,7 @@ export default ({
             required: false
         },
         token: {
-            Type: String,
+            type: String,
             required: true,
         }
     },

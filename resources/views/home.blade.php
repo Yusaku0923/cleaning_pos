@@ -51,13 +51,13 @@
                             <div class="card col-6 p-1">
                                 <p class="mb-0 d-flex">
                                     <span class="d-inline-block col-4">未収金</span>
-                                    <span class="d-inline-block col-8"></span>
+                                    <span class="d-inline-block col-8">{{ isset($unpaid_amount) ? number_format($unpaid_amount) . '円' : '' }}</span>
                                 </p>
                             </div>
                             <div class="card col-6 p-1">
                                 <p class="mb-0 d-flex">
                                     <span class="d-inline-block col-4">最終来店日</span>
-                                    <span class="d-inline-block col-8"></span>
+                                    <span class="d-inline-block col-8">{{ $latest_visit ? date('Y/m/d', strtotime($latest_visit)) : '' }}</span>
                                 </p>
                             </div>
                         </div>
@@ -67,8 +67,8 @@
                                 <div class="card col-12 p-1">
                                     <p class="mb-0 d-flex">
                                         <span class="d-inline-block col-4">入金管理</span>
-                                        @if (isset($customer->needs_payment_confimation))
-                                        <span class="d-inline-block col-8">{{ (boolean)$customer->needs_payment_confimation ? 'する': 'しない' }}</span>
+                                        @if (isset($customer->needs_payment_confirmation))
+                                        <span class="d-inline-block col-8">{{ (boolean)$customer->needs_payment_confirmation ? 'する': 'しない' }}</span>
                                         @endif
                                     </p>
                                 </div>
@@ -76,7 +76,7 @@
                                     <p class="mb-0 d-flex">
                                         <span class="d-inline-block col-4">締め日</span>
                                         @if (isset($customer->is_invoice) && (boolean)$customer->is_invoice)
-                                        <span class="d-inline-block col-8">{{ $customer->cutoff_date === 99 ? '末日': $customer->cutoff_date . '日' }}</span>
+                                        <span class="d-inline-block col-8">{{ (int)$customer->cutoff_date === \App\Services\Utility::MONTH_END_CUTOFF ? '末日': $customer->cutoff_date . '日' }}</span>
                                         @endif
                                     </p>
                                 </div>

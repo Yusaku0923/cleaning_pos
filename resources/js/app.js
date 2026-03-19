@@ -40,6 +40,8 @@ Vue.component('history-card-component', require('./components/HistoryCardCompone
 Vue.component('clothes-mst-component', require('./components/ClothesMasterComponent.vue').default);
 Vue.component('manager-select-btn-component', require('./components/ManagerSelectButtonComponent.vue').default);
 Vue.component('customer-display-component', require('./components/CustomerDisplayComponent.vue').default);
+Vue.component('delivery-sp-entry-component', require('./components/DeliverySpEntryComponent.vue').default);
+Vue.component('delivery-note-component', require('./components/DeliveryNoteComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

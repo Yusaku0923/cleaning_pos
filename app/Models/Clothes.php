@@ -11,7 +11,17 @@ class Clothes extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
+    const MULTI_TAG_CLOTHES_ID = 999;
+
+    protected $fillable = [
+        'store_id',
+        'category_id',
+        'name',
+        'name_kana',
+        'price',
+        'tag_count',
+        'sort_key',
+    ];
 
     public function categories()
     {
@@ -25,7 +35,7 @@ class Clothes extends Model
                                 ->join('clothes', 'order_clothes.clothes_id', '=', 'clothes.id')
                                 ->join('orders', 'order_clothes.order_id', '=', 'orders.id')
                                 ->where('orders.customer_id', $customer_id)
-                                ->where('order_clothes.clothes_id', '<>', 999)
+                                ->where('order_clothes.clothes_id', '<>', self::MULTI_TAG_CLOTHES_ID)
                                 ->whereNull('clothes.deleted_at')
                                 ->groupBy('order_clothes.clothes_id')
                                 ->orderByDesc('count')

@@ -8,6 +8,8 @@ use App\Events\CustomerDisplay;
 
 class Utility
 {
+    const MONTH_END_CUTOFF = 99;
+
     public static function convertTagFormat($tag) {
         $formated_tag = '';
         if ($tag >= 10000) {
@@ -30,7 +32,7 @@ class Utility
         if (empty($handed_at)) {
             $handed_at = date('Y-m-d');
         }
-        if ($cutoff_date === 99) {
+        if ((int)$cutoff_date === self::MONTH_END_CUTOFF) {
             $period_start = date('Y-m-01', strtotime($handed_at));
             $period_end = date('Y-m-t', strtotime($handed_at));
         } else {

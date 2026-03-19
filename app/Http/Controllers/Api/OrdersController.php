@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Clothes;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Store;
@@ -122,7 +121,7 @@ class OrdersController extends Controller
                             $converted_tag = Utility::convertTagFormat($tag);
                             OrderClothes::query()->create([
                                 'order_id' => $order->id,
-                                'clothes_id' => 999,
+                                'clothes_id' => Clothes::MULTI_TAG_CLOTHES_ID,
                                 'tag' => $converted_tag,
                                 'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
                             ]);
@@ -149,7 +148,7 @@ class OrdersController extends Controller
                         for ($j = 1; $j < $tag_count; $j++) {
                             OrderClothes::query()->create([
                                 'order_id' => $order->id,
-                                'clothes_id' => 999,
+                                'clothes_id' => Clothes::MULTI_TAG_CLOTHES_ID,
                                 'tag' => '0-000',
                                 'handed_at' => ($request->check_return) ? null : date('Y-m-d H:i:s'),
                             ]);
@@ -170,6 +169,9 @@ class OrdersController extends Controller
                 ]);
         
         $customer = Customer::find($request->customer_id);
+        if (!$customer) {
+            return response()->json(['error' => '顧客が見つかりません'], 422);
+        }
         $customer->increment('total_sales', $request->amount);
         $customer->increment('number_of_visits');
 
@@ -226,11 +228,16 @@ class OrdersController extends Controller
 
     public function delete(Request $request) {
         $order = Order::find($request->order_id);
+        if (!$order) {
+            return response()->json(['error' => '注文が見つかりません'], 404);
+        }
         $invoice_id = $order->invoice_id;
 
         $customer = Customer::find($request->customer_id);
-        $customer->decrement('total_sales', $order->amount);
-        $customer->decrement('number_of_visits');
+        if ($customer) {
+            $customer->decrement('total_sales', $order->amount);
+            $customer->decrement('number_of_visits');
+        }
         $order->delete();
 
         if (!is_null($invoice_id) && !Order::where('invoice_id', $invoice_id)->exists()) {
@@ -243,7 +250,6 @@ class OrdersController extends Controller
     }
 
     public function updateTag(Request $request) {
-        Log::debug($request->tag);
         $model = OrderClothes::find($request->id);
         $model->tag = $request->tag;
         $model->save();
@@ -255,7 +261,15 @@ class OrdersController extends Controller
 
     public function fetchReceiptInfo($order_id) {
         $order = Order::find($order_id);
+        if (!$order) {
+            return response()->json(['error' => '注文が見つかりません'], 404);
+        }
+
         $customer = Customer::find($order->customer_id);
+        if (!$customer) {
+            return response()->json(['error' => '顧客が見つかりません'], 422);
+        }
+
         $store = Store::find($order->store_id);
         $manager_name = Manager::where('id', $customer->manager_id)->value('name');
         $tax = Tax::where('store_id', $order->store_id)->value('tax');

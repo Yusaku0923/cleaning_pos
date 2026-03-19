@@ -7,13 +7,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Log;
+use App\Models\Clothes;
 
 class Order extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'store_id',
+        'manager_id',
+        'customer_id',
+        'invoice_id',
+        'is_invoice',
+        'amount',
+        'reduction',
+        'discount',
+        'payment',
+        'paid_at',
+        'handed_at',
+        'note',
+        'created_at',
+    ];
 
     public function order_clothes() {
         return $this->hasMany(OrderClothes::class, 'order_id');
@@ -68,9 +82,7 @@ class Order extends Model
             }
             // has specified tag item
             if (!empty($where['tag'])) {
-                Log::debug($where['tag']);
                 $ids = $this->hasSpecifiedTag($customer_id, $where['tag']);
-                Log::debug($ids);
                 if (is_null($ids)) {
                     return [];
                 } else {
@@ -177,7 +189,7 @@ class Order extends Model
             $row = $list[$i];
             
             // clothes_id=999（スリーピースの追加パーツ）の場合は、前のレコードと結合
-            if ($row['clothes_id'] == 999 && count($result) > 0) {
+            if ($row['clothes_id'] == Clothes::MULTI_TAG_CLOTHES_ID && count($result) > 0) {
                 $lastIndex = count($result) - 1;
                 // 前のレコードのtag_endを更新
                 if ($this->compareTags($row['tag'], $result[$lastIndex]['tag_end']) > 0) {
@@ -447,7 +459,6 @@ class Order extends Model
             $query->where('orders.customer_id', $customer_id);
         }
         $query->where('order_clothes.tag', $tag);
-        Log::debug($query->toSql());
 
         return $query->get('id')->toArray();
     }

@@ -10,5 +10,8 @@ class TagNumber extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'manager_id',
+        'tag_number',
+    ];
 }

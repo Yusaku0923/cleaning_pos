@@ -125,18 +125,18 @@ import OperateModal from "./Modals/InvoiceOperateModalComponent";
 export default ({
     props: {
         invoices: {
-            Type: Array,
+            type: Array,
             required: true
         },
         manager_id: {
             required: true
         },
         token: {
-            Type: String,
+            type: String,
             required: true,
         },
         theme: {
-            Type: String,
+            type: String,
             required: true
         }
     },

@@ -170,7 +170,7 @@ export default ({
             }
         },
         isWaiting4PayCheck: function () {
-            if (Boolean(this.customer.needs_payment_confimation) && this.order.invoice_id !== null && this.order.paid_at === null) {
+            if (Boolean(this.customer.needs_payment_confirmation) && this.order.invoice_id !== null && this.order.paid_at === null) {
                 return true;
             } else {
                 return false;

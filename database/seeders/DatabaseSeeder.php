@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateDeafaultStore::class);
         $this->call(CreateDefaultManager::class);
         $this->call(CreateSampleCategories::class);
+        $this->call(DeliveryDataSeeder::class);
     }
 }

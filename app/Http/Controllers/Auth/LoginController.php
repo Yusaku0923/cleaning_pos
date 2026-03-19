@@ -28,6 +28,13 @@ class LoginController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
+    protected function redirectTo()
+    {
+        $ua = request()->header('User-Agent', '');
+        $isMobile = (bool) preg_match('/iPhone|Android.*Mobile/i', $ua);
+        return $isMobile ? '/delivery/sp/choice' : '/home';
+    }
+
     /**
      * Create a new controller instance.
      *

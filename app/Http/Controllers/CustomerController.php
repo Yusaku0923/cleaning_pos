@@ -165,7 +165,7 @@ class CustomerController extends Controller
         $customer->name_kana = mb_convert_kana($request->name_kana, 'rnk');
         $customer->phone_number = $request->phone_number;
         $customer->is_invoice = (boolean)$request->is_invoice;
-        $customer->needs_payment_confimation = (boolean)$request->check_payment;
+        $customer->needs_payment_confirmation = (boolean)$request->check_payment;
         $customer->needs_return_confimation = (boolean)$request->check_return;
         $customer->cutoff_date = $request->cutoff_date;
         $customer->save();

@@ -11,7 +11,10 @@ class Category extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'store_id',
+        'name',
+    ];
 
     public function clothes()
     {
@@ -21,7 +24,6 @@ class Category extends Model
     public function getAllWithClothes()
     {
         $categories = Category::get();
-        dd($categories);
 
         return $categories;
     }

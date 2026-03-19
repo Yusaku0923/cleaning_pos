@@ -199,7 +199,7 @@
                         @php
                             if ($prev_order === $daily_orders[$i]['order_id']) {
                                 $disp_customer = false;
-                                if ($prev_clothes === $daily_orders[$i]['clothes_id'] || $daily_orders[$i]['clothes_id'] === 999) {
+                                if ($prev_clothes === $daily_orders[$i]['clothes_id'] || $daily_orders[$i]['clothes_id'] == \App\Models\Clothes::MULTI_TAG_CLOTHES_ID) {
                                     $disp_clothes = false;
                                 } else {
                                     $disp_clothes = true;

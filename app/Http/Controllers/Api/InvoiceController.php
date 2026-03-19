@@ -69,7 +69,6 @@ class InvoiceController extends Controller
     }
 
     public function align_cutoff_date(Request $request, Invoice $INVOICE) {
-        \Log::debug("message");
         $invoices = $request->invoices;
         foreach ($invoices as $invoice_id) {
             // 対象の請求書とその配下の注文を取得

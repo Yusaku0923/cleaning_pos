@@ -51,11 +51,11 @@
                             <label for="check_payment" class="form-label fs-20 fw-bold">入金確認</label>
                             <div class="col-8 d-flex fs-20">
                                 <div class="col-6">
-                                    <input type="radio" id="check_payment_true" class="form-check-input" name="check_payment" value="1" {{ (boolean)$customer->needs_payment_confimation ? 'checked': '' }} />
+                                    <input type="radio" id="check_payment_true" class="form-check-input" name="check_payment" value="1" {{ (boolean)$customer->needs_payment_confirmation ? 'checked': '' }} />
                                     <label for="check_payment_true">する</label>
                                 </div>
                                 <div class="col-6">
-                                    <input type="radio" id="check_payment_false" class="form-check-input" name="check_payment" value="0" {{ (boolean)$customer->needs_payment_confimation ? '': 'checked' }} />
+                                    <input type="radio" id="check_payment_false" class="form-check-input" name="check_payment" value="0" {{ (boolean)$customer->needs_payment_confirmation ? '': 'checked' }} />
                                     <label for="check_payment_false">しない</label>
                                 </div>
                             </div>

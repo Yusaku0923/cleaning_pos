@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="col-12 text-end px-3 mb-2">
+    <a href="{{ route('delivery.index') }}" class="btn btn-outline-success btn-sm">📋 納品書管理</a>
+</div>
 
 <invoice-component
     :manager_id="{{ json_encode(session()->get('manager_id')) }}"

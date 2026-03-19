@@ -11,7 +11,12 @@ class OrderClothes extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'order_clothes';
-    protected $guarded = [];
+    protected $fillable = [
+        'order_id',
+        'clothes_id',
+        'tag',
+        'handed_at',
+    ];
     
     public function clothes()
     {

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ClothesController;
 use App\Http\Controllers\Api\CustomerInformationController;
 use App\Http\Controllers\Api\CustomerDisplayController;
 use App\Http\Controllers\Api\ClientErrorController;
+use App\Http\Controllers\Api\DeliveryEntryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,8 +50,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('return/update', [ReturnController::class, 'update'])->name('return.update');
     
     Route::post('broadcast', [CustomerDisplayController::class, 'broadcast'])->name('customer_display.broadcast');
+    Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
+
+    // Delivery note system API
+    Route::get('delivery/customers', [DeliveryEntryController::class, 'customers'])->name('delivery.customers');
+    Route::get('delivery/customers/{id}/departments', [DeliveryEntryController::class, 'departments'])->name('delivery.departments');
+    Route::get('delivery/entries', [DeliveryEntryController::class, 'index'])->name('delivery.entries.index');
+    Route::post('delivery/entries', [DeliveryEntryController::class, 'store'])->name('delivery.entries.store');
+    Route::get('delivery/entry-status', [DeliveryEntryController::class, 'entryStatus'])->name('delivery.entry_status');
+    Route::get('delivery/preview', [DeliveryEntryController::class, 'preview'])->name('delivery.preview');
 });
-Route::get('receipt/{order_id}', [OrdersController::class, 'fetchReceiptInfo'])->name('order.receipt');
 
 // クライアントエラー収集（認証なしで受け付ける）
 Route::post('client-error', [ClientErrorController::class, 'store'])->name('client_error.store');
