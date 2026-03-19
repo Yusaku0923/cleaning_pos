@@ -14,6 +14,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\IpaddressController;
 use App\Http\Controllers\CacheController;
 use App\Http\Controllers\DeliveryNoteController;
+use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,7 @@ Auth::routes([
 ]);
 
 Route::get('/customer_display', [HomeController::class, 'customer_display'])->name('customer_display');
+Route::get('/login/auto', [LoginController::class, 'autoLogin'])->name('login.auto')->middleware('guest');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');

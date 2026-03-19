@@ -49,8 +49,8 @@
     <table class="doc-meta-inner" style="border:none; margin-bottom:8px;">
         <tr>
             <td style="border:none; padding:0;">
-                期間：<span class="num">{{ \Carbon\Carbon::parse($periodStart)->format('Y年n月j日') }}</span>
-                〜 <span class="num">{{ \Carbon\Carbon::parse($periodEnd)->format('Y年n月j日') }}</span>
+                期間：<span class="num">{{ \Carbon\Carbon::parse($periodStart)->format('Y') }}</span>年<span class="num">{{ \Carbon\Carbon::parse($periodStart)->format('n') }}</span>月<span class="num">{{ \Carbon\Carbon::parse($periodStart)->format('j') }}</span>日
+                〜 <span class="num">{{ \Carbon\Carbon::parse($periodEnd)->format('Y') }}</span>年<span class="num">{{ \Carbon\Carbon::parse($periodEnd)->format('n') }}</span>月<span class="num">{{ \Carbon\Carbon::parse($periodEnd)->format('j') }}</span>日
             </td>
             <td style="border:none; padding:0; text-align:right;">
                 No. <span class="num bold">{{ $note->note_number }}</span>
