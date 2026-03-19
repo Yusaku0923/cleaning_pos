@@ -34,7 +34,7 @@ class LoginController extends Controller
     {
         $ua = request()->header('User-Agent', '');
         $isMobile = (bool) preg_match('/iPhone|Android.*Mobile/i', $ua);
-        return $isMobile ? '/delivery/sp/choice' : '/home';
+        return $isMobile ? '/delivery/sp/choice' : '/';
     }
 
     /**
