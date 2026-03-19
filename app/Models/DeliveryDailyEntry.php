@@ -12,7 +12,7 @@ class DeliveryDailyEntry extends Model
 
     public function product()
     {
-        return $this->belongsTo(DeliveryProduct::class);
+        return $this->belongsTo(DeliveryProduct::class, 'delivery_product_id');
     }
 
     public function deliveryNote()

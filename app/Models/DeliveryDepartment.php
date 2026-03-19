@@ -10,7 +10,7 @@ class DeliveryDepartment extends Model
 
     public function customer()
     {
-        return $this->belongsTo(DeliveryCustomer::class);
+        return $this->belongsTo(DeliveryCustomer::class, 'delivery_customer_id');
     }
 
     public function products()

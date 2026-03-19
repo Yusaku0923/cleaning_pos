@@ -1,0 +1,12 @@
+{
+  "name": "cleaning-pos-e2e",
+  "scripts": {
+    "test": "playwright test",
+    "test:delivery": "playwright test tests/delivery.spec.js",
+    "test:ui": "playwright test --ui",
+    "debug": "playwright test --debug tests/delivery.spec.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}

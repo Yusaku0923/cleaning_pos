@@ -12,7 +12,7 @@ class DeliveryProduct extends Model
 
     public function department()
     {
-        return $this->belongsTo(DeliveryDepartment::class);
+        return $this->belongsTo(DeliveryDepartment::class, 'delivery_department_id');
     }
 
     public function dailyEntries()
