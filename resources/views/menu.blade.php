@@ -11,7 +11,10 @@
         <a href="{{ route('clothes.create') }}" class="card col-5 fs-26 p-4 cbtn cbtn-blue text-center">商品マスタ</a>
     </div>
     <div class="col-12 d-flex justify-content-around mx-auto mb-3">
+        <a href="{{ route('delivery.index') }}" class="card col-5 fs-26 p-4 cbtn cbtn-green text-center">納品書管理</a>
         <a href="{{ route('receipt.edit') }}" class="card col-5 fs-26 p-4 cbtn cbtn-blue text-center">レシート設定</a>
+    </div>
+    <div class="col-12 d-flex justify-content-around mx-auto mb-3">
         <button id="browser-cache-clear-btn" class="card col-5 fs-26 p-4 cbtn cbtn-yellow text-center" style="border: none; cursor: pointer;">
             ブラウザキャッシュクリア
         </button>

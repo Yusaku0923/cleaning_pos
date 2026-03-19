@@ -97,6 +97,23 @@ class DeliveryEntryController extends Controller
     }
 
     /**
+     * 日次入力削除（顧客ID・日付で一括削除）
+     */
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required|exists:delivery_customers,id',
+            'date' => 'required|date',
+        ]);
+
+        DeliveryDailyEntry::whereHas('product.department', function ($q) use ($request) {
+            $q->where('delivery_customer_id', $request->customer_id);
+        })->where('date', $request->date)->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    /**
      * 集計プレビュー（iPad管理画面用）
      */
     public function preview(Request $request)

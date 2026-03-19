@@ -57,6 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('delivery/customers/{id}/departments', [DeliveryEntryController::class, 'departments'])->name('delivery.departments');
     Route::get('delivery/entries', [DeliveryEntryController::class, 'index'])->name('delivery.entries.index');
     Route::post('delivery/entries', [DeliveryEntryController::class, 'store'])->name('delivery.entries.store');
+    Route::delete('delivery/entries', [DeliveryEntryController::class, 'destroy'])->name('delivery.entries.destroy');
     Route::get('delivery/entry-status', [DeliveryEntryController::class, 'entryStatus'])->name('delivery.entry_status');
     Route::get('delivery/preview', [DeliveryEntryController::class, 'preview'])->name('delivery.preview');
 });

@@ -30,12 +30,13 @@
         <div v-else>
           <div v-for="d in entryDates" :key="d.date"
                class="card mb-2"
-               @click="selectDate(d.date)"
-               style="cursor:pointer; padding: 14px 18px;">
+               style="padding: 14px 18px;">
             <div class="d-flex align-items-center justify-content-between">
-              <span style="font-size: 18px;">{{ formatDate(d.date) }}</span>
-              <span v-if="d.finalized" style="font-size: 20px; color: #1976D2;">✅ 確定済</span>
-              <span v-else style="font-size: 20px; color: #388E3C;">✅ 入力済</span>
+              <span style="font-size: 18px; flex:1; cursor:pointer;" @click="selectDate(d.date)">{{ formatDate(d.date) }}</span>
+              <span v-if="d.finalized" style="font-size: 20px; color: #1976D2; margin-right: 12px;">✅ 確定済</span>
+              <span v-else style="font-size: 20px; color: #388E3C; margin-right: 12px;" @click="selectDate(d.date)">✅ 入力済</span>
+              <button class="btn btn-outline-danger btn-sm" style="font-size:16px; padding: 6px 14px;"
+                @click.stop="deleteDate(d.date)">削除</button>
             </div>
           </div>
           <div v-if="entryDates.length === 0" class="text-muted text-center py-3">入力済みデータはありません</div>
@@ -167,6 +168,19 @@ export default {
     setQuantity(productId, value) {
       const num = parseInt(value, 10);
       this.$set(this.quantities, productId, isNaN(num) || num < 0 ? 0 : num);
+    },
+    async deleteDate(date) {
+      if (!confirm(`${this.formatDate(date)} のデータを削除しますか？`)) return;
+      try {
+        await axios.delete('/api/delivery/entries', {
+          data: { customer_id: this.selectedCustomer.id, date },
+          headers: { Authorization: `Bearer ${this.token}` },
+          withCredentials: true,
+        });
+        await this.fetchEntryDates();
+      } catch (e) {
+        alert('削除に失敗しました。');
+      }
     },
     async save() {
       this.saving = true;
