@@ -18,8 +18,6 @@ class ClientError extends Model
         'user_agent',
         'manager_id',
         'extra_data',
-        'created_at',
-        'updated_at',
     ];
 
     protected $casts = [

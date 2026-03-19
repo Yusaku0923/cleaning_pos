@@ -29,21 +29,13 @@ class ClientErrorLogTest extends TestCase
 
     public function test_prune_expired_deletes_records_older_than_30_days(): void
     {
-        // 31日前のレコードを直接作成
-        ClientError::create([
-            'error_type' => 'server_error',
-            'message'    => 'Old error',
-            'created_at' => now()->subDays(31),
-            'updated_at' => now()->subDays(31),
-        ]);
+        // 31日前に移動してレコードを作成
+        $this->travel(-31)->days();
+        ClientError::create(['error_type' => 'server_error', 'message' => 'Old error']);
+        $this->travelBack();
 
-        // 1日前のレコード（残るべき）
-        ClientError::create([
-            'error_type' => 'server_error',
-            'message'    => 'Recent error',
-            'created_at' => now()->subDays(1),
-            'updated_at' => now()->subDays(1),
-        ]);
+        // 現在時刻でレコードを作成（残るべき）
+        ClientError::create(['error_type' => 'server_error', 'message' => 'Recent error']);
 
         ClientError::pruneExpired();
 
@@ -53,12 +45,10 @@ class ClientErrorLogTest extends TestCase
 
     public function test_prune_expired_keeps_records_exactly_30_days_old(): void
     {
-        ClientError::create([
-            'error_type' => 'server_error',
-            'message'    => 'Boundary error',
-            'created_at' => now()->subDays(30)->addSecond(),
-            'updated_at' => now()->subDays(30)->addSecond(),
-        ]);
+        // 30日前より1秒後（境界値：残るべき）
+        $this->travelTo(now()->subDays(30)->addSecond());
+        ClientError::create(['error_type' => 'server_error', 'message' => 'Boundary error']);
+        $this->travelBack();
 
         ClientError::pruneExpired();
 
