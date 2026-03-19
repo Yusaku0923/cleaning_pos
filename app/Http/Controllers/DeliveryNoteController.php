@@ -62,7 +62,7 @@ class DeliveryNoteController extends Controller
         $pdf->setPaper('A4', 'portrait');
 
         $filename = "納品書_{$customer->name}_No{$note->note_number}.pdf";
-        return $pdf->download($filename);
+        return $pdf->stream($filename);
     }
 
     /** メール送信確認・本文編集ページ */

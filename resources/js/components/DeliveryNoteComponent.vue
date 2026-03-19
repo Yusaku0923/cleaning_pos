@@ -67,12 +67,10 @@
 
         <!-- PDF・メールボタン -->
         <div class="d-flex gap-2 mt-3">
-          <form :action="`/delivery/notes/${customer.id}/pdf`" method="POST">
-            <input type="hidden" name="_token" :value="csrf">
-            <input type="hidden" name="period_start" :value="periodStart">
-            <input type="hidden" name="period_end" :value="periodEnd">
-            <button type="submit" class="btn btn-danger">📄 PDFダウンロード</button>
-          </form>
+          <a :href="`/delivery/notes/${customer.id}/pdf?period_start=${periodStart}&period_end=${periodEnd}`"
+             target="_blank" rel="noopener noreferrer" class="btn btn-danger">
+            📄 PDF表示
+          </a>
           <button class="btn btn-outline-success" :disabled="!customer.email" @click="showEmailForm = true">
             📧 メール送信 {{ !customer.email ? '（メアド未設定）' : '' }}
           </button>

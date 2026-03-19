@@ -106,7 +106,7 @@ Route::delete('delete/{id}', [CustomerController::class, 'destroy'])->name('cust
     Route::prefix('delivery')->group(function () {
         Route::get('/', [DeliveryNoteController::class, 'index'])->name('delivery.index');
         Route::get('notes/{customer}', [DeliveryNoteController::class, 'notes'])->name('delivery.notes');
-        Route::post('notes/{customer}/pdf', [DeliveryNoteController::class, 'downloadPdf'])->name('delivery.pdf');
+        Route::get('notes/{customer}/pdf', [DeliveryNoteController::class, 'downloadPdf'])->name('delivery.pdf');
         Route::get('notes/{customer}/email', [DeliveryNoteController::class, 'emailForm'])->name('delivery.email_form');
         Route::post('notes/{customer}/email', [DeliveryNoteController::class, 'sendEmail'])->name('delivery.email_send');
         Route::get('email-logs', [DeliveryNoteController::class, 'emailLogs'])->name('delivery.email_logs');
