@@ -24,6 +24,8 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
+            // Laravel の $internalDontReport が reportable() より先にこれらをフィルタリングするため、
+            // 通常このガードは実行されない。将来の変更に備えた防衛的チェックとして残す。
             $skip = [
                 ValidationException::class,
                 AuthenticationException::class,
