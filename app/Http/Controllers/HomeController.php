@@ -16,8 +16,13 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
+        $ua = $request->header('User-Agent', '');
+        if (preg_match('/iPhone|Android.*Mobile/i', $ua)) {
+            return redirect()->route('delivery.sp.choice');
+        }
+
         $model = new Order;
         $managers = Manager::where('store_id', Auth::id())->get();
         if (session()->exists('manager_id')) {
