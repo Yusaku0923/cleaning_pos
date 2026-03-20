@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateDefaultManager::class);
         $this->call(CreateSampleCategories::class);
         $this->call(DeliveryDataSeeder::class);
+        $this->call(SKUniformSeeder::class);
     }
 }
