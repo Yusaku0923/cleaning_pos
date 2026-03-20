@@ -32,10 +32,12 @@ class DeliveryNoteController extends Controller
         $request->validate([
             'period_start' => 'required|date',
             'period_end' => 'required|date|after_or_equal:period_start',
+            'cutoff_date' => 'nullable|date',
         ]);
 
         $periodStart = $request->period_start;
         $periodEnd = $request->period_end;
+        $cutoffDate = $request->cutoff_date ?? $periodEnd;
 
         // 既存の納品書を検索、なければcreateWithNumberで採番して作成
         $note = DeliveryNote::where('delivery_customer_id', $customer->id)
@@ -58,7 +60,7 @@ class DeliveryNoteController extends Controller
         // 消費税計算
         $taxGroups = $this->calcTax($entries);
 
-        $pdf = Pdf::loadView('delivery.pdf', compact('customer', 'note', 'entries', 'taxGroups', 'periodStart', 'periodEnd'));
+        $pdf = Pdf::loadView('delivery.pdf', compact('customer', 'note', 'entries', 'taxGroups', 'periodStart', 'periodEnd', 'cutoffDate'));
         $pdf->setPaper('A4', 'portrait');
 
         $filename = "納品書_{$customer->name}_No{$note->note_number}.pdf";

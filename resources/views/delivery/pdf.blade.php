@@ -16,19 +16,33 @@
             font-weight: normal;
             src: url('{{ storage_path('fonts/migmix-2m-bold.ttf') }}');
         }
-        body { font-family: migmix; line-height: 80%; margin: 15px 20px; }
+        body { font-family: migmix; line-height: 80%; page-break-inside: avoid; position: relative; margin: 15px 20px; }
         .bold-font { font-family: migmix-bold !important; }
         .number-font { font-family: Arial, Helvetica, sans-serif !important; }
         .text-end { text-align: right !important; }
+        .text-start { text-align: left !important; }
         .text-center { text-align: center; }
+        .normal-font { font-family: migmix !important; }
 
-        .doc-title { font-family: migmix-bold; font-size: 24px; text-align: center; margin-bottom: 5px; border-bottom: 1px solid #000; display: inline-block; padding: 0 20px 3px 20px; }
-        .doc-title-wrap { text-align: center; margin-bottom: 4px; }
-        .date-field { text-align: center; margin-bottom: 8px; font-size: 14px; }
-        .date-blank { display: inline-block; border-bottom: 1px solid #000; min-width: 30px; text-align: center; margin: 0 2px; }
-        .doc-meta-inner { width: 100%; }
-        .customer-block { font-size: 18px; }
-        .store-block { text-align: right; font-size: 13px; }
+        .date { position: absolute; top: 0; right: 0; }
+        .title { width: 100%; text-align: center; position: relative; }
+        .title-label { font-size: 24px; border-bottom: 1px solid #000000; display: inline-block; padding: 0 10px 3px 10px; margin-bottom: 5px; }
+        .cutoff { width: 100%; text-align: center; position: relative; font-size: 18px; }
+        .no { position: absolute; top: 30px; right: 0; font-size: 16px; border-bottom: 1px solid #000000; padding: 0 3px 2px 3px; }
+        .store_name { position: absolute; top: 58px; left: 360px; }
+        .manager_name { position: absolute; top: 58px; right: 0; }
+        .address { position: absolute; top: 76px; left: 360px; }
+        .customer_name { white-space: pre-wrap; position: absolute; top: 90px; left: 0; font-size: 18px; }
+        .invoice_num { position: absolute; top: 130px; left: 360px; }
+        .tel { position: absolute; top: 94px; left: 360px; }
+        .fax { position: absolute; top: 94px; right: 0; }
+        .square-field { position: absolute; top: 118px; right: 0; width: 105px; }
+        .square-right { width: 50px; height: 50px; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; float: right; }
+        .square-left { width: 50px; height: 50px; border: 1px solid #000000; float: right; }
+
+        .header-area { position: relative; height: 190px; }
+
+        .period-info { margin-bottom: 6px; font-size: 13px; }
 
         table { border-collapse: collapse; width: 100%; border: 2px solid #000; }
         td { border: 1px solid #000; padding: 3px 6px; }
@@ -49,35 +63,39 @@
     </style>
 </head>
 <body>
-    <div class="doc-title-wrap">
-        <span class="doc-title">納　品　書</span>
-    </div>
-    <div class="date-field">
-        <span class="date-blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>年
-        <span class="date-blank">&nbsp;&nbsp;</span>月
-        <span class="date-blank">&nbsp;&nbsp;</span>日
-    </div>
+    <div class="header-area">
+        <div class="date number-font">
+            <div class="date-label">({{ date('Y/m/d') }})</div>
+        </div>
+        <div class="title">
+            <div class="title-label bold-font">＊ ＊ 請求書 ＊ ＊</div>
+        </div>
 
-    <table class="doc-meta-inner" style="border:none; margin-bottom:6px;">
-        <tr>
-            <td style="border:none; padding:0;">
-                期間：<span class="number-font">{{ \Carbon\Carbon::parse($periodStart)->format('Y') }}</span>年<span class="number-font">{{ \Carbon\Carbon::parse($periodStart)->format('n') }}</span>月<span class="number-font">{{ \Carbon\Carbon::parse($periodStart)->format('j') }}</span>日
-                〜 <span class="number-font">{{ \Carbon\Carbon::parse($periodEnd)->format('Y') }}</span>年<span class="number-font">{{ \Carbon\Carbon::parse($periodEnd)->format('n') }}</span>月<span class="number-font">{{ \Carbon\Carbon::parse($periodEnd)->format('j') }}</span>日
-            </td>
-            <td style="border:none; padding:0; text-align:right;">
-                No. <span class="number-font bold-font">{{ $note->note_number }}</span>
-            </td>
-        </tr>
-    </table>
+        <div class="cutoff">
+            <div class="cutoff-label">
+                <span class="number-font">{{ \Carbon\Carbon::parse($cutoffDate)->format('Y') }}</span>年<span class="number-font">{{ \Carbon\Carbon::parse($cutoffDate)->format('n') }}</span>月<span class="number-font">{{ \Carbon\Carbon::parse($cutoffDate)->format('j') }}</span>日締
+            </div>
+        </div>
 
-    <table class="header-box" style="border:none; margin-bottom:8px;">
-        <tr>
-            <td style="border:none; padding:0;" class="customer-block bold-font">{{ $customer->name }} 御中</td>
-            <td style="border:none; padding:0; text-align:right;" class="store-block">
-                あさひ屋クリーニング
-            </td>
-        </tr>
-    </table>
+
+        <div class="store_name">{{ Auth::user()->name }}</div>
+
+        <div class="manager_name">担当:中山謙二</div>
+
+        <div class="address">〒<span class="number-font">{{ Auth::user()->postal_code }}</span>　{{ Auth::user()->address }}</div>
+
+        <div class="customer_name bold-font">{{ $customer->name }}　様</div>
+
+        <div class="invoice_num">登録番号:<span class="number-font">T8810957628818</span></div>
+
+        <div class="tel">TEL <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
+        <div class="fax">FAX <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
+
+        <div class="square-field">
+            <div class="square-left"></div>
+            <div class="square-right"></div>
+        </div>
+    </div>
 
     <p style="font-size:11px; margin:4px 0 6px 0;">下記のとおり納品いたしました</p>
 
