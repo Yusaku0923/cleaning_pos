@@ -88,8 +88,7 @@
 
         <div class="invoice_num">登録番号:<span class="number-font">T8810957628818</span></div>
 
-        <div class="tel">TEL <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
-        <div class="fax">FAX <span class="number-font">{{ Auth::user()->phone_number }}</span></div>
+        <div class="tel">TEL <span class="number-font">0973-{{ Auth::user()->phone_number }}</span></div>
 
         <div class="square-field">
             <div class="square-left"></div>
@@ -97,7 +96,6 @@
         </div>
     </div>
 
-    <p style="font-size:11px; margin:4px 0 6px 0;">下記のとおり納品いたしました</p>
 
     <table>
         <thead>
