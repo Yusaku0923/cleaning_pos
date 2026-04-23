@@ -65,7 +65,7 @@
 <body>
     <div class="header-area">
         <div class="date number-font">
-            <div class="date-label">({{ date('Y/m/d') }})</div>
+            <div class="date-label"> </div>
         </div>
         <div class="title">
             <div class="title-label bold-font">＊ ＊ 請求書 ＊ ＊</div>
