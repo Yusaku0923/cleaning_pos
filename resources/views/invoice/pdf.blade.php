@@ -236,7 +236,7 @@ function replaceSpaceWithNewline($input) {
     <body>
         @foreach ($invoices as $invoice)
         <div class="date number-font">
-            {{-- <div class="date-label">({{ date('Y/m/d') }})</div> --}}
+            <div class="date-label"> </div>
         </div>
         <div class="count number-font">
             <div class="count-label">{{ $invoice['page_count'] }}/　{{ array_count_values(array_column($invoices, 'id'))[$invoice['id']] }}</div>
