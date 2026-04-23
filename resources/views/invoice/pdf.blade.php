@@ -239,7 +239,7 @@ function replaceSpaceWithNewline($input) {
             <div class="date-label">({{ date('Y/m/d') }})</div>
         </div>
         <div class="count number-font">
-            <div class="count-label">{{ $invoice['page_count'] }}/　{{ array_count_values(array_column($invoices, 'id'))[$invoice['id']] }}</div>
+            {{-- <div class="count-label">{{ $invoice['page_count'] }}/　{{ array_count_values(array_column($invoices, 'id'))[$invoice['id']] }}</div> --}}
         </div>
         <div class="title">
             <div class="title-label bold-font">＊ ＊ 請求書 ＊ ＊</div>
