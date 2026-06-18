@@ -197,7 +197,7 @@ export default ({
             this.showTagEditor = 0;
         },
         receiptReissue: function() {
-            this.$refs.child.printReceipt(this.order.id);
+            this.$refs.child.printReceipt(this.order.id, true); // 再発行のためisReissue=true
             this.$emit('close');
         },
     }

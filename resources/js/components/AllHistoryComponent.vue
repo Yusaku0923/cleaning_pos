@@ -136,6 +136,7 @@
             @updateTag="updateTag"
             :customer="customer"
             :order="selectedOrder"
+            :token="token"
             v-if="dispDetail"
         ></detail-modal>
     </div>
