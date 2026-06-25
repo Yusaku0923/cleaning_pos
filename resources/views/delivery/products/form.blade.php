@@ -25,7 +25,7 @@
             <select name="delivery_department_id" class="form-select @error('delivery_department_id') is-invalid @enderror">
                 <option value="">選択してください</option>
                 @foreach($departments as $department)
-                <option value="{{ $department->id }}" @selected((string)$selectedDept === (string)$department->id)>
+                <option value="{{ $department->id }}" {{ (string)$selectedDept === (string)$department->id ? 'selected' : '' }}>
                     {{ $department->name }}
                 </option>
                 @endforeach
@@ -50,8 +50,8 @@
         <div class="mb-3">
             <label class="form-label">税率</label>
             <select name="tax_rate" class="form-select @error('tax_rate') is-invalid @enderror">
-                <option value="0.10" @selected($selectedTax === '0.10')>10%</option>
-                <option value="0.08" @selected($selectedTax === '0.08')>8%（軽減税率）</option>
+                <option value="0.10" {{ $selectedTax === '0.10' ? 'selected' : '' }}>10%</option>
+                <option value="0.08" {{ $selectedTax === '0.08' ? 'selected' : '' }}>8%（軽減税率）</option>
             </select>
             @error('tax_rate')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>

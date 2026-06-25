@@ -39,6 +39,20 @@ class DeliveryProductControllerTest extends TestCase
         $customer->delete();
     }
 
+    public function test_create_page_has_no_unprocessed_blade_directive()
+    {
+        [$customer, $department] = $this->makeCustomerWithDepartment();
+
+        // @selected はLaravel9+のディレクティブ。L8では未処理のまま出力され、
+        // Vueが @ を v-on として解釈しテンプレートコンパイルが壊れ白画面になる。
+        $this->actingAsStore()
+            ->get("/delivery/{$customer->id}/products/create?department_id={$department->id}")
+            ->assertOk()
+            ->assertDontSee('@selected', false);
+
+        $customer->delete();
+    }
+
     public function test_can_store_product()
     {
         [$customer, $department] = $this->makeCustomerWithDepartment();
