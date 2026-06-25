@@ -32,12 +32,17 @@ php artisan test
 # or
 ./vendor/bin/phpunit
 
-# Run single test file
-php artisan test --filter=ExampleTest
+# Run single test file / single test
+php artisan test --filter=DeliveryEntryApiTest
+php artisan test --filter=DeliveryEntryApiTest::test_method_name
 
 # Clear all caches
 php artisan cache:clear && php artisan config:clear && php artisan view:clear
 ```
+
+Caches can also be cleared/rebuilt from the running app's UI — `CacheController`
+(routes `cache.clear`, `cache.build-vue`, `cache.clear-and-build`) shells out to
+`npm run prod` so staff can rebuild Vue assets without terminal access.
 
 ## Architecture
 
@@ -50,7 +55,10 @@ php artisan cache:clear && php artisan config:clear && php artisan view:clear
   - `Customer` - Customer management with cutoff date settings
   - `Clothes` - Clothing item catalog
   - `OrderClothes` - Pivot table linking orders to clothes with tag numbers
-- **Routes**: Web routes require auth; API routes use Sanctum authentication
+  - `DeliveryNote` / `DeliveryCustomer` / `DeliveryDailyEntry` / `DeliveryDepartment` / `DeliveryProduct` / `DeliveryEmailLog` - Separate delivery-note (納品書) subsystem with its own customer/product master, per-customer sequential note numbering (`DeliveryNote::createWithNumber` uses `lockForUpdate` in a transaction), PDF generation (dompdf), and email sending with logging
+  - `ClientError` - Stores JS errors collected from the browser
+- **Routes**: Web routes require `auth`; API routes use Sanctum (`auth:sanctum`). Exceptions: `customer_display`, `login.auto` (auto-login, `guest` only), and `client-error` (unauthenticated error ingestion) are public.
+- Most domain logic lives in the **Order/Invoice models**, not controllers — tag sorting/merging, carry-over math, and cutoff handling are model methods.
 
 ### Frontend (Vue.js 2)
 
@@ -61,14 +69,21 @@ php artisan cache:clear && php artisan config:clear && php artisan view:clear
   - `CustomerDisplayComponent.vue` - Customer-facing display
   - `InvoiceComponent.vue` - Invoice management
   - `ReturnComponent.vue` - Item return handling
-- Real-time updates via Pusher/Laravel Echo
+  - `DeliveryNoteComponent.vue` / `DeliverySpEntryComponent.vue` - Delivery-note management and mobile (SP) entry
+  - `Functions/ReceiptPrinter.vue` - Wraps the EPSON ePOS SDK (`epson.ePOSDevice`); reusable receipt-printing logic
+  - `Modals/` - Shared modal dialogs (accounting, discount, change, invoice operations, etc.)
+- Components are registered globally in `resources/js/app.js` with kebab-case names (e.g. `order-component`); add new components there.
+- `resources/js/utils/ErrorLogger.js` hooks `window.onerror`, unhandled promise rejections, and `console.error`/`warn`, batching them to the `client-error` API endpoint.
+- Real-time updates via Pusher/Laravel Echo (customer-facing display is driven by the `customer_display.broadcast` API endpoint).
 
 ### Key Domain Concepts
 
 - **Tag Numbers**: Format `X-XXX` (e.g., `8-873`). Wraps from `9-999` to `0-001`. Critical for receipt printing and item tracking.
 - **Cutoff Dates**: Customer billing cycles end on specific days (99 = end of month)
 - **Carry Over**: Invoices can carry unpaid amounts to subsequent periods
-- **Managers**: Store staff/managers who process orders
+- **Managers**: Store staff/managers who process orders (selected via `manager-select` flow before processing)
+- **Daily Report** (日報): `DailyReportController` aggregates a day's orders/payments; generated per date.
+- **Delivery Notes** (納品書): A parallel B2B billing flow distinct from the main POS order flow — recurring delivery customers, daily entries over a period, then a numbered note that can be PDF'd and emailed.
 
 ### Database
 

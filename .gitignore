@@ -18,3 +18,7 @@ import
 vetur.config.js
 public/js/app.js
 public/css/app.css
+
+# 接続情報・秘匿メモ（コミット禁止）
+/.secrets/
+*.local.md

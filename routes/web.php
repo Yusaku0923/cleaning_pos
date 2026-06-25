@@ -14,6 +14,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\IpaddressController;
 use App\Http\Controllers\CacheController;
 use App\Http\Controllers\DeliveryNoteController;
+use App\Http\Controllers\DeliveryProductController;
 use App\Http\Controllers\Auth\LoginController;
 
 /*
@@ -112,6 +113,13 @@ Route::delete('delete/{id}', [CustomerController::class, 'destroy'])->name('cust
         Route::get('email-logs', [DeliveryNoteController::class, 'emailLogs'])->name('delivery.email_logs');
         Route::get('sp/choice', [DeliveryNoteController::class, 'spChoice'])->name('delivery.sp.choice');
         Route::get('sp/entry', [DeliveryNoteController::class, 'spEntry'])->name('delivery.sp.entry');
+
+        // 商品マスタ管理（追加・編集）
+        Route::get('{customer}/products', [DeliveryProductController::class, 'index'])->name('delivery.products.index');
+        Route::get('{customer}/products/create', [DeliveryProductController::class, 'create'])->name('delivery.products.create');
+        Route::post('{customer}/products', [DeliveryProductController::class, 'store'])->name('delivery.products.store');
+        Route::get('{customer}/products/{product}/edit', [DeliveryProductController::class, 'edit'])->name('delivery.products.edit');
+        Route::put('{customer}/products/{product}', [DeliveryProductController::class, 'update'])->name('delivery.products.update');
     });
 
     if (config('app.env') === 'local') {

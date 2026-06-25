@@ -9,6 +9,9 @@
             <a href="{{ route('delivery.notes', $customer) }}" class="btn btn-primary">
                 集計・PDF出力
             </a>
+            <a href="{{ route('delivery.products.index', $customer) }}" class="btn btn-outline-secondary">
+                商品管理
+            </a>
         </div>
     </div>
     @endforeach
