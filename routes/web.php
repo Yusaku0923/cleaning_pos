@@ -36,7 +36,7 @@ Auth::routes([
 ]);
 
 Route::get('/customer_display', [HomeController::class, 'customer_display'])->name('customer_display');
-Route::get('/login/auto', [LoginController::class, 'autoLogin'])->name('login.auto')->middleware('guest');
+Route::get('/login/auto', [LoginController::class, 'autoLogin'])->name('login.auto')->middleware(['guest', 'throttle:10,1']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');

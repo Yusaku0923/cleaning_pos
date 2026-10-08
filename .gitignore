@@ -30,3 +30,4 @@ public/css/app.css
 /.env.vps
 /deploy/initdb/*.sql
 /deploy/initdb/*.sql.gz
+/backups/

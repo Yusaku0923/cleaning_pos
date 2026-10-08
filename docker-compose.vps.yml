@@ -17,6 +17,36 @@ services:
       - "${APP_PORT:-8000}:80"
     volumes:
       - app-storage:/var/www/html/storage
+    restart: unless-stopped
+  # 古い API トークンの掃除(日次)。XREA の cron の代わり
+  scheduler:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+      args:
+        ENV_FILE: deploy/.env.build
+    env_file: .env.vps
+    environment:
+      DB_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["sh", "-c", "while true; do php artisan command:DeletePersonalAccessToken; sleep 86400; done"]
+    restart: unless-stopped
+  # HTTPS(ドメイン取得後に SITE_ADDRESS=your.example.com で有効化): --profile https
+  caddy:
+    image: caddy:2
+    profiles: ["https"]
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    depends_on: [app]
+    restart: unless-stopped
   db:
     image: mariadb:10.6
     environment:
@@ -28,10 +58,12 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       - ./deploy/initdb:/docker-entrypoint-initdb.d:ro
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
       retries: 20
 volumes:
+  caddy-data:
   app-storage:
   db-data:

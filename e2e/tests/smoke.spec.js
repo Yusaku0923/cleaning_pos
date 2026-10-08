@@ -28,6 +28,27 @@ test.describe('認証', () => {
     await page.goto('/login/auto?id=nobody@example.com&pass=wrong');
     await expect(page).toHaveURL(/\/login/);
   });
+
+  test('/login/auto は正しい資格情報でログインでき、Referer を送らせない', async ({ request }) => {
+    const url = `/login/auto?id=${encodeURIComponent(EMAIL)}&pass=${encodeURIComponent(PASSWORD)}`;
+    let res = await request.get(url, { maxRedirects: 0 });
+    if (res.status() === 429) { // 直前の実行の制限が残っている場合は解除を待つ
+      test.setTimeout(90000);
+      await new Promise((r) => setTimeout(r, (Number(res.headers()['retry-after']) || 60) * 1000 + 500));
+      res = await request.get(url, { maxRedirects: 0 });
+    }
+    expect(res.status()).toBe(302);
+    expect(res.headers()['referrer-policy']).toBe('no-referrer');
+    expect(res.headers()['location']).not.toMatch(/\/login$/);
+  });
+
+  test('/login/auto は連続した誤り試行を 429 で制限する', async ({ request }) => {
+    const codes = [];
+    for (let i = 0; i < 14; i++) {
+      codes.push((await request.get('/login/auto?id=x@example.com&pass=bad', { maxRedirects: 0 })).status());
+    }
+    expect(codes).toContain(429);
+  });
 });
 
 const PAGES = [
@@ -87,4 +108,13 @@ test('ログアウトできる', async ({ page }) => {
   expect(res.status()).toBeLessThan(500);
   await page.goto('/menu');
   await expect(page).toHaveURL(/\/login/);
+});
+
+test('APIトークンはページ表示のたびに増えず、同一セッションで再利用される', async ({ page }) => {
+  await login(page);
+  await selectManagerAndCustomer(page, 'E2E顧客');
+  const tokenOf = async () => (await (await page.request.get('/order/create')).text()).match(/:token="&quot;(.+?)&quot;"/)[1];
+  const a = await tokenOf();
+  const b = await tokenOf();
+  expect(b).toBe(a);
 });

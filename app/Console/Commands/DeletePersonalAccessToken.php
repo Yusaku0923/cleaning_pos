@@ -19,7 +19,7 @@ class DeletePersonalAccessToken extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = '7日以上前に発行された API トークンを削除する';
 
     /**
      * Create a new command instance.
@@ -38,6 +38,11 @@ class DeletePersonalAccessToken extends Command
      */
     public function handle()
     {
-        DB::table('personal_access_tokens')->truncate();
+        // 全削除(truncate)だと、開きっぱなしの画面のトークンが深夜に突然無効になるため、
+        // 古いものだけ消す。トークンはセッション内で再利用される(Utility::fetchApiToken)。
+        $deleted = DB::table('personal_access_tokens')
+            ->where('created_at', '<', now()->subDays(7))
+            ->delete();
+        $this->info("deleted {$deleted} tokens");
     }
 }

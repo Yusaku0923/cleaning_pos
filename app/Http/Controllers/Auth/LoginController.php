@@ -54,11 +54,15 @@ class LoginController extends Controller
             'password' => $request->query('pass'),
         ];
 
+        // 資格情報がURLに載るため、リンク先へ Referer として漏れないようにする。
+        // (既存端末のブックマーク互換のため仕組み自体は維持。総当たり対策は throttle で行う)
+        $noReferrer = ['Referrer-Policy' => 'no-referrer'];
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect($this->redirectTo());
+            return redirect($this->redirectTo())->withHeaders($noReferrer);
         }
 
-        return redirect()->route('login');
+        return redirect()->route('login')->withHeaders($noReferrer);
     }
 }

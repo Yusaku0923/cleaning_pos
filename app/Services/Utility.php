@@ -4,6 +4,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Store;
+use Laravel\Sanctum\PersonalAccessToken;
 use App\Events\CustomerDisplay;
 
 class Utility
@@ -50,11 +51,25 @@ class Utility
         return [$period_start, $period_end];
     }
 
+    /**
+     * 画面から /api を叩くための Sanctum トークン。
+     * 以前は表示のたびに発行しており personal_access_tokens が際限なく増えていたため、
+     * セッション内で再利用し、失効(日次の全削除など)していた場合のみ再発行する。
+     */
     public static function fetchApiToken() {
-        $store = Store::find(Auth::id());
-        $token = $store->createToken(Str::random(10));
+        $plain = session('api_token');
+        if ($plain) {
+            $existing = PersonalAccessToken::findToken($plain);
+            if ($existing && (int)$existing->tokenable_id === (int)Auth::id()) {
+                return $plain;
+            }
+        }
 
-        return $token->plainTextToken;
+        $store = Store::find(Auth::id());
+        $plain = $store->createToken(Str::random(10))->plainTextToken;
+        session(['api_token' => $plain]);
+
+        return $plain;
     }
 
     public static function sendWebSocket($body) {

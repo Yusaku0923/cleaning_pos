@@ -1,0 +1,10 @@
+# HTTPS 終端。ドメイン取得後は :80 を your.example.com に置き換えると証明書が自動取得される。
+# ドメイン無しのうちは HTTP のまま(EPSON プリンタ直結のため。docs/vps-migration.md 参照)。
+{$SITE_ADDRESS::80} {
+	encode gzip
+	reverse_proxy app:80
+	header {
+		X-Content-Type-Options nosniff
+		-Server
+	}
+}
