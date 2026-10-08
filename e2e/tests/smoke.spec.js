@@ -3,30 +3,7 @@
 // 全画面が 5xx/JSエラー無しで開き、Vue がマウントされることを確認する。
 const { test, expect } = require('@playwright/test');
 
-const EMAIL = process.env.E2E_EMAIL || 'test@gmail.com';
-const PASSWORD = process.env.E2E_PASSWORD || 'Test123456';
-
-// 外部(EPSONプリンタ/Pusher)への接続失敗は環境依存なので無視する
-const IGNORED_ERRORS = [/epson/i, /pusher/i, /WebSocket/i, /ERR_CONNECTION/i, /ERR_NAME_NOT_RESOLVED/i, /Failed to load resource/i];
-
-async function login(page) {
-  await page.goto('/login');
-  await page.fill('input[name="email"]', EMAIL);
-  await page.fill('input[name="password"]', PASSWORD);
-  await Promise.all([
-    page.waitForURL((u) => !u.pathname.startsWith('/login'), { timeout: 15000 }),
-    page.click('button[type="submit"]'),
-  ]);
-}
-
-function collectErrors(page) {
-  const errors = [];
-  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
-  page.on('console', (m) => {
-    if (m.type() === 'error' && !IGNORED_ERRORS.some((r) => r.test(m.text()))) errors.push(`console: ${m.text()}`);
-  });
-  return errors;
-}
+const { EMAIL, PASSWORD, login, collectErrors, selectManagerAndCustomer } = require('./helpers');
 
 test.describe('認証', () => {
   test('未ログインは /login にリダイレクトされる', async ({ page }) => {
@@ -76,12 +53,14 @@ test.describe('主要画面が開く', () => {
     test(`${name} (${path})`, async ({ page }) => {
       const errors = collectErrors(page);
       await login(page);
+      await selectManagerAndCustomer(page, 'E2E請求顧客'); // 担当者・顧客のセッションがある状態で全画面を開く
       const res = await page.goto(path);
       expect(res && res.status(), `${path} の HTTP ステータス`).toBeLessThan(400);
       await page.waitForLoadState('networkidle').catch(() => {});
       // レイアウトに本文が描画されていること(白画面の検知)
       const bodyText = (await page.locator('body').innerText()).trim();
       expect(bodyText.length, `${path} が白画面`).toBeGreaterThan(0);
+      expect(page.url(), `${path} がホームへ弾かれた`).toContain(path === '/' ? '' : path);
       expect(errors, `${path} でJSエラー`).toEqual([]);
     });
   }
