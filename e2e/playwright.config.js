@@ -8,6 +8,8 @@ if (/cleaningpossystem\.shop/.test(process.env.E2E_BASE_URL || '')) {
 
 module.exports = defineConfig({
   testDir: './tests',
+  globalSetup: require.resolve('./global-setup.js'),
+  retries: process.env.CI ? 2 : 1, // 失敗は trace を残して1回だけ再試行
   timeout: 30000,
   use: {
     baseURL: process.env.E2E_BASE_URL || 'http://localhost:8000',
@@ -15,6 +17,7 @@ module.exports = defineConfig({
     slowMo: Number(process.env.SLOWMO || 0),
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    trace: 'on-first-retry',
   },
   projects: [
     {
