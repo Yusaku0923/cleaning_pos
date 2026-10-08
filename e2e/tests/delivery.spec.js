@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
-const BASE = 'http://localhost:8000';
+const BASE = process.env.E2E_BASE_URL || 'http://localhost:8000';
 const EMAIL = 'test@gmail.com';
 const PASSWORD = 'Test123456';
 
@@ -13,6 +13,12 @@ async function login(page) {
   await page.click('button[type="submit"]');
   // ログイン後は /home or /delivery/sp/choice にリダイレクト
   await page.waitForURL(url => !url.href.includes('/login'), { timeout: 15000 });
+}
+
+/** 顧客が複数社ある場合は先頭の顧客を選ぶ(本番コピーDBは2社、開発DBは1社) */
+async function pickCustomer(page) {
+  const btn = page.locator('.sp-entry button.btn-outline-primary.w-100').first();
+  if (await btn.count()) await btn.click();
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -58,6 +64,7 @@ test('SP entry 画面に顧客・商品が表示される', async ({ page }) => 
   await page.goto(`${BASE}/delivery/sp/entry`);
   // Vue コンポーネントがマウントされるのを待つ
   await page.waitForSelector('.sp-entry', { timeout: 10000 });
+  await pickCustomer(page);
   // 日付ピッカーが表示されること
   await expect(page.locator('input[type="date"]')).toBeVisible();
   // 入力ボタンが表示されること
@@ -72,6 +79,7 @@ test('SP entry - 日付選択でフォームが開き商品が表示される', 
   await login(page);
   await page.goto(`${BASE}/delivery/sp/entry`);
   await page.waitForSelector('.sp-entry', { timeout: 10000 });
+  await pickCustomer(page);
 
   // 今日の日付をセット
   const today = new Date().toISOString().slice(0, 10);
@@ -95,6 +103,7 @@ test('SP entry - 数量を入力して保存できる', async ({ page }) => {
   await login(page);
   await page.goto(`${BASE}/delivery/sp/entry`);
   await page.waitForSelector('.sp-entry', { timeout: 10000 });
+  await pickCustomer(page);
 
   // テスト用日付（今日）
   const today = new Date().toISOString().slice(0, 10);
@@ -136,6 +145,7 @@ test('SP entry - 入力済み日付を削除できる', async ({ page }) => {
   await login(page);
   await page.goto(`${BASE}/delivery/sp/entry`);
   await page.waitForSelector('.sp-entry', { timeout: 10000 });
+  await pickCustomer(page);
 
   // 削除ボタンがあれば実行（入力済みデータが前提）
   const deleteBtn = page.locator('button:has-text("削除")').first();
@@ -162,6 +172,7 @@ test('API エラー時に「保存に失敗しました」アラートが表示�
   await login(page);
   await page.goto(`${BASE}/delivery/sp/entry`);
   await page.waitForSelector('.sp-entry', { timeout: 10000 });
+  await pickCustomer(page);
 
   // API をブロックして強制的にエラーにする
   await page.route('**/api/delivery/entries', route => {

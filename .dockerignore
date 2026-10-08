@@ -1,0 +1,8 @@
+vendor
+node_modules
+e2e
+.git
+.secrets
+.env*
+!.env.vps.example
+storage/logs/*
