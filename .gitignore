@@ -22,3 +22,8 @@ public/css/app.css
 # 接続情報・秘匿メモ（コミット禁止）
 /.secrets/
 *.local.md
+
+# E2E
+/e2e/node_modules/
+/e2e/test-results/
+/e2e/playwright-report/
