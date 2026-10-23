@@ -84,6 +84,28 @@ return [
             ]) : [],
         ],
 
+        // 旧 DB (Laravel 8 の本番 DB / そのコピー)。legacy:import と legacy:verify が読むだけ。
+        // 接続ごとに SET SESSION TRANSACTION READ ONLY を掛けるので、INSERT/UPDATE/DELETE/DDL はサーバー側で拒否される。
+        // コードからは App\Legacy\LegacyReader (SELECT のみ) を通してだけ使う。
+        'legacy' => [
+            'driver' => 'mysql',
+            'host' => env('LEGACY_DB_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('LEGACY_DB_PORT', env('DB_PORT', '3306')),
+            'database' => env('LEGACY_DB_DATABASE', ''),
+            'username' => env('LEGACY_DB_USERNAME', ''),
+            'password' => env('LEGACY_DB_PASSWORD', ''),
+            'unix_socket' => env('LEGACY_DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? [
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_INIT_COMMAND : PDO::MYSQL_ATTR_INIT_COMMAND) => 'SET SESSION TRANSACTION READ ONLY',
+            ] : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),

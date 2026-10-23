@@ -19,6 +19,8 @@ class AuthTest extends TestCase
             'name' => 'テスト店',
             'email' => 'store@example.com',
             'password' => Hash::make('secret-pass'),
+            'address' => '大分県日田市',
+            'phone_number' => '0973-00-0000',
         ]);
     }
 

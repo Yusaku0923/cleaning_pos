@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
- * 店舗 = ログインアカウント (guard: web)。
+ * 店舗 = ログインアカウント (guard: web)。旧 stores と同じカラム。
+ * 認証に使うので店舗で絞るスコープは付けない。
  */
 class Store extends Authenticatable
 {
@@ -13,6 +15,9 @@ class Store extends Authenticatable
         'name',
         'email',
         'password',
+        'postal_code',
+        'address',
+        'phone_number',
     ];
 
     protected $hidden = [
@@ -23,5 +28,10 @@ class Store extends Authenticatable
     public function getRememberTokenName()
     {
         return '';
+    }
+
+    public function managers(): HasMany
+    {
+        return $this->hasMany(Manager::class);
     }
 }
