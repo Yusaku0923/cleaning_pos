@@ -141,7 +141,7 @@ test.describe.serial('注文フロー(通常顧客)', () => {
     await expect(page.locator('.modal-ch-change')).toContainText('9,000 円');
     ctx.uiOrderId = Number(rec.url().match(/(\d+)$/)[1]);
     // 「ホームに戻る」で担当者・顧客を引き継いだホームに戻る
-    await page.locator('.modal-overlay').click({ position: { x: 5, y: 5 } });
+    await page.locator('.modal-overlay', { has: page.locator('.modal-ch') }).click({ position: { x: 5, y: 5 } });
     await page.locator('a', { hasText: 'ホームに戻る' }).click();
     await expect(page.locator('body')).toContainText('E2E顧客');
     expect(errors).toEqual([]);
