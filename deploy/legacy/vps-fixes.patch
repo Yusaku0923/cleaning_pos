@@ -1,0 +1,114 @@
+diff --git a/app/Console/Commands/DeletePersonalAccessToken.php b/app/Console/Commands/DeletePersonalAccessToken.php
+index 89bfadf..14fae44 100644
+--- a/app/Console/Commands/DeletePersonalAccessToken.php
++++ b/app/Console/Commands/DeletePersonalAccessToken.php
+@@ -19,7 +19,7 @@ class DeletePersonalAccessToken extends Command
+      *
+      * @var string
+      */
+-    protected $description = 'Command description';
++    protected $description = '7日以上前に発行された API トークンを削除する';
+ 
+     /**
+      * Create a new command instance.
+@@ -38,6 +38,11 @@ public function __construct()
+      */
+     public function handle()
+     {
+-        DB::table('personal_access_tokens')->truncate();
++        // 全削除(truncate)だと、開きっぱなしの画面のトークンが深夜に突然無効になるため、
++        // 古いものだけ消す。トークンはセッション内で再利用される(Utility::fetchApiToken)。
++        $deleted = DB::table('personal_access_tokens')
++            ->where('created_at', '<', now()->subDays(7))
++            ->delete();
++        $this->info("deleted {$deleted} tokens");
+     }
+ }
+diff --git a/app/Http/Controllers/Auth/LoginController.php b/app/Http/Controllers/Auth/LoginController.php
+index 52630e4..3f6661d 100644
+--- a/app/Http/Controllers/Auth/LoginController.php
++++ b/app/Http/Controllers/Auth/LoginController.php
+@@ -54,11 +54,15 @@ public function autoLogin(Request $request)
+             'password' => $request->query('pass'),
+         ];
+ 
++        // 資格情報がURLに載るため、リンク先へ Referer として漏れないようにする。
++        // (既存端末のブックマーク互換のため仕組み自体は維持。総当たり対策は throttle で行う)
++        $noReferrer = ['Referrer-Policy' => 'no-referrer'];
++
+         if (Auth::attempt($credentials)) {
+             $request->session()->regenerate();
+-            return redirect($this->redirectTo());
++            return redirect($this->redirectTo())->withHeaders($noReferrer);
+         }
+ 
+-        return redirect()->route('login');
++        return redirect()->route('login')->withHeaders($noReferrer);
+     }
+ }
+diff --git a/app/Services/Utility.php b/app/Services/Utility.php
+index 028cdb4..10a3764 100644
+--- a/app/Services/Utility.php
++++ b/app/Services/Utility.php
+@@ -4,6 +4,7 @@
+ use Illuminate\Support\Facades\Auth;
+ use Illuminate\Support\Str;
+ use App\Models\Store;
++use Laravel\Sanctum\PersonalAccessToken;
+ use App\Events\CustomerDisplay;
+ 
+ class Utility
+@@ -50,11 +51,25 @@ public static function searchInvoicePeriod($cutoff_date, $handed_at = '') {
+         return [$period_start, $period_end];
+     }
+ 
++    /**
++     * 画面から /api を叩くための Sanctum トークン。
++     * 以前は表示のたびに発行しており personal_access_tokens が際限なく増えていたため、
++     * セッション内で再利用し、失効(日次の全削除など)していた場合のみ再発行する。
++     */
+     public static function fetchApiToken() {
++        $plain = session('api_token');
++        if ($plain) {
++            $existing = PersonalAccessToken::findToken($plain);
++            if ($existing && (int)$existing->tokenable_id === (int)Auth::id()) {
++                return $plain;
++            }
++        }
++
+         $store = Store::find(Auth::id());
+-        $token = $store->createToken(Str::random(10));
++        $plain = $store->createToken(Str::random(10))->plainTextToken;
++        session(['api_token' => $plain]);
+ 
+-        return $token->plainTextToken;
++        return $plain;
+     }
+ 
+     public static function sendWebSocket($body) {
+diff --git a/resources/views/invoice/index.blade.php b/resources/views/invoice/index.blade.php
+index 408e3c9..067d6fc 100644
+--- a/resources/views/invoice/index.blade.php
++++ b/resources/views/invoice/index.blade.php
+@@ -9,7 +9,7 @@
+     :manager_id="{{ json_encode(session()->get('manager_id')) }}"
+     :invoices="{{ json_encode($invoices) }}"
+     :token="{{ json_encode(Utility::fetchApiToken()) }}"
+-    :theme="{{ session('theme_header') ? json_encode(session('theme_header').'-header'): (session('theme_body') ? json_encode(session('theme_header').'-header'): 'theme') }}"
++    :theme="{{ session('theme_header') ? json_encode(session('theme_header').'-header') : json_encode('theme') }}"
+ ></invoice-component>
+ {{-- <div class="col-12">
+     <div class="col-12 d-flex border-bottom border-2 mt-2 pb-2 dr-header">
+diff --git a/routes/web.php b/routes/web.php
+index 9321621..6f596e8 100644
+--- a/routes/web.php
++++ b/routes/web.php
+@@ -36,7 +36,7 @@
+ ]);
+ 
+ Route::get('/customer_display', [HomeController::class, 'customer_display'])->name('customer_display');
+-Route::get('/login/auto', [LoginController::class, 'autoLogin'])->name('login.auto')->middleware('guest');
++Route::get('/login/auto', [LoginController::class, 'autoLogin'])->name('login.auto')->middleware(['guest', 'throttle:10,1']);
+ 
+ Route::middleware(['auth'])->group(function () {
+     Route::get('/', [HomeController::class, 'index'])->name('home');

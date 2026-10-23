@@ -1,0 +1,55 @@
+# 旧アプリ(Laravel 8 / Vue 2)の基準環境。PHP 8.3 + MariaDB 10.6 + 本番ダンプ。
+#   起動: docker compose -f docker-compose.legacy.yml up -d --build   -> http://localhost:8081
+#   ダンプ: tmp/legacy.sql.gz (git 管理外。個人情報を含む)。DBボリューム初回作成時のみ取り込まれる。
+#   E2E データ: e2e/setup-test-store.sh
+#   停止: docker compose -f docker-compose.legacy.yml down      (DB も消す: down -v)
+name: cleaning_pos_legacy
+services:
+  app:
+    build:
+      context: .
+      dockerfile: deploy/legacy/Dockerfile
+      args:
+        ENV_FILE: deploy/legacy/env.build
+    environment:
+      APP_NAME: cleaning_pos
+      APP_ENV: production
+      APP_KEY: base64:bGVnYWN5LXJlZmVyZW5jZS1sb2NhbC1rZXktMzJieSE=
+      APP_DEBUG: "false"
+      APP_URL: http://localhost:8081
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: cleaningpossystem
+      DB_USERNAME: cleaningpossystem
+      DB_PASSWORD: legacy-local
+      BROADCAST_DRIVER: log
+      SESSION_DRIVER: database
+      SESSION_LIFETIME: "120"
+      LOG_CHANNEL: stderr
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+  db:
+    image: mariadb:10.6
+    environment:
+      MARIADB_DATABASE: cleaningpossystem
+      MARIADB_USER: cleaningpossystem
+      MARIADB_PASSWORD: legacy-local
+      MARIADB_ROOT_PASSWORD: legacy-local
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "33061:3306"
+    volumes:
+      - legacy-db:/var/lib/mysql
+      - ./tmp/legacy.sql.gz:/docker-entrypoint-initdb.d/10-prod.sql.gz:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 60
+volumes:
+  legacy-db:

@@ -1,0 +1,9 @@
+vendor
+node_modules
+e2e
+tmp
+.git
+.secrets
+.superpowers
+.env*
+storage/logs/*
