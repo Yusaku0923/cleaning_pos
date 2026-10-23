@@ -17,3 +17,12 @@ export function includedTax(amount, ratePercent, mode) {
     }
     throw new Error(`mode must be 'round' or 'floor': '${mode}'`);
 }
+
+/**
+ * 割引 (%) の値引額 (PHP の PriceCalculator::reduction と同じ: floor(amount × 割合 / 100))。
+ * 整数の掛け算を先にするので浮動小数の誤差が出ない (旧の Math.floor(amount * (discount / 100)) は
+ * 100 円 × 29% で 28 になるなど、まれに 1 円ずれていた)。
+ */
+export function discountReduction(amount, ratioPercent) {
+    return Math.floor((amount * ratioPercent) / 100);
+}

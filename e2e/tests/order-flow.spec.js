@@ -147,6 +147,33 @@ test.describe.serial('注文フロー(通常顧客)', () => {
     expect(errors).toEqual([]);
   });
 
+  test('割引 29% (1,500 円): 画面の合計・お釣りとレシートの合計が同じ', async ({ page }) => {
+    const errors = collectErrors(page);
+    page.on('dialog', (d) => d.dismiss());
+    await login(page);
+    await selectManagerAndCustomer(page, 'E2E顧客');
+    await page.goto('/order/create');
+    await page.locator('text=E2Eカテゴリ').first().click();
+    for (let i = 0; i < 3; i++) await page.locator('text=E2E衣類').first().click();
+    await page.locator('.to-bill').click();
+    await page.locator('text=値引・割引を追加').click();
+    await page.locator('.modal-ac-keypad-lower-key', { hasText: /^2$/ }).click();
+    await page.locator('.modal-ac-keypad-upper-key', { hasText: /^9$/ }).click();
+    await page.locator('text=割引・値引を適用する').click();
+    // v2: floor(1500 × 29 / 100) = 435 (サーバーと同じ整数計算)。旧: 浮動小数で 434 (e2e/allowed-diffs.md)
+    const total = V2 ? 1065 : 1066;
+    await expect(page.locator('.bill-total')).toContainText(`${total.toLocaleString()} 円`);
+    await page.locator('text=預り金入力').click();
+    await page.locator('.modal-ac-keypad-lower-just').click();
+    const receipt = page.waitForResponse((r) => /\/api\/receipt\/\d+$/.test(r.url()));
+    await page.locator('.modal-ac-send').click();
+    const body = await (await receipt).json();
+    expect(body.amount).toBe(total);
+    expect(body.payment).toBe(total);
+    await expect(page.locator('.modal-ch-change')).toContainText('0 円');
+    expect(errors).toEqual([]);
+  });
+
   test('注文を登録でき、タグ番号が採番される', async ({ page }) => {
     await login(page);
     await selectManagerAndCustomer(page, 'E2E顧客');

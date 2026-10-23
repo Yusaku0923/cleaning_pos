@@ -372,7 +372,7 @@ import AccountingModal from './Modals/AccountingModalComponent.vue';
 import ChangeModal from './Modals/ChangeModalComponent.vue';
 import ReceiptPrinter from './Functions/ReceiptPrinter.vue';
 import { warmUpPrinter } from '../printer/EposPrinter.js';
-import { includedTax } from '../utils/money.js';
+import { includedTax, discountReduction } from '../utils/money.js';
 import { pushCustomerDisplay } from '../customerDisplay.js';
 
 export default {
@@ -473,7 +473,7 @@ export default {
         // (旧は値引額が古いまま残り、画面の合計と割合が合わなくなっていた。サーバーは割合から計算する)
         amount: function (amount) {
             if (this.discount > 0) {
-                this.reduction = Math.floor(amount * (this.discount / 100));
+                this.reduction = discountReduction(amount, this.discount);
             }
         },
     },
@@ -635,6 +635,8 @@ export default {
             if (!order_id) {
                 return;
             }
+            // お釣りはサーバーが保存した合計 (レシートに印刷される値) で出し直す
+            this.change = payment - (this.amount - this.reduction);
 
             // レシート発行
             console.log('printReceipt1');
@@ -677,10 +679,12 @@ export default {
                 check_return: this.checkReturn,
                 created_at: this.created_at || null,
             })
-            .then(function (response) {
+            .then((response) => {
                 if (response.data.total !== expected) {
                     console.warn('画面の合計とサーバーの合計が違います', expected, response.data.total);
                 }
+                // 保存した合計 (サーバーの計算。レシートもこの値) を画面の正とする
+                this.reduction = this.amount - response.data.total;
                 return response.data.order_id;
             })
             .catch(function (error) {

@@ -40,7 +40,8 @@ class OrderController extends Controller
             'customer_name' => $customer->name ?? '',
             'is_invoice' => (bool) $customer->is_invoice,
             'check_return' => (bool) $customer->needs_return_confirmation,
-            'latest_tag' => (string) (TagCounter::where('manager_id', $manager->id)->value('value') ?? '1000'),
+            // TagAllocator と同じく論理削除された行も読む (発行予定タグ = 実際に振られるタグ)
+            'latest_tag' => (string) (TagCounter::withTrashed()->where('manager_id', $manager->id)->value('value') ?? '1000'),
             'list' => $categories,
             'often_ordered' => $this->oftenOrdered($customer),
             'tax_rate' => (int) (Tax::query()->value('tax') ?? 10),

@@ -93,6 +93,8 @@
     </transition>
 </template>
 <script>
+import { discountReduction } from '../../utils/money.js';
+
 export default {
     name: "discount",
     emits: ["close", "updateDiscount"],
@@ -176,7 +178,8 @@ export default {
             }
         },
         calcReduction: function() {
-            this.reduction = Math.floor(this.amount * (this.discount / 100));
+            // サーバー (PriceCalculator::reduction) と同じ整数の計算。旧は Math.floor(this.amount * (this.discount / 100))
+            this.reduction = discountReduction(this.amount, this.discount);
         }
     }
 }

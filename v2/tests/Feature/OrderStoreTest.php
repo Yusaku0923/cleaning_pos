@@ -355,6 +355,19 @@ class OrderStoreTest extends TestCase
         $this->assertStringNotContainsString(trim(json_encode('他店の服'), '"'), $html);
     }
 
+    public function test_tag_preview_reads_soft_deleted_counter_like_the_allocator(): void
+    {
+        // TagAllocator は論理削除された行も使う (withTrashed)。画面の発行予定タグも同じ値を出す
+        DB::table('tag_counters')->where('manager_id', $this->manager)->update(['value' => 4321, 'deleted_at' => now()]);
+        $this->actingAs($this->store);
+
+        $html = $this->get("/order/create?m={$this->manager}&c={$this->customer}")->assertOk()->getContent();
+        $this->assertStringContainsString(':latest_tag="&quot;4321&quot;"', $html);
+
+        $this->postJson('/api/orders', $this->payload(['items' => [['clothes_id' => $this->shirt, 'qty' => 1]]]))
+            ->assertCreated()->assertJson(['tags' => ['4-321']]);
+    }
+
     public function test_clothes_search_is_scoped(): void
     {
         $this->actingAs($this->store);
