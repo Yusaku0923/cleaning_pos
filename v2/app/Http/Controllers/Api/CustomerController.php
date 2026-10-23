@@ -8,7 +8,6 @@ use App\Models\Manager;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 /** 旧 Api\CustomerController (顧客検索)。 */
 class CustomerController extends Controller

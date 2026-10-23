@@ -9,6 +9,7 @@ use App\Models\Store;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 /**
@@ -57,7 +58,7 @@ class PosContextTest extends TestCase
     public function test_context_comes_from_query_not_session(): void
     {
         $seen = null;
-        \Illuminate\Support\Facades\Route::middleware(['web', 'auth', ResolvePosContext::class])
+        Route::middleware(['web', 'auth', ResolvePosContext::class])
             ->get('/_ctx', function (Request $request) use (&$seen) {
                 $seen = [$request->attributes->get('manager'), $request->attributes->get('customer')];
 
