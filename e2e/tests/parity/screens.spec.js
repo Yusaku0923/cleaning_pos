@@ -17,6 +17,7 @@ function dynamicMasks(page) {
     page.locator('input[type="date"], input[type="datetime-local"], input[type="month"]'),
     page.locator('.tag-number, .order-id, .created_at, time'),
     page.locator('#RealtimeClockArea'), // 現在時刻
+    page.locator('span.fs-22.fw-bold'), // 注文作成の発行予定タグ番号(採番カウンタは実行ごとに進む)
     page.locator('.category-bar'), // カテゴリは本番マスタ(取引先名を含む)なので隠す
   ];
 }
@@ -31,6 +32,8 @@ async function settle(page) {
 function accumulatedMasks(page) {
   return [
     page.getByText(/\d{4}\/\d{2}\/\d{2}/),
+    page.getByText(/\d{4}-\d{2}/), // 請求の対象月(実行月)
+    page.getByText(/\d{2}\/\d{2}\s*[〜～]\s*\d{2}\/\d{2}/), // 請求対象期間
     page.getByText(/^\s*\d+回\s*$/),
     page.getByText(/[\d,]+円/),
     page.getByText(/^\s*\d{4,6}\s*$/), // 伝票No.(全体で連番)

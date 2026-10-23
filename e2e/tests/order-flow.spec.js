@@ -25,6 +25,22 @@ async function clothesId(page, token) {
   return Number(m[1]);
 }
 
+/** 作った注文を削除し、成功(200 かつ ok)を確認する。E2E データを毎回同じ状態に戻すため。 */
+async function deleteOrder(page, token, ctx, orderId, { invoiceOrder = false } = {}) {
+  const res = await page.request.post('/api/order/delete', {
+    headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+    data: { order_id: orderId, customer_id: ctx.customerId },
+  });
+  // 旧のバグ: 請求付き注文の削除は、注文を消したあと Invoice の削除フック(未定義の orders())で 500 になる。
+  // 注文は消えているので legacy ではこの 500 を既知として許容する(残る請求は globalSetup のリセットで消す)。
+  if (invoiceOrder && process.env.E2E_TARGET !== 'v2') {
+    expect([200, 500], `注文 ${orderId} の削除`).toContain(res.status());
+    return;
+  }
+  expect(res.status(), `注文 ${orderId} の削除`).toBe(200);
+  expect((await res.json()).ok).toBe(true);
+}
+
 function orderPayload(ctx, over = {}) {
   return {
     manager_id: ctx.managerId,
@@ -96,19 +112,23 @@ test.describe.serial('注文フロー(通常顧客)', () => {
       data: orderPayload(ctx, { amount: 500, payment: 0, not_paid: true, order: { [ctx.clothesId]: 1 } }),
     });
     expect(res.status()).toBe(200);
+    ctx.unpaidOrderId = (await res.json()).order_id;
+    expect(ctx.unpaidOrderId).toBeGreaterThan(0);
     await page.goto('/payment');
     await expect(page.locator('body')).toContainText('500');
   });
 
-  test('注文を削除できる(後始末)', async ({ page }) => {
+  test('作った注文をすべて削除できる(後始末)', async ({ page }) => {
     await login(page);
     await selectManagerAndCustomer(page, 'E2E顧客');
     const token = await apiToken(page);
-    const res = await page.request.post('/api/order/delete', {
-      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-      data: { order_id: ctx.orderId },
-    });
-    expect(res.status()).toBeLessThan(500);
+    for (const id of [ctx.orderId, ctx.unpaidOrderId]) {
+      expect(id, '削除対象の注文IDがない(前のテストが失敗)').toBeGreaterThan(0);
+      await deleteOrder(page, token, ctx, id);
+    }
+    // 預り一覧・入金画面に残っていない
+    await page.goto('/payment');
+    await expect(page.locator('body')).not.toContainText('500 円');
   });
 });
 
@@ -130,10 +150,23 @@ test.describe.serial('請求フロー(請求顧客)', () => {
       data: orderPayload(ctx, { invoice: true, payment: 0 }),
     });
     expect(res.status()).toBe(200);
+    ctx.orderId = (await res.json()).order_id;
+    ctx.token = token;
 
     const inv = await page.goto('/invoice');
     expect(inv && inv.status()).toBeLessThan(400);
     await expect(page.locator('body')).toContainText('E2E請求顧客');
     expect(errors).toEqual([]);
+  });
+
+  test('作った請求注文を削除できる(後始末。請求も消える)', async ({ page }) => {
+    await login(page);
+    await selectManagerAndCustomer(page, 'E2E請求顧客');
+    const token = await apiToken(page);
+    expect(ctx.orderId, '削除対象の注文IDがない(前のテストが失敗)').toBeGreaterThan(0);
+    await deleteOrder(page, token, ctx, ctx.orderId, { invoiceOrder: true });
+    // 注文が消えている(請求の削除は v2 では 200 で消える。legacy は旧バグで請求が残るためリセットに任せる)
+    const gone = await page.request.get(`/api/receipt/${ctx.orderId}`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } });
+    expect(gone.status(), '削除した注文が残っている').toBe(404);
   });
 });
