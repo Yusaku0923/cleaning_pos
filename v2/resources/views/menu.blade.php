@@ -114,8 +114,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // キャッシュバスティング付きでページをリロード
+            // 選択中の担当者・顧客 (?m=&c=) は残し、v だけ付け替える
             const timestamp = new Date().getTime();
-            window.location.href = window.location.pathname + '?v=' + timestamp;
+            const params = new URLSearchParams(window.location.search);
+            params.set('v', timestamp);
+            window.location.href = window.location.pathname + '?' + params.toString();
         });
     }
 });

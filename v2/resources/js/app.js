@@ -5,6 +5,7 @@ import CustomerInfoComponent from './components/CustomerInfoComponent.vue';
 import CustomerCreateComponent from './components/CustomerCreateComponent.vue';
 import CustomerSearchComponent from './components/CustomerSearchComponent.vue';
 import ManagerSelectButtonComponent from './components/ManagerSelectButtonComponent.vue';
+import OrderComponent from './components/OrderComponent.vue';
 
 // 旧 (Laravel Mix) と同じく Bootstrap 5.2.2 の JS を同梱 (data-bs-* のモーダル等)
 window.bootstrap = bootstrap;
@@ -23,6 +24,7 @@ export const components = {
     'customer-create-component': CustomerCreateComponent,
     'customer-search-component': CustomerSearchComponent,
     'manager-select-btn-component': ManagerSelectButtonComponent,
+    'order-component': OrderComponent,
 };
 
 export function registerComponents(app) {

@@ -1,0 +1,33 @@
+{
+  "order_id": 12347,
+  "is_reissue": false,
+  "receipt": {
+    "store_name": "あさひ屋クリーニング",
+    "store_address": "大分県日田市若宮町3-72",
+    "store_tel": "22-3540",
+    "customer_name_kana": "ﾋﾞｮｳｲﾝ",
+    "customer_name": "一ノ宮病院",
+    "customer_tel": "0973-00-0000",
+    "manager_name": "若宮本店",
+    "ordered_at": "2026年10月23日 10時15分",
+    "discount_raito": null,
+    "tax": "10",
+    "ip_address": "192.168.0.214",
+    "order_list": [
+      {
+        "id": 31,
+        "name": "ｼｰﾂ",
+        "tag_start": "1-006",
+        "tag_end": "1-009",
+        "price": 1200,
+        "count": 4
+      }
+    ],
+    "total_count": 4,
+    "amount": 1200,
+    "discount": 0,
+    "payment": 0,
+    "paid_at": "2026-11-20 00:00:00",
+    "is_invoice": 1
+  }
+}

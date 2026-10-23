@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\OrderController;
 use App\Http\Middleware\ResolvePosContext;
 use Illuminate\Support\Facades\Route;
 
@@ -40,10 +41,13 @@ Route::middleware(['auth', ResolvePosContext::class])->group(function () {
         Route::delete('delete/{id}', [CustomerController::class, 'destroy'])->whereNumber('id')->name('customer.delete');
     });
 
+    Route::prefix('order')->group(function () {
+        Route::get('create', [OrderController::class, 'create'])->name('order.create');
+    });
+
     // まだ移植していない画面。ホーム・メニューのリンク先の名前だけ先に置く (開くと 501)。
     // 各タスクで本物のルートに置き換えたら、ここから消す。
     foreach ([
-        ['order/create', 'order.create'],                                 // Task 6
         ['order/all_show', 'order.all_show'],                             // Task 8
         ['order/show', 'order.show'],                                     // Task 8
         ['return', 'return.index'],                                       // Task 8

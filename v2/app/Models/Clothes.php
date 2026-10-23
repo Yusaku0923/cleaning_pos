@@ -12,6 +12,9 @@ class Clothes extends Model
 {
     use BelongsToStore, SoftDeletes;
 
+    /** 2 枚目以降のタグの行に使う商品 (旧 Clothes::MULTI_TAG_CLOTHES_ID。本番では論理削除済みの「〃」)。 */
+    public const MULTI_TAG_CLOTHES_ID = 999;
+
     protected $table = 'clothes';
 
     protected $guarded = ['id'];

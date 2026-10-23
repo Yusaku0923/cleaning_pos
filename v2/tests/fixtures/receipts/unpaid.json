@@ -1,0 +1,33 @@
+{
+  "order_id": 12348,
+  "is_reissue": false,
+  "receipt": {
+    "store_name": "あさひ屋クリーニング",
+    "store_address": "大分県日田市若宮町3-72",
+    "store_tel": "22-3540",
+    "customer_name_kana": "ﾔﾏﾀﾞ ﾀﾛｳ",
+    "customer_name": "山田 太郎",
+    "customer_tel": "090-1234-5678",
+    "manager_name": "若宮本店",
+    "ordered_at": "2026年10月23日 10時15分",
+    "discount_raito": null,
+    "tax": "10",
+    "ip_address": "192.168.0.214",
+    "order_list": [
+      {
+        "id": 12,
+        "name": "ﾜｲｼｬﾂ",
+        "tag_start": "3-604",
+        "tag_end": "3-604",
+        "price": 500,
+        "count": 1
+      }
+    ],
+    "total_count": 1,
+    "amount": 500,
+    "discount": 0,
+    "payment": 0,
+    "paid_at": null,
+    "is_invoice": 0
+  }
+}

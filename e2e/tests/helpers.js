@@ -10,7 +10,8 @@ const PASSWORD = process.env.E2E_PASSWORD || 'Test123456';
 const TARGET = process.env.E2E_TARGET || 'legacy';
 
 // 外部(EPSONプリンタ/Pusher)への接続失敗は環境依存なので無視する
-const IGNORED_ERRORS = [/epson/i, /pusher/i, /WebSocket/i, /ERR_CONNECTION/i, /ERR_NAME_NOT_RESOLVED/i, /Failed to load resource/i];
+// 「プリンター」は印刷処理のログ (接続できない・リトライ上限) の文言
+const IGNORED_ERRORS = [/epson/i, /プリンター/, /pusher/i, /WebSocket/i, /ERR_CONNECTION/i, /ERR_NAME_NOT_RESOLVED/i, /Failed to load resource/i];
 
 async function login(page) {
   await page.goto('/login');
