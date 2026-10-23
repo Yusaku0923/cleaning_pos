@@ -3,9 +3,11 @@ import * as bootstrap from 'bootstrap';
 import { createApp } from 'vue';
 import CustomerInfoComponent from './components/CustomerInfoComponent.vue';
 import CustomerCreateComponent from './components/CustomerCreateComponent.vue';
+import CustomerDisplayComponent from './components/CustomerDisplayComponent.vue';
 import CustomerSearchComponent from './components/CustomerSearchComponent.vue';
 import ManagerSelectButtonComponent from './components/ManagerSelectButtonComponent.vue';
 import OrderComponent from './components/OrderComponent.vue';
+import { pushFlashedCustomerDisplay } from './customerDisplay.js';
 
 // 旧 (Laravel Mix) と同じく Bootstrap 5.2.2 の JS を同梱 (data-bs-* のモーダル等)
 window.bootstrap = bootstrap;
@@ -22,6 +24,7 @@ window.bootstrap = bootstrap;
 export const components = {
     'customer-info-component': CustomerInfoComponent,
     'customer-create-component': CustomerCreateComponent,
+    'customer-display-component': CustomerDisplayComponent,
     'customer-search-component': CustomerSearchComponent,
     'manager-select-btn-component': ManagerSelectButtonComponent,
     'order-component': OrderComponent,
@@ -40,4 +43,9 @@ if (el) {
     const app = createApp({});
     registerComponents(app);
     app.mount(el);
+}
+
+// 顧客選択 (GET) のあと 1 回だけ、顧客表示へ「いらっしゃいませ」を送る (旧は GET の中で送っていた)
+if (typeof document !== 'undefined') {
+    pushFlashedCustomerDisplay();
 }

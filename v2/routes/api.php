@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ClothesController;
 use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\CustomerDisplayController;
 use App\Http\Controllers\Api\CustomerInformationController;
 use App\Http\Controllers\Api\OrderController;
 use Illuminate\Http\Request;
@@ -19,4 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('orders', [OrderController::class, 'store'])->name('api.orders.store');
     // レシート印刷用データ (旧と同じ URL・キー名)
     Route::get('receipt/{order}', [OrderController::class, 'receipt'])->name('api.receipt');
+
+    // 顧客表示へ送る (旧 POST /api/broadcast。ペイロードは旧と同じ)
+    Route::post('customer-display', CustomerDisplayController::class)->name('api.customer_display');
 });

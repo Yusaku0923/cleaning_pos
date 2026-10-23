@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\DeviceLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DisplayLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\OrderController;
@@ -18,6 +19,14 @@ Route::middleware('guest')->group(function () {
 Route::get('/login/device/{token}', DeviceLoginController::class)
     ->middleware('throttle:10,1')
     ->name('login.device');
+
+// 顧客表示の端末 (旧 /customer_display は公開だった。v2 は表示端末のログインが要る)
+Route::get('/display/login/{token}', [DisplayLoginController::class, 'login'])
+    ->middleware('throttle:10,1')
+    ->name('display.login');
+Route::get('/customer_display', [DisplayLoginController::class, 'show'])
+    ->middleware('auth:display')
+    ->name('customer_display');
 
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 

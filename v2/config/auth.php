@@ -42,6 +42,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // 顧客表示の端末 (GET /display/login/{token})。/customer_display と自店舗の表示チャンネルだけ。
+        // web とは別ガードなので、このログインでは POS の画面・API は使えない。
+        'display' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
     /*

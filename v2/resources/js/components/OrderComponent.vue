@@ -463,7 +463,7 @@ export default {
         if (this.printer_ip) {
             warmUpPrinter(this.printer_ip, 8008);
         }
-        // TODO(Task 7): 旧は GET /order/create で {event: 'order', name} を顧客表示へ送っていた (請求書払いの顧客以外)
+        // 旧は GET /order/create で {event: 'order', name} を顧客表示へ送っていた (請求書払いの顧客以外)。v2 は開いたときに POST で送る
         if (!this.is_invoice) {
             pushCustomerDisplay({ event: 'order', name: this.customer_name });
         }
@@ -693,7 +693,7 @@ export default {
                 return;
             });
         },
-        // カスタマーディスプレイ表示情報 (TODO(Task 7): customerDisplay.js が POST /api/customer-display に送る)
+        // カスタマーディスプレイ表示情報 (customerDisplay.js が POST /api/customer-display に送る)
         CD_updateClothes: function(id) {
             pushCustomerDisplay({
                 event: 'update',

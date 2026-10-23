@@ -7,6 +7,7 @@ use App\Http\Requests\Customers\UpdateRequest;
 use App\Models\Customer;
 use App\Models\Manager;
 use App\Models\Order;
+use App\Services\CustomerDisplay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -61,9 +62,11 @@ class CustomerController extends Controller
         $customer = Customer::findOrFail($id);
         $manager = $request->attributes->get('manager');
 
-        // TODO(Task 7): 旧はここ (GET) で顧客表示に push していた (請求書払いでない顧客のみ、
-        //   ['event' => 'customer', 'name' => $customer->name])。v2 は GET では送らず、
-        //   ホーム画面の Vue から POST /api/customer-display を呼ぶ。
+        // 旧はここ (GET) で顧客表示に送っていた (請求書払いでない顧客のみ)。v2 は GET では送らず、
+        // 1 回だけのフラッシュに載せ、リダイレクト先の画面 (app.js) が POST /api/customer-display で送る。
+        if (! $customer->is_invoice) {
+            $request->session()->flash('customer_display', ['event' => 'customer', 'name' => $customer->name]);
+        }
 
         return redirect()->route('home', ['m' => $manager?->id ?? $customer->manager_id, 'c' => $customer->id]);
     }
@@ -98,8 +101,10 @@ class CustomerController extends Controller
             'cutoff_date' => $request->cutoff_date ?? 99,
         ]);
 
-        // TODO(Task 7): 旧はここで顧客表示に push していた (請求書払いでない顧客のみ)。
-        //   v2 はホーム画面の Vue から POST /api/customer-display を呼ぶ。
+        // 旧と同じくここ (POST) で顧客表示に送る (請求書払いでない顧客のみ)
+        if (! $customer->is_invoice) {
+            CustomerDisplay::push((int) $request->user()->id, ['event' => 'customer', 'name' => $customer->name]);
+        }
 
         return redirect()->route('home', ['m' => $manager->id, 'c' => $customer->id]);
     }

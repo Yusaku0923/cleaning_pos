@@ -26,7 +26,7 @@ class OrderController extends Controller
         }
 
         // 旧はここ (GET) で顧客表示へ {event: 'order', name} を送っていた。v2 は GET では送らない。
-        // 画面側 (OrderComponent の mounted) の TODO(Task 7) から POST で送る。
+        // 画面側 (OrderComponent の mounted) から POST /api/customer-display で送る。
 
         // 旧と同じくカテゴリ ID 1 (「一時」) は出さない
         $categories = Category::with(['clothes' => fn ($q) => $q->orderBy('sort_key', 'asc')])

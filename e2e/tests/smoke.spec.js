@@ -87,9 +87,14 @@ test.describe('主要画面が開く', () => {
   }
 });
 
-test('顧客表示画面は未ログインでも開ける', async ({ page }) => {
+// 旧は未ログインでも開けた (顧客名が公開チャンネルで流れていた)。v2 は表示端末のログイン
+// (GET /display/login/{token}) が要り、未ログインは /login へ (allowed-diffs.md「顧客表示」)。
+test('顧客表示画面: 旧は未ログインでも開ける / v2 は表示端末のログインが要る', async ({ page }) => {
   const res = await page.goto('/customer_display');
   expect(res && res.status()).toBeLessThan(400);
+  if ((process.env.E2E_TARGET || 'legacy') === 'v2') {
+    await expect(page).toHaveURL(/\/login/);
+  }
 });
 
 test('クライアントエラー収集APIが受け付ける(未認証)', async ({ request }) => {

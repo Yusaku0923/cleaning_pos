@@ -11,6 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    // 顧客表示の private channel の認可 (/broadcasting/auth)。表示端末 (display ガード) だけ
+    ->withBroadcasting(__DIR__.'/../routes/channels.php', ['middleware' => ['web', 'auth:display']])
     ->withMiddleware(function (Middleware $middleware): void {
         // API は同一オリジンのセッション Cookie で認証 (Sanctum SPA)
         $middleware->statefulApi();

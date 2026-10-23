@@ -26,6 +26,11 @@
     <script src="{{ asset('js/common.js') }}" defer></script>
     <script type="text/javascript" src="{{ asset('js/epos-2.22.0.js') }}"></script>
 
+    @if (session()->has('customer_display'))
+    {{-- 顧客表示へ 1 回だけ送る内容 (顧客選択の GET の代わり。app.js が POST /api/customer-display で送る) --}}
+    <meta name="customer-display-push" content="{{ json_encode(session('customer_display'), JSON_UNESCAPED_UNICODE) }}">
+    @endif
+
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
 
