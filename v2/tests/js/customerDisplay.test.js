@@ -43,9 +43,20 @@ test('Pusher の鍵が無ければ Echo を作らず null (例外を出さない
     expect(window.Echo).toBeUndefined();
 });
 
-test('鍵があれば private channel を使える Echo を作る', async () => {
-    const echo = await setupEcho({ VITE_PUSHER_APP_KEY: 'k', VITE_PUSHER_APP_CLUSTER: 'mt1' });
+test('鍵があれば private channel を使える Echo を作り、認可は渡した関数 (customHandler) で行う', async () => {
+    const authorize = vi.fn();
+    const echo = await setupEcho({ VITE_PUSHER_APP_KEY: 'k', VITE_PUSHER_APP_CLUSTER: 'mt1' }, { authorize });
     expect(echo).toBe(window.Echo);
     expect(typeof echo.private).toBe('function');
+    expect(echo.connector.pusher.config.channelAuthorizer).toBe(authorize);
     echo.disconnect();
+});
+
+test('Echo / Pusher の読み込みに失敗したら false (例外を出さない)', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.resetModules();
+    vi.doMock('pusher-js', () => { throw new Error('chunk load failed'); });
+    const { setupEcho: setup } = await import('../../resources/js/bootstrap.js');
+    await expect(setup({ VITE_PUSHER_APP_KEY: 'k' })).resolves.toBe(false);
+    vi.doUnmock('pusher-js');
 });

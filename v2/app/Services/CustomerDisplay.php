@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\CustomerDisplayUpdated;
+use App\Models\DisplayStore;
 use App\Models\Setting;
 use App\Models\Store;
 use Illuminate\Support\Str;
@@ -42,12 +43,14 @@ class CustomerDisplay
     {
         $plain = Str::random(48);
         Setting::set(self::SETTING_KEY, ['hash' => hash('sha256', $plain), 'store_id' => $store->id]);
+        // ログインを保持している表示端末も切る (古い URL で入った端末を残さない)
+        Store::query()->whereKey($store->id)->update(['remember_token' => null]);
 
         return $plain;
     }
 
     /** トークンが一致すれば、その店舗を返す (比較は hash_equals) */
-    public static function storeForToken(string $plain): ?Store
+    public static function storeForToken(string $plain): ?DisplayStore
     {
         $stored = Setting::get(self::SETTING_KEY);
         if (! is_array($stored) || ! is_string($stored['hash'] ?? null) || ! isset($stored['store_id'])) {
@@ -57,6 +60,6 @@ class CustomerDisplay
             return null;
         }
 
-        return Store::query()->find($stored['store_id']);
+        return DisplayStore::query()->find($stored['store_id']);
     }
 }

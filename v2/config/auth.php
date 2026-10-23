@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DisplayStore;
 use App\Models\Store;
 
 return [
@@ -44,9 +45,12 @@ return [
         ],
         // 顧客表示の端末 (GET /display/login/{token})。/customer_display と自店舗の表示チャンネルだけ。
         // web とは別ガードなので、このログインでは POS の画面・API は使えない。
+        // ログインの保持 (remember cookie) を使い、放置でセッションが切れても表示を続ける。
+        // remember cookie はログイン時から 365 日有効 (延長しない)。切れたら display:issue-token で再ログイン
         'display' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'displays',
+            'remember' => 60 * 24 * 365,
         ],
     ],
 
@@ -71,6 +75,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', Store::class),
+        ],
+        // 顧客表示の端末。同じ stores の行だが remember_token を使うモデル
+        'displays' => [
+            'driver' => 'eloquent',
+            'model' => DisplayStore::class,
         ],
 
         // 'users' => [

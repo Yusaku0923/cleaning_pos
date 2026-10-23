@@ -24,9 +24,10 @@ Route::get('/login/device/{token}', DeviceLoginController::class)
 Route::get('/display/login/{token}', [DisplayLoginController::class, 'login'])
     ->middleware('throttle:10,1')
     ->name('display.login');
-Route::get('/customer_display', [DisplayLoginController::class, 'show'])
-    ->middleware('auth:display')
-    ->name('customer_display');
+// 未ログインでも POS の /login には飛ばさず、スタッフ向けの案内を出す (コントローラで判定)
+Route::get('/customer_display', [DisplayLoginController::class, 'show'])->name('customer_display');
+// 表示画面のキープアライブ (10 分ごと)。セッションを新しく保ち、切れていれば remember cookie で入り直す
+Route::get('/display/ping', [DisplayLoginController::class, 'ping'])->name('display.ping');
 
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 

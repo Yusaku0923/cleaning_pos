@@ -20,7 +20,7 @@
 
 | 項目 | 旧 | v2 | 意図した差分 |
 |---|---|---|---|
-| 顧客表示 (`/customer_display`) | 未ログインで誰でも開ける。Pusher の**公開**チャンネル `cleaning-pos` に顧客名が流れ、鍵を知る誰でも購読できる | 表示端末は `GET /display/login/{token}`(`php artisan display:issue-token` で発行)でログインし、店舗ごとの **private** チャンネル `private-store.{店舗ID}.display` だけ購読できる。未ログインは `/login` へ。表示端末のログインでは POS の画面・API は使えない | 開き方(ログイン)とチャンネル名だけ。画面の DOM・CSS、イベント名 `customer-display`、ペイロード `{message: {event, ...}}`、送るきっかけ(顧客選択・顧客登録・預り入力を開く・会計後の「終了」)は旧と同じ。顧客選択は GET の代わりにリダイレクト先の画面が POST で送る |
+| 顧客表示 (`/customer_display`) | 未ログインで誰でも開ける。Pusher の**公開**チャンネル `cleaning-pos` に顧客名が流れ、鍵を知る誰でも購読できる | 表示端末は `GET /display/login/{token}`(`php artisan display:issue-token` で発行)でログインし、店舗ごとの **private** チャンネル `private-store.{店舗ID}.display` だけ購読できる。未ログイン (またはログイン切れ) は `/login` へは飛ばさず、スタッフ向けの案内「顧客表示の再ログインが必要です（スタッフ向け）」を全画面で出す (401)。ログインは remember cookie (365 日) と 10 分ごとのキープアライブで保持。表示端末のログインでは POS の画面・API は使えない | 開き方(ログイン)とチャンネル名だけ。画面の DOM・CSS、イベント名 `customer-display`、ペイロード `{message: {event, ...}}`、送るきっかけ(顧客選択・顧客登録・預り入力を開く・会計後の「終了」)は旧と同じ。顧客選択は GET の代わりにリダイレクト先の画面が POST で送る |
 
 ## 比較対象外
 

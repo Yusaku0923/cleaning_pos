@@ -1,5 +1,11 @@
 <template>
     <div class="cd col-12">
+        <!-- v2 追加: 表示端末のログインが切れたとき (お客様に POS のログイン画面は見せない)。文言は display_login_required.blade.php と同じ -->
+        <div class="d-flex flex-column justify-content-center align-items-center text-center bg-white text-dark px-4"
+            style="position: fixed; inset: 0; z-index: 2000;" v-if="needsLogin">
+            <div class="fw-bold mb-4" style="font-size: 2.5rem;">顧客表示の再ログインが必要です（スタッフ向け）</div>
+            <div style="font-size: 1.25rem;">管理者に顧客表示のログイン URL を発行してもらい（php artisan display:issue-token）、この端末で開いてください。</div>
+        </div>
         <div class="cd-1" v-if="phase === 1">
             <div
                 class="mx-auto cd-1-welcome col-12"
@@ -101,6 +107,7 @@
 
 <script>
 import { setupEcho } from '../bootstrap.js';
+import { createDisplayConnection } from '../displayConnection.js';
 
 export default {
     data() {
@@ -125,6 +132,7 @@ export default {
             phase1_2anim: false,
             phase3_1anim: false,
             phase3_2anim: false,
+            needsLogin: false,
         }
     },
     props: {
@@ -136,9 +144,25 @@ export default {
     },
     async mounted() {
         // 旧は公開チャンネル 'cleaning-pos'。v2 は店舗ごとの private channel (イベント名・中身は旧と同じ)
-        const echo = await setupEcho();
+        // 放置してもログインが切れないよう 10 分ごとにキープアライブ。切れたらスタッフ向けの案内を出す
+        const connection = createDisplayConnection({
+            axios: window.axios,
+            onLoginRequired: () => { this.needsLogin = true; },
+        });
+        connection.startKeepAlive();
+        const echo = await setupEcho(import.meta.env, { authorize: connection.authorize });
+        if (echo === false) { // Echo / Pusher を読み込めない: 黙って止まらず案内を出す
+            this.needsLogin = true;
+            return;
+        }
         if (!echo) return; // Pusher 未設定: 画面 (いらっしゃいませ) だけ出して受信しない
         echo.private('store.' + this.storeId + '.display')
+            .error(error => {
+                console.warn('顧客表示: チャンネルの購読に失敗しました', error);
+                if ([401, 403, 419].includes(error?.status)) {
+                    this.needsLogin = true;
+                }
+            })
             .listen('.customer-display', req => {
                 req = req.message; // コイツ
                 switch(req.event) {

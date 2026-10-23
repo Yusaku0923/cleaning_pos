@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 /**
@@ -126,9 +127,101 @@ class CustomerDisplayTest extends TestCase
 
     public function test_display_route_requires_display_login(): void
     {
-        $this->get('/customer_display')->assertRedirect('/login');
+        // 未ログインでも POS の /login には飛ばさない。スタッフ向けの案内を全画面で出す
+        $this->get('/customer_display')->assertStatus(401)
+            ->assertSee(self::STAFF_MESSAGE)
+            ->assertDontSee('<customer-display-component', false)
+            ->assertDontSee('name="password"', false);
         // POS としてログインしているだけでは表示画面にはならない (表示端末のログインが要る)
-        $this->actingAs($this->store)->get('/customer_display')->assertRedirect();
+        $this->actingAs($this->store)->get('/customer_display')->assertStatus(401)->assertSee(self::STAFF_MESSAGE);
+    }
+
+    private const STAFF_MESSAGE = '顧客表示の再ログインが必要です（スタッフ向け）';
+
+    /** 表示端末でログインし、remember cookie (表示用ガードのもの) の名前と値を返す */
+    private function displayLoginWithRemember(): array
+    {
+        $token = $this->issueToken($this->store);
+        $res = $this->get('/display/login/'.$token)->assertRedirect('/customer_display');
+        $name = auth()->guard('display')->getRecallerName();
+        $cookie = $res->getCookie($name, true, false);
+        $this->assertNotNull($cookie, 'remember cookie が無い');
+        // 少なくとも営業 1 日 (12 時間) より長く残る
+        $this->assertGreaterThan(now()->addHours(12)->getTimestamp(), $cookie->getExpiresTime());
+        $this->assertStringNotContainsString(auth()->guard('web')->getRecallerName(), $name);
+
+        return [$name, $cookie->getValue()];
+    }
+
+    /** セッション切れ (SESSION_LIFETIME を過ぎて放置) を再現: 時間を進め、セッションとガードの状態を捨てる */
+    private function expireSession(): void
+    {
+        $this->travel(config('session.lifetime') + 13 * 60)->minutes();
+        $this->app['session']->driver()->flush();
+        $this->app['auth']->forgetGuards();
+        // auth:display ミドルウェアは既定ガードを display にする (本番はリクエストごとにアプリが新しいので残らない)
+        $this->app['auth']->shouldUse('web');
+        $this->flushSession();
+    }
+
+    public function test_display_survives_idle_session_expiry_via_remember_cookie(): void
+    {
+        $this->usePusherWithDummyKeys();
+        [$name, $value] = $this->displayLoginWithRemember();
+
+        $this->expireSession();
+        $this->withCookie($name, $value)->get('/customer_display')->assertOk()
+            ->assertSee('<customer-display-component', false);
+
+        $this->expireSession();
+        $this->withCookie($name, $value)
+            ->post('/broadcasting/auth', ['socket_id' => '1234.5678', 'channel_name' => "private-store.{$this->store->id}.display"])
+            ->assertOk()->assertJsonStructure(['auth']);
+
+        $this->expireSession();
+        $this->withCookie($name, $value)->get('/display/ping')->assertNoContent();
+
+        // 表示用の remember cookie では POS (web) には入れない
+        $this->expireSession();
+        $this->withCookie($name, $value)->get('/')->assertRedirect('/login');
+        $this->withCookie($name, $value)->getJson('/api/user')->assertUnauthorized();
+    }
+
+    public function test_keep_alive_ping(): void
+    {
+        $this->get('/display/ping')->assertUnauthorized();             // ブラウザの普通の GET でも 401 (リダイレクトしない)
+        $this->actingAs($this->store)->get('/display/ping')->assertUnauthorized(); // POS のログインでは不可
+
+        $this->displayLoginWithRemember();
+        $this->get('/display/ping')->assertNoContent();
+    }
+
+    public function test_reissuing_token_invalidates_remembered_displays(): void
+    {
+        [$name, $value] = $this->displayLoginWithRemember();
+        $this->issueToken($this->store);
+
+        $this->expireSession();
+        $this->withCookie($name, $value)->get('/customer_display')->assertStatus(401)->assertSee(self::STAFF_MESSAGE);
+    }
+
+    public function test_pos_web_login_and_logout_unchanged_and_do_not_break_display(): void
+    {
+        // (remember cookie にはパスワードのハッシュが入るので、パスワードは先に決めておく)
+        $this->store->forceFill(['password' => Hash::make('pos-pass')])->save();
+        [$name, $value] = $this->displayLoginWithRemember();
+
+        // POS は今まで通り: ログインしても remember cookie は出さない、ログアウトできる
+        $this->app['auth']->forgetGuards();
+        $login = $this->post('/login', ['email' => 'a@example.com', 'password' => 'pos-pass']);
+        $login->assertRedirect('/');
+        $this->assertNull($login->getCookie(auth()->guard('web')->getRecallerName(), false));
+        $this->post('/logout')->assertRedirect();
+        $this->assertGuest('web');
+
+        // POS のログアウトで表示端末の remember が切れない
+        $this->expireSession();
+        $this->withCookie($name, $value)->get('/customer_display')->assertOk();
     }
 
     public function test_display_token_login_works_and_wrong_token_404(): void
@@ -144,7 +237,7 @@ class CustomerDisplayTest extends TestCase
 
         $this->get('/display/login/wrong-token')->assertNotFound();
         $this->get('/display/login/'.$token)->assertRedirect('/customer_display');
-        $this->assertAuthenticatedAs($this->store, 'display');
+        $this->assertSame($this->store->id, auth()->guard('display')->id());
         $this->assertGuest('web');
 
         $this->get('/customer_display')->assertOk()

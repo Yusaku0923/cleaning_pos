@@ -22,9 +22,10 @@ class Store extends Authenticatable
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
 
-    // stores に remember_token は無い (ログインの保持は使わない)
+    // POS (web ガード) はログインの保持を使わない。remember_token 列は顧客表示端末 (DisplayStore) 専用
     public function getRememberTokenName()
     {
         return '';
