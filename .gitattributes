@@ -11,3 +11,7 @@ CHANGELOG.md export-ignore
 # Docker/シェルは LF 固定(Windows の autocrlf で壊れないように)
 deploy/legacy/* text eol=lf
 *.sh text eol=lf
+deploy/v2/* text eol=lf
+deploy/xrea/* text eol=lf
+v2/** text eol=lf
+*.bash text eol=lf

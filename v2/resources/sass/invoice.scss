@@ -1,0 +1,136 @@
+.iv {
+    &-title {
+        font-size: 28px;
+    }
+
+    &-left {
+        &-search {
+            &-field {
+                font-size: 20px;
+                &-column {
+                    line-height: 3;
+                }
+                &-btn {
+                    top: 11px;
+                    right: 22px;
+                }
+            }
+        }
+
+        &-result {
+            &-field {
+                height: 68vh;
+                &-card {
+                    font-size: 20px;
+                }
+                &-back {
+                    font-size: 24px;
+                }
+                &-list {
+                    height: 60vh;
+                    &-card {
+                        font-size: 20px;
+                        position: relative;
+                    }
+                    &-caution {
+                        position: absolute;
+                        top: 11px;
+                        left: -27px;
+                        color: $red;
+                        &-c {
+                            top: 9px !important;
+                            left: -29px !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &-right {
+        &-select {
+            &-label {
+                font-size: 20px;
+            }
+
+            &-field {
+                height: 50vh;
+            }
+        }
+    }
+
+    &-reset {
+        position:absolute;
+        // right: 226.5px;
+        // right: 216.5px;
+        right: 18.35%;
+        bottom: 0;
+        transition: 1s;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: $orange;
+        text-align: center;
+        font-size: 28px;
+        line-height: 150px;
+        text-decoration: none;
+        color: #fff;
+        &:hover {
+            color: #fff;
+        }
+    }
+    &-operate {
+        position:absolute;
+        // right: 226.5px;
+        // right: 216.5px;
+        right: 18.35%;
+        bottom: 0;
+        transition: 1s;
+        width: 150px;
+        height: 150px;
+        border: 3px solid #000;
+        border-radius: 50%;
+        background-color: $deepblue;
+        text-align: center;
+        font-size: 28px;
+        line-height: 150px;
+        text-decoration: none;
+        color: #fff;
+        &:hover {
+            color: #fff;
+        }
+    }
+    &-pdf {
+        position:absolute;
+        // right: 17.5px;
+        // right: 27.5px;
+        right: 2.33%;
+        bottom: 0;
+        transition: 1s;
+        width: 150px;
+        height: 150px;
+        border: 3px solid #000;
+        border-radius: 50%;
+        background-color: $orange;
+        text-align: center;
+        font-size: 28px;
+        line-height: 144px;
+        text-decoration: none;
+        color: #fff;
+        &:hover {
+            color: #fff;
+        }
+    }
+
+    &-unselected {
+        padding: 10px 2px !important;
+    }
+    &-selected {
+        border: 3px solid #2dbe5b;
+        &-right {
+            background-color: #2dbe5b;
+            color: #fff;
+            font-size: 18px;
+        }
+    }
+}

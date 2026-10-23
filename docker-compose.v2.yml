@@ -1,0 +1,46 @@
+# v2 (Laravel 12 / Vue 3) の開発・テスト環境。PHP 8.3 + MariaDB 10.6 (XREA と同じ系統)。
+#   起動:   docker compose -f docker-compose.v2.yml up -d --build      -> http://localhost:8082
+#   テスト: docker compose -f docker-compose.v2.yml exec app php artisan test
+#   ビルド: docker compose -f docker-compose.v2.yml exec app npm run build
+#   停止:   docker compose -f docker-compose.v2.yml down   (DB も消す: down -v)
+# 旧の基準環境 (docker-compose.legacy.yml, 8081/33061) とは別プロジェクト。
+name: cleaning_pos_v2
+services:
+  app:
+    build:
+      context: deploy/v2
+    working_dir: /app
+    volumes:
+      - ./v2:/app
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: v2
+      DB_USERNAME: v2
+      DB_PASSWORD: v2-local
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8082:8000"
+  db:
+    image: mariadb:10.6
+    environment:
+      MARIADB_DATABASE: v2
+      MARIADB_USER: v2
+      MARIADB_PASSWORD: v2-local
+      MARIADB_ROOT_PASSWORD: v2-local
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "33062:3306"
+    volumes:
+      - v2-db:/var/lib/mysql
+      - ./deploy/v2/initdb.sql:/docker-entrypoint-initdb.d/10-testing.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 60
+volumes:
+  v2-db:

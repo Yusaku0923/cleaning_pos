@@ -1,0 +1,33 @@
+.odcreate {
+    &-category {
+        &-active {
+            color: #fff;
+            background-color: $green;
+        }
+    }
+    &-clothes {
+        &-tag {
+            top: 5px;
+            right: 5px;
+            &-one {
+                color: $primary;
+            }
+            &-two {
+                color: $green;
+            }
+            &-more {
+                color: $orange;
+            }
+
+            &intro {
+                bottom: 16px;
+            }
+        }
+    }
+    &-selected {
+        &-tag {
+            top: 17px;
+            right: 15px;
+        }
+    }
+}

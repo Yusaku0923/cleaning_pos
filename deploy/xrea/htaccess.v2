@@ -1,0 +1,32 @@
+# v2 (Laravel 12) の Web ルート用。PHP 8.3
+AddHandler fcgid-script .php
+FcgidWrapper /virtual/cleaningpossystem/public_html/.fast-cgi-bin/php83.fcgi .php
+
+# アクセス制御: 店の IP が固定でないため、全員 Basic 認証 (店の IP が分かったら RequireAny に Require ip を足す)
+AuthType Basic
+AuthName "cleaning_pos v2"
+AuthUserFile /virtual/cleaningpossystem/.htpasswd_v2
+Require valid-user
+
+# 以下は旧 (public/.htaccess) と同じ Laravel のリライト
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
