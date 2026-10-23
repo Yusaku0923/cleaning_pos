@@ -1,0 +1,120 @@
+<template>
+    <div class="col-12">
+        <div class="col-10 mx-auto">
+            <div class="card card-border col-12 py-3 mb-4 h4 text-center">
+                顧　客　検　索
+            </div>
+            <div class="card card-border col-12 py-4">
+                <div class="form-group col-6 mx-auto">
+                    <input type="text" class="form-control form-control-lg" placeholder="名前、フリガナ、電話番号"
+                        v-model="keyword"
+                        @input="onInput"
+                        @keydown.enter="search"/>
+                </div>
+            </div>
+        </div>
+        <div class="col-10 mx-auto my-3">
+            <div class="card card-border col-12">
+                <div class="col-10 d-flex mx-auto mt-3 dr-body-column-inner bg-primary text-white" >
+                    <div class="col-7 text-center">お名前</div>
+                    <div class="col-3 text-center">最終来店日</div>
+                    <div class="col-2 text-center">来店回数</div>
+                </div>
+                <div class="col-12 overflow-scroll fs-24" style="height: 380px;">
+
+                    <a class="card col-10 mx-auto my-3 py-3 text-decoration-none text-dark"
+                        v-for="customer in customers"
+                        :key="customer.id"
+                        :href="url(customer.id)">
+                        <div class="col-12 d-flex">
+                            <div class="col-4 text-end px-1">{{ customer.name }}</div>
+                            <div class="col-3 text-start px-1">({{ customer.name_kana }})</div>
+                            <div class="col-3 text-center">{{ customer.latest_visit !== null ? dateFormater(customer.latest_visit, 'YYYY/MM/DD'): '-' }}</div>
+                            <div class="col-2 text-center">{{ customer.number_of_visits }}回</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import moment from "moment";
+export default {
+    props: {
+        manager_id: {
+            type: Number,
+            requied: true,
+        },
+        default: {
+            required: false
+        }
+    },
+    data() {
+        return {
+            keyword: '',
+            customers: this.default,
+            searchTimeout: null,
+        }
+    },
+    methods: {
+        onInput: function() {
+            // 既存のタイマーをクリア
+            if (this.searchTimeout) {
+                clearTimeout(this.searchTimeout);
+            }
+            
+            // 入力が空の場合はデフォルトの顧客リストを表示
+            if (this.keyword.trim() === '') {
+                this.customers = this.default;
+                return;
+            }
+            
+            // 500ms後に検索実行（デバウンス）
+            this.searchTimeout = setTimeout(() => {
+                this.search();
+            }, 500);
+        },
+        search: async function() {
+            // キーワードが空の場合はデフォルトリストを表示
+            if (this.keyword.trim() === '') {
+                this.customers = this.default;
+                return;
+            }
+            
+            let result = await this.send();
+            if (result !== undefined && result.length >= 0) {
+                this.customers = result;
+            }
+        },
+        send: async function() {
+            return await axios.post('/api/customer/search', {
+                manager_id: this.manager_id,
+                keyword: this.keyword
+            })
+            .then(function (response) {
+                return response.data.customers;
+            })
+            .catch(function (error) {
+                console.log(error);
+                return;
+            });
+        },
+        url: function(id) {
+            // 選択中の担当者 (?m=) を引き継ぐ
+            return '/customer/select/' + id + window.location.search
+        },
+        // Utilityにまとめる
+        dateFormater: function(date, format = 'MM/DD') {
+            return moment(date).format(format);
+        },
+    },
+    beforeUnmount() {
+        // コンポーネント破棄時にタイマーをクリア
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+    }
+}
+</script>

@@ -1,6 +1,10 @@
 import './bootstrap';
 import * as bootstrap from 'bootstrap';
 import { createApp } from 'vue';
+import CustomerInfoComponent from './components/CustomerInfoComponent.vue';
+import CustomerCreateComponent from './components/CustomerCreateComponent.vue';
+import CustomerSearchComponent from './components/CustomerSearchComponent.vue';
+import ManagerSelectButtonComponent from './components/ManagerSelectButtonComponent.vue';
 
 // 旧 (Laravel Mix) と同じく Bootstrap 5.2.2 の JS を同梱 (data-bs-* のモーダル等)
 window.bootstrap = bootstrap;
@@ -15,6 +19,10 @@ window.bootstrap = bootstrap;
  *   'customer-display-component', 'delivery-sp-entry-component', 'delivery-note-component'
  */
 export const components = {
+    'customer-info-component': CustomerInfoComponent,
+    'customer-create-component': CustomerCreateComponent,
+    'customer-search-component': CustomerSearchComponent,
+    'manager-select-btn-component': ManagerSelectButtonComponent,
 };
 
 export function registerComponents(app) {

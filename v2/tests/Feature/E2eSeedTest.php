@@ -1,0 +1,45 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Customer;
+use App\Models\Manager;
+use App\Models\Store;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
+class E2eSeedTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_seed_is_idempotent_and_resets_e2e_orders(): void
+    {
+        $this->artisan('e2e:seed')->assertSuccessful();
+        $this->artisan('e2e:seed')->assertSuccessful();
+
+        $this->assertSame(1, Store::where('email', 'test@gmail.com')->count());
+        $manager = Manager::where('name', 'E2E担当')->sole();
+        $this->assertSame(['E2E請求顧客', 'E2E顧客'], Customer::where('manager_id', $manager->id)->orderBy('name')->pluck('name')->all());
+
+        // 注文とタグ採番を進めても、もう一度流せば初期状態に戻る
+        $customer = Customer::where('name', 'E2E顧客')->sole();
+        $t = ['created_at' => now(), 'updated_at' => now()];
+        $order = DB::table('orders')->insertGetId(['store_id' => $manager->store_id, 'manager_id' => $manager->id, 'customer_id' => $customer->id, 'amount' => 500, 'reduction' => 0, 'payment' => 500] + $t);
+        DB::table('order_items')->insert(['order_id' => $order, 'clothes_id' => DB::table('clothes')->where('name', 'E2E衣類')->value('id'), 'tag' => '1-000'] + $t);
+        DB::table('tag_counters')->where('manager_id', $manager->id)->update(['value' => 1005]);
+        $customer->update(['total_sales' => 500, 'number_of_visits' => 1]);
+
+        $this->artisan('e2e:seed')->assertSuccessful();
+        $this->assertSame(0, DB::table('orders')->count());
+        $this->assertSame(1000, (int) DB::table('tag_counters')->where('manager_id', $manager->id)->value('value'));
+        $this->assertSame(0, (int) $customer->fresh()->total_sales);
+    }
+
+    public function test_seed_refuses_production(): void
+    {
+        $this->app['env'] = 'production';
+        $this->artisan('e2e:seed')->assertFailed();
+        $this->assertSame(0, Store::count());
+    }
+}

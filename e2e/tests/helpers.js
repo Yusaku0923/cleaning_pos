@@ -43,18 +43,37 @@ function decodeHtml(html) {
 async function selectManagerAndCustomer(page, customerName) {
   const home = decodeHtml(await (await page.request.get('/')).text());
   const m = home.match(/"id":(\d+),"store_id":\d+,"name":"E2E担当"/);
-  expect(m, 'テスト担当者がホームの managers に見つからない(setup-test-store.sh 未実行?)').not.toBeNull();
-  if (TARGET === 'v2') {
-    // TODO(v2 実装時): 担当者・顧客を URL で指定する方式に合わせて goto 先を変える。
-    // 現状は legacy と同じ手順(v2 側で同じ導線を維持する前提)。
-  }
+  expect(m, 'テスト担当者がホームの managers に見つからない(setup-test-store.sh / e2e:seed 未実行?)').not.toBeNull();
   await page.goto(`/manager/update/${m[1]}`);
-  if (!customerName) return;
-  await page.goto('/customer/list');
-  const card = page.locator('.card', { hasText: customerName }).filter({ has: page.locator('a:has-text("選択")') }).first();
-  await expect(card, `${customerName} が顧客一覧にない`).toBeVisible();
-  await card.locator('a:has-text("選択")').click();
-  await expect(page.locator('body')).toContainText(customerName);
+  if (customerName) {
+    // v2: /manager/update は ?m= 付きのホームへリダイレクトする。顧客一覧へはその m を引き継ぐ
+    // (画面の「顧客一覧」ボタンと同じ URL)。
+    await page.goto(TARGET === 'v2' ? `/customer/list${new URL(page.url()).search}` : '/customer/list');
+    const card = page.locator('.card', { hasText: customerName }).filter({ has: page.locator('a:has-text("選択")') }).first();
+    await expect(card, `${customerName} が顧客一覧にない`).toBeVisible();
+    await card.locator('a:has-text("選択")').click();
+    await expect(page.locator('body')).toContainText(customerName);
+  }
+  if (TARGET === 'v2') await carryPosContext(page);
+}
+
+/**
+ * v2: 選択中の担当者・顧客は URL (?m=&c=) で持つ。テストが page.goto('/order/create') のように
+ * クエリ無しで開いても legacy (セッション) と同じ画面になるよう、以後の同一オリジンの画面遷移に
+ * 今の m / c を付ける (画面内のリンクは元から m / c 付き)。
+ */
+async function carryPosContext(page) {
+  const current = new URL(page.url());
+  const ctx = ['m', 'c'].filter((k) => current.searchParams.has(k)).map((k) => [k, current.searchParams.get(k)]);
+  expect(ctx.length, '担当者を選んだあとの URL に m が無い').toBeGreaterThan(0);
+  await page.unroute('**/*').catch(() => {});
+  await page.route('**/*', (route) => {
+    const req = route.request();
+    const url = new URL(req.url());
+    if (!req.isNavigationRequest() || url.origin !== current.origin || url.searchParams.has('m')) return route.continue();
+    for (const [k, v] of ctx) url.searchParams.set(k, v);
+    return route.continue({ url: url.toString() });
+  });
 }
 
 module.exports = { TARGET, EMAIL, PASSWORD, login, collectErrors, decodeHtml, selectManagerAndCustomer };

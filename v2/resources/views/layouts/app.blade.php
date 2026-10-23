@@ -31,15 +31,17 @@
 
 </head>
 <body>
-    <div id="app" class="{{ session('theme_body') ?? session('theme_body') }}" style="height: 100dvh;">
+    {{-- 担当者は URL (?m=) から (ResolvePosContext)。旧はセッションの manager_name / theme_* --}}
+    @php($posManager = request()->attributes->get('manager'))
+    <div id="app" class="{{ $posManager?->theme_body }}" style="height: 100dvh;">
         @if (!request()->is('*customer_display*'))
         <main class="{{ request()->is('delivery/sp*') ? '' : 'pt-4' }} position-relative">
             @if (!request()->is('delivery/sp*'))
             <div class="col-12 mb-4 px-2 position-sticky">
                 @if ( !request()->is('*login*') )
-                <a href="{{ route('home') }}" class="card text-decoration-none text-body border border-2 border-dark {{ session('theme_header') ? session('theme_header') : '' }}">
-                    <div class="d-flex justify-content-between  {{ session('theme_header') ? session('theme_header').'-header' : '' }}">
-                        <div class="col-4 px-5 text-start fs-20" style="line-height: 43px">担当者：<span class="{{ is_null(session('manager_name')) ? 'text-danger fw-bold': '' }}">{{ session('manager_name') ?? '設定されていません' }}</span></div>
+                <a href="{{ pos_url('home') }}" class="card text-decoration-none text-body border border-2 border-dark {{ $posManager?->theme_header ? $posManager->theme_header : '' }}">
+                    <div class="d-flex justify-content-between  {{ $posManager?->theme_header ? $posManager->theme_header.'-header' : '' }}">
+                        <div class="col-4 px-5 text-start fs-20" style="line-height: 43px">担当者：<span class="{{ is_null($posManager?->name) ? 'text-danger fw-bold': '' }}">{{ $posManager?->name ?? '設定されていません' }}</span></div>
                         <div class="col-4 text-center fs-20" style="line-height: 43px">{{ $title ?? 'システム' }}</div>
                         <div class="col-4 px-5 text-end fs-20" id="RealtimeClockArea" style="line-height: 43px"></div>
                     </div>
