@@ -36,6 +36,12 @@
         <env name="LEGACY_DB_DATABASE" value="legacy_testing" force="true"/>
         <env name="LEGACY_DB_USERNAME" value="v2" force="true"/>
         <env name="LEGACY_DB_PASSWORD" value="v2-local" force="true"/>
+        <!-- プロセスの環境変数 (compose の environment / exec -e) より優先させる。フィクスチャは旧テーブルを DROP する -->
+        <server name="LEGACY_DB_HOST" value="db" force="true"/>
+        <server name="LEGACY_DB_PORT" value="3306" force="true"/>
+        <server name="LEGACY_DB_DATABASE" value="legacy_testing" force="true"/>
+        <server name="LEGACY_DB_USERNAME" value="v2" force="true"/>
+        <server name="LEGACY_DB_PASSWORD" value="v2-local" force="true"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
