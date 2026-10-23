@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Domain\Tag\TagAllocator;
+use App\Domain\Tag\TagCounterUnavailable;
 use App\Domain\Tag\TagNumber;
+use App\Models\Store;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -60,6 +62,21 @@ class TagAllocatorTest extends TestCase
 
         $this->assertSame([1000, 1001], $this->ints(app(TagAllocator::class)->allocate($manager, 2)));
         $this->assertSame(1002, (int) DB::table('tag_counters')->where('manager_id', $manager)->value('value'));
+    }
+
+    public function test_counter_hidden_by_store_scope_throws_domain_exception(): void
+    {
+        $other = $this->seedManager(1500); // 店 s@example.com の担当者
+        $mine = Store::create(['name' => '自店', 'email' => 'me@example.com', 'password' => 'x', 'address' => '住所', 'phone_number' => '000']);
+        $this->actingAs($mine);
+
+        try {
+            app(TagAllocator::class)->allocate($other, 1);
+            $this->fail('expected TagCounterUnavailable');
+        } catch (TagCounterUnavailable $e) {
+            $this->assertStringContainsString((string) $other, $e->getMessage());
+        }
+        $this->assertSame(1500, (int) DB::table('tag_counters')->where('manager_id', $other)->value('value'));
     }
 
     public function test_zero_count_allocates_nothing(): void

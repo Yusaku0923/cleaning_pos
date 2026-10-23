@@ -21,8 +21,11 @@ class TagAllocator
             throw new InvalidArgumentException("count must be >= 0: {$count}");
         }
 
+        $this->ensureCounter($managerId);
+
         return DB::transaction(function () use ($managerId, $count) {
-            $counter = $this->lockCounter($managerId);
+            $counter = TagCounter::withTrashed()->where('manager_id', $managerId)->lockForUpdate()->first()
+                ?? throw new TagCounterUnavailable("担当者 {$managerId} のタグ番号を取得できません");
 
             $tag = TagNumber::fromInt((int) $counter->value);
             $tags = [];
@@ -40,20 +43,18 @@ class TagAllocator
         });
     }
 
-    private function lockCounter(int $managerId): TagCounter
+    /**
+     * 行がない担当者は 1000 から始める。ロックを取る前に作っておく
+     * (行がない状態で 2 接続が FOR UPDATE → INSERT すると、ギャップロック同士でデッドロックするため)。
+     * manager_id は unique なので同時に作られても 1 行。行がある担当者では何もしない (INSERT IGNORE の共有ロックを取らない)。
+     */
+    private function ensureCounter(int $managerId): void
     {
-        $find = fn () => TagCounter::withTrashed()->where('manager_id', $managerId)->lockForUpdate()->first();
-
-        $counter = $find();
-        if ($counter === null) {
-            // 行がない担当者は 1000 から。manager_id は unique なので同時に作られても 1 行
+        if (! TagCounter::withTrashed()->where('manager_id', $managerId)->exists()) {
             TagCounter::query()->insertOrIgnore([
                 'manager_id' => $managerId, 'value' => TagNumber::MIN,
                 'created_at' => now(), 'updated_at' => now(),
             ]);
-            $counter = $find();
         }
-
-        return $counter;
     }
 }

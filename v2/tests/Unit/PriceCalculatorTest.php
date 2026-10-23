@@ -46,6 +46,19 @@ class PriceCalculatorTest extends TestCase
         $this->assertSame(0, $this->calc->includedTax(0, 10, 'round'));
     }
 
+    public function test_negative_amounts(): void
+    {
+        // 外税: round は PHP round (0 から遠い方)、floor は PHP floor (旧 納品書 floor($subtotal * $rate))
+        $this->assertSame(-101, $this->calc->tax(-1005, 10, 'round'));  // round(-100.5)
+        $this->assertSame(-101, $this->calc->tax(-1005, 10, 'floor'));  // floor(-100.5)
+        $this->assertSame(-100, $this->calc->tax(-1004, 10, 'round'));  // round(-100.4)
+        $this->assertSame(-101, $this->calc->tax(-1004, 10, 'floor'));  // floor(-100.4)
+        // 内税: round = 旧 請求書 PDF amount - round(amount / 1.1)、floor = 旧 画面 Math.trunc (0 に向かって切り捨て)
+        $this->assertSame(-46, $this->calc->includedTax(-505, 10, 'round'));  // -505 - round(-459.09)
+        $this->assertSame(-45, $this->calc->includedTax(-505, 10, 'floor'));  // trunc(-45.909)
+        $this->assertSame(-45, $this->calc->includedTax(-500, 10, 'floor'));  // trunc(-45.45)
+    }
+
     public function test_line_total(): void
     {
         $this->assertSame(1500, $this->calc->lineTotal(500, 3));

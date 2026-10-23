@@ -148,27 +148,97 @@ class InvoiceServiceTest extends TestCase
         $this->assertSame(3, Invoice::where('customer_id', $c->id)->count());
     }
 
-    public function test_align_cutoff_moves_orders_of_mismatched_invoices_and_deletes_them(): void
+    public function test_align_cutoff_moves_orders_of_the_selected_invoice_and_deletes_it(): void
     {
         $c = $this->customer(99);
         // 締め日を 20 日 → 末日に変えた顧客の古い請求書 (period_end の日 ≠ 締め日)
         $old = Invoice::create(['manager_id' => $this->manager, 'customer_id' => $c->id, 'period_start' => '2026-01-21', 'period_end' => '2026-02-20']);
+        $other = Invoice::create(['manager_id' => $this->manager, 'customer_id' => $c->id, 'period_start' => '2025-12-21', 'period_end' => '2026-01-20']);
         $ok = $this->service()->findOrCreateFor($c, CarbonImmutable::parse('2026-03-05')); // 03-01 〜 03-31
         $o1 = $this->order($c, $old->id, '2026-01-25 10:00:00');
         $o2 = $this->order($c, $old->id, '2026-02-03 10:00:00');
         $o3 = $this->order($c, $ok->id, '2026-03-05 10:00:00');
+        $o4 = $this->order($c, $other->id, '2026-01-10 10:00:00');
 
         $this->assertTrue($this->service()->isMismatchCutoff($old));
+        $this->assertTrue($this->service()->isMismatchCutoff($other));
         $this->assertFalse($this->service()->isMismatchCutoff($ok));
 
-        $this->service()->alignCutoff($c);
+        // 旧 align_cutoff_date と同じく、選んだ 1 件だけを直す
+        $this->service()->alignCutoff($old);
 
         $jan = Invoice::where('customer_id', $c->id)->whereDate('period_end', '2026-01-31')->sole();
         $feb = Invoice::where('customer_id', $c->id)->whereDate('period_end', '2026-02-28')->sole();
         $this->assertSame($jan->id, $o1->fresh()->invoice_id);
         $this->assertSame($feb->id, $o2->fresh()->invoice_id);
-        $this->assertSame($ok->id, $o3->fresh()->invoice_id);
+        $this->assertNull($jan->paid_at);
+        $this->assertSame($this->manager, $jan->manager_id);
         $this->assertSoftDeleted('invoices', ['id' => $old->id]);
+        // 選んでいない請求書と、その注文はそのまま
+        $this->assertSame($ok->id, $o3->fresh()->invoice_id);
+        $this->assertSame($other->id, $o4->fresh()->invoice_id);
+        $this->assertNotSoftDeleted('invoices', ['id' => $other->id]);
         $this->assertNotSoftDeleted('invoices', ['id' => $ok->id]);
+    }
+
+    public function test_align_cutoff_never_moves_orders_onto_the_invoice_being_deleted(): void
+    {
+        // 締め日 0 の請求書は旧の判定で常に「ズレ」。正しい期間が自分自身と同じでも、消える請求書には移さない
+        $c = $this->customer(0);
+        $inv = $this->service()->findOrCreateFor($c, CarbonImmutable::parse('2026-06-23')); // 06-01 〜 06-30
+        $o = $this->order($c, $inv->id, '2026-06-23 10:00:00');
+        $this->assertTrue($this->service()->isMismatchCutoff($inv));
+
+        $this->service()->alignCutoff($inv);
+
+        $this->assertSoftDeleted('invoices', ['id' => $inv->id]);
+        $target = Invoice::find($o->fresh()->invoice_id);
+        $this->assertNotNull($target);
+        $this->assertSame(['2026-06-01', '2026-06-30'], $this->period($target));
+    }
+
+    /** 旧から取り込んだ締め日 0 の顧客の請求書 (period_end = 翌月の '-00')。 */
+    private function insertLegacyDay00Invoice(Customer $c, string $start, string $end): int
+    {
+        $mode = DB::selectOne('select @@session.sql_mode as m')->m;
+        DB::statement("set session sql_mode = ''");
+        try {
+            return DB::table('invoices')->insertGetId([
+                'manager_id' => $this->manager, 'customer_id' => $c->id,
+                'period_start' => $start, 'period_end' => $end,
+                'created_at' => now(), 'updated_at' => now(),
+            ]);
+        } finally {
+            DB::statement('set session sql_mode = ?', [$mode]);
+        }
+    }
+
+    public function test_imported_day_00_invoice_is_reused_for_the_same_period(): void
+    {
+        // 本番 請求書 1281: 締め日 0、06-23 渡し → 旧は 2026-06-01 .. 2026-07-00 (= 6 月分)
+        $c = $this->customer(0);
+        $legacyId = $this->insertLegacyDay00Invoice($c, '2026-10-01', '2026-11-00');
+        $this->assertSame('2026-11-00', DB::table('invoices')->where('id', $legacyId)->value('period_end'));
+
+        $invoice = $this->service()->findOrCreateFor($c, CarbonImmutable::parse('2026-10-23 12:00:00'));
+
+        $this->assertSame($legacyId, $invoice->id);
+        $this->assertSame(1, Invoice::where('customer_id', $c->id)->count());
+        // 保存されている値は変えない
+        $this->assertSame('2026-11-00', DB::table('invoices')->where('id', $legacyId)->value('period_end'));
+    }
+
+    public function test_day_00_invoice_of_another_month_is_not_reused(): void
+    {
+        // '2026-10-00' は 9 月分 (2026-09-01 .. 2026-10-00)。10 月の注文には使わない
+        $c = $this->customer(0);
+        $september = $this->insertLegacyDay00Invoice($c, '2026-09-01', '2026-10-00');
+
+        $invoice = $this->service()->findOrCreateFor($c, CarbonImmutable::parse('2026-10-23'));
+
+        $this->assertNotSame($september, $invoice->id);
+        $this->assertSame(['2026-10-01', '2026-10-31'], $this->period($invoice->fresh()));
+        // 9 月の注文なら旧の請求書を使う
+        $this->assertSame($september, $this->service()->findOrCreateFor($c, CarbonImmutable::parse('2026-09-15'))->id);
     }
 }

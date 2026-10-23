@@ -62,7 +62,8 @@ class PriceCalculator
 
     /**
      * 内税: 税込 $amount に含まれる税額。
-     * round = 旧 請求書 PDF (amount - round(amount / (1 + rate)))、floor = 旧 画面 (trunc(amount - amount / (1 + rate)))。
+     * round = 旧 請求書 PDF (amount - round(amount / (1 + rate)))、floor = 旧 画面 (Math.trunc(amount - amount / (1 + rate)))。
+     * 'floor' はここだけ 0 に向かう切り捨て (外税の tax() は旧 納品書と同じく PHP の floor)。
      */
     public function includedTax(int $amount, int $ratePercent, string $mode): int
     {
@@ -72,7 +73,8 @@ class PriceCalculator
         return match ($this->mode($mode)) {
             // amount - round(amount*100/den) を、税額側で四捨五入の向きを合わせて整数だけで計算
             self::ROUND => $amount - $this->divRoundHalfUp($amount * 100, $den),
-            self::FLOOR => $this->divFloor($num, $den),
+            // 旧 画面は Math.trunc (0 に向かって切り捨て)。負の金額で floor と違う
+            self::FLOOR => intdiv($num, $den),
         };
     }
 

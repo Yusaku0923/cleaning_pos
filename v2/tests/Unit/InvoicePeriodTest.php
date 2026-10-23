@@ -13,10 +13,11 @@ use Tests\TestCase;
  * (作り方は tests/fixtures/make_invoice_periods.php)。
  *
  * 旧関数は 'Y-m-<締め日>' の文字列を返すので、存在しない日 (2026-02-31, 2026-07-0, 2026-01-32) も返る。
- * v2 は旧の PHP がその文字列を日付として読んだ値 (strtotime。旧の繰越処理もこれで読む) と同じにする。
- *   - 2026-02-31 → 2026-03-03 のように翌月に繰り上がる (旧と同じ)
- *   - 日付 00 (締め日 0 = 未選択) → 前月末 = 本当の月末 (旧 DB には 'YYYY-MM-00' が入る。e2e/allowed-diffs.md)
- *   - 32 日 (締め日 31 の開始日) → 旧の strtotime は読めず 1970-01-01。v2 は 1 日 + 31 日 (e2e/allowed-diffs.md)
+ *   - 旧が存在する日を返したとき: v2 はその日と完全に同じ。
+ *   - 旧が存在しない日を返したとき (締め日 0 の日付 00、締め日 29〜31 の短い月): v2 は本当の日付にする。
+ *     終了日 = その月の min(締め日, 月の日数) (締め日 0 は月末)、開始日 = 前の期間の終了日の翌日。
+ *     旧 DB には 'YYYY-MM-00' / '0000-00-00' が入っていた (e2e/allowed-diffs.md)。
+ * どの場合も、渡し日は必ずその期間に入る。
  */
 class InvoicePeriodTest extends TestCase
 {
@@ -34,31 +35,59 @@ class InvoicePeriodTest extends TestCase
     #[DataProvider('legacyCases')]
     public function test_matches_legacy_search_invoice_period(array $c): void
     {
-        [$start, $end] = InvoicePeriod::for($c['cutoff'], CarbonImmutable::parse($c['handed_at']));
+        $handed = CarbonImmutable::parse($c['handed_at']);
+        [$start, $end] = InvoicePeriod::for($c['cutoff'], $handed);
 
-        $this->assertSame($this->expected($c['start_raw'], $c['start']), $start->toDateString(), 'start');
-        $this->assertSame($this->expected($c['end_raw'], $c['end']), $end->toDateString(), 'end');
         $this->assertSame('00:00:00', $start->format('H:i:s'));
+        $this->assertTrue($start->lte($handed) && $end->gte($handed), "handed {$c['handed_at']} must be inside {$start->toDateString()}..{$end->toDateString()}");
+
+        foreach (['start' => $start, 'end' => $end] as $key => $v2) {
+            $raw = $c["{$key}_raw"];
+            if ($this->isRealDate($raw)) {
+                // 旧が存在する日を返したときは完全に同じ
+                $this->assertSame(CarbonImmutable::parse($c[$key])->toDateString(), $v2->toDateString(), "{$key} (legacy {$raw})");
+                $this->assertSame($c[$key], $this->normalize($raw));
+            }
+        }
+
+        // 存在しない日の代わり: 終了日は min(締め日, 月の日数)、締め日 0 / 99 は月末
+        $endDay = in_array($c['cutoff'], [0, 99], true) ? $end->daysInMonth : min($c['cutoff'], $end->daysInMonth);
+        $this->assertSame($endDay, $end->day, 'end day');
+        // 開始日は前の期間の終了日の翌日
+        [, $prevEnd] = InvoicePeriod::for($c['cutoff'], $start->subDay());
+        $this->assertSame($prevEnd->addDay()->toDateString(), $start->toDateString(), 'start = previous end + 1');
     }
 
-    /**
-     * 旧の値。ただし旧の PHP が読めなかった 32 日だけは、他の日と同じ繰り上がりで「その月の 1 日 + 31 日」。
-     * こうすると前の期間の終了日 (例: 2026-02-31 → 03-03) の翌日 (03-04) から始まり、期間が途切れも重なりもしない。
-     */
-    private function expected(string $raw, string $legacyRead): string
+    private function isRealDate(string $raw): bool
     {
         [$y, $m, $d] = array_map('intval', explode('-', $raw));
-        if ($legacyRead === '1970-01-01') {
-            $this->assertSame(32, $d, "only day 32 is unreadable by legacy: {$raw}");
 
-            return CarbonImmutable::create($y, $m, 1)->addDays(31)->toDateString();
-        }
-        if ($d === 0) {
-            // 旧の strtotime も前月末として読む (DB には 00 のまま入る)
-            $this->assertSame(CarbonImmutable::create($y, $m, 1)->subDay()->toDateString(), $legacyRead);
-        }
+        return checkdate($m, $d, $y);
+    }
 
-        return $legacyRead;
+    private function normalize(string $raw): string
+    {
+        [$y, $m, $d] = array_map('intval', explode('-', $raw));
+
+        return sprintf('%04d-%02d-%02d', $y, $m, $d);
+    }
+
+    /** 旧が存在しない日を返す締め日 29〜31 の例 (レビュー指摘: 渡し日が期間外になっていた)。 */
+    public function test_short_month_cutoffs_are_clamped(): void
+    {
+        $cases = [
+            // [締め日, 渡し日, 開始, 終了]
+            [30, '2026-03-01', '2026-03-01', '2026-03-30'],  // 旧: 2026-02-31 .. 2026-03-30
+            [31, '2026-02-10', '2026-02-01', '2026-02-28'],  // 旧: 2026-01-32 .. 2026-02-31
+            [29, '2026-02-28', '2026-01-30', '2026-02-28'],  // 旧: 2026-01-30 .. 2026-02-29
+            [29, '2026-03-01', '2026-03-01', '2026-03-29'],  // 旧: 2026-02-30 .. 2026-03-29
+            [31, '2026-04-30', '2026-04-01', '2026-04-30'],  // 旧: 2026-03-32 .. 2026-04-31
+            [29, '2024-02-29', '2024-01-30', '2024-02-29'],  // うるう年は旧も正しい
+        ];
+        foreach ($cases as [$cutoff, $handed, $s, $e]) {
+            [$start, $end] = InvoicePeriod::for($cutoff, CarbonImmutable::parse($handed));
+            $this->assertSame([$s, $e], [$start->toDateString(), $end->toDateString()], "cutoff {$cutoff} handed {$handed}");
+        }
     }
 
     public function test_fixture_covers_the_brief_matrix(): void
@@ -95,10 +124,7 @@ class InvoicePeriodTest extends TestCase
             for ($i = 0; $i < 400; $i++) {
                 $day = $day->addDay();
                 [$start, $end] = InvoicePeriod::for($cutoff, $day);
-                if ($cutoff <= 28 || $cutoff === 99) {
-                    // 29〜31 は旧と同じく、短い月の直後の数日がその日を含まない期間に入る (画面では選べない締め日)
-                    $this->assertTrue($start->lte($day) && $end->gte($day), "cutoff {$cutoff}: {$day->toDateString()} is in its period");
-                }
+                $this->assertTrue($start->lte($day) && $end->gte($day), "cutoff {$cutoff}: {$day->toDateString()} is in its period");
                 if (! $end->equalTo($prevEnd)) {
                     $this->assertSame($prevEnd->addDay()->toDateString(), $start->toDateString(), "cutoff {$cutoff} at {$day->toDateString()}");
                     $prevEnd = $end;
