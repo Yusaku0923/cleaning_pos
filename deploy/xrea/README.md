@@ -83,6 +83,27 @@ curl -s -u asahiya:<pw> http://dev.cleaningpossystem.shop/login | grep 'name="em
 tail -50 ~/log/deploy_v2.log
 ```
 
+どの手順 (git fetch / pull / composer / npm ci / npm run build / migrate / *:cache) も、失敗するとログに
+`!!! <手順> failed (exit N)` を書いて 0 以外で終わり、`~/tmp/pull_v2.failed` を残す。印がある間は次の cron が
+`-f` と同じくすべてやり直し、成功すると印を消す (2026-10-27: composer が exit 143 で落ちた回を次の cron が自動でやり直して成功)。
+`grep -n '!!!' ~/log/deploy_v2.log | tail` で失敗の有無を見る。
+
+## 新旧比較の E2E を XREA の v2 に流す (切替前だけ)
+
+v2 DB が本番のコピーである間だけ。E2E は E2E 店舗 (test@gmail.com) を作り書き込むので、流したあとは必ず取り込み直す。
+
+```bash
+# ローカル (e2e/)。Basic 認証は環境変数で (リポジトリに書かない)
+E2E_ALLOW_V2=1 E2E_TARGET=v2 E2E_BASE_URL=http://asahiya-pos.xrea.jp E2E_HTTP_USER=asahiya E2E_HTTP_PASSWORD=<pw> E2E_RESET_CMD='<ssh で "cd ~/v2/cleaning_pos/v2 && php83cli artisan e2e:seed --allow-production-env">' npx playwright test --reporter=line
+# XREA: 本番の最新で取り込み直し → 検算 → 表示端末の URL を再発行 (取り込みで消える)
+cd ~/v2/cleaning_pos/v2
+php83cli artisan legacy:import --fresh && php83cli artisan legacy:verify
+php83cli artisan display:issue-token > ~/backup/display_token.txt; chmod 600 ~/backup/display_token.txt
+```
+
+`e2e:seed` は DB 名 `cleaningpossystem` (本番) ではどんなオプションでも動かない。APP_ENV=production では
+`--allow-production-env` のときだけ動く。切替後 (v2 DB が本番) は `E2E_ALLOW_V2=1` で流さない。
+
 ## 端末の自動ログイン
 
 ```bash
