@@ -9,7 +9,7 @@
 | アプリ | `~/prod/cleaning_pos` | `~/v2/cleaning_pos/v2` |
 | Web ルート | `~/public_html/cleaningpossystem.shop` | `~/public_html/asahiya-pos.xrea.jp` |
 | DB | `cleaningpossystem` | `cleaningpossystem_dev` |
-| 自動デプロイ | cron `~/commands/pull_prod.bash` (feature/launch) | cron `~/commands/pull_v2.bash` (main) |
+| 自動デプロイ | cron `~/commands/pull_prod.bash` (feature/launch) | cron `~/commands/pull_v2.bash` (master) |
 | Pusher | 本番のアプリ (キー b2d5…) | 切替までは dev のアプリ (キー 5f8b…)。切替で本番のアプリに替える |
 
 Basic 認証のパスワードはこのリポジトリには書かない (オーナーの控えを見る)。
@@ -56,7 +56,7 @@ sed -i 's/^SESSION_LIFETIME=.*/SESSION_LIFETIME=1440/' .env && php83cli artisan 
 
 ### 0-3. v2 のコードを直すとき
 
-`main` に push すると、10 分以内に XREA が自動で取り込む。**画面 (v2/resources) を変えるとビルドが走り、その間 (1〜3 分) v2 の画面が 500 になる。**
+`master` に push すると、10 分以内に XREA が自動で取り込む。**画面 (v2/resources) を変えるとビルドが走り、その間 (1〜3 分) v2 の画面が 500 になる。**
 切替後は営業中に push しない (閉店後に push し、`tail ~/log/deploy_v2.log` で completed を確かめる)。`feature/launch` には push しない (旧の本番に出る)。
 
 ---
