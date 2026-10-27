@@ -1,0 +1,5 @@
+# 日本語フォント (旧 storage/fonts と同じ migmix-2m)。dompdf が作るキャッシュ (installed-fonts.json と migmix_*_<hash>.*) はコミットしない
+*
+!.gitignore
+!migmix-2m-regular.ttf
+!migmix-2m-bold.ttf

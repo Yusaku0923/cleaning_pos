@@ -122,4 +122,42 @@ class OrderQueries
             ->map(fn ($rows) => $rows->toArray())
             ->all();
     }
+
+    /**
+     * 旧 Order::fetchDailyOrders($manager_id, $date): その日の受付 (受付順) と品物、その日・その月の売上合計。
+     * 受付・品物は DB の値のまま (日時を ISO 文字列にしない)。合計は旧と同じく DB の SUM の値。
+     *
+     * @return array{0: list<array>, 1: mixed, 2: mixed}
+     */
+    public function fetchDailyOrders(int $managerId, string $date): array
+    {
+        $orders = Order::query()->select('orders.*', 'customers.name')
+            ->join('customers', 'orders.customer_id', '=', 'customers.id')
+            ->where('orders.created_at', '>=', $date.' 00:00:00')
+            ->where('orders.created_at', '<=', $date.' 23:59:59')
+            ->where('orders.manager_id', $managerId)
+            ->orderBy('orders.created_at', 'asc')->orderBy('orders.id', 'asc')
+            ->get()->map(fn (Order $o) => $o->getAttributes())->all();
+
+        $sum = fn (string $from, string $to) => Order::where('created_at', '>=', $from.' 00:00:00')
+            ->where('created_at', '<=', $to.' 23:59:59')
+            ->where('manager_id', $managerId)
+            ->sum('amount');
+        $dailySum = $sum($date, $date);
+        $monthlySum = $sum(date('Y-m-01', strtotime($date)), date('Y-m-t', strtotime($date)));
+
+        $items = OrderItem::query()
+            ->select('order_items.*', 'clothes.id as clothes_id', 'clothes.name', 'clothes.price')
+            ->join('clothes', 'order_items.clothes_id', '=', 'clothes.id')
+            ->whereIn('order_items.order_id', array_column($orders, 'id'))
+            ->orderBy('order_items.id', 'asc')
+            ->get()
+            ->groupBy('order_id')
+            ->map(fn ($rows) => $rows->map(fn (OrderItem $i) => $i->getAttributes())->all());
+        foreach ($orders as $key => $order) {
+            $orders[$key]['items'] = $items[$order['id']] ?? [];
+        }
+
+        return [$orders, $dailySum, $monthlySum];
+    }
 }

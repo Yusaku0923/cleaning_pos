@@ -6,11 +6,14 @@ import CustomerInfoComponent from './components/CustomerInfoComponent.vue';
 import CustomerCreateComponent from './components/CustomerCreateComponent.vue';
 import CustomerDisplayComponent from './components/CustomerDisplayComponent.vue';
 import CustomerSearchComponent from './components/CustomerSearchComponent.vue';
+import DailyReportSearchComponent from './components/DailyReportSearchComponent.vue';
 import HistoryCardComponent from './components/HistoryCardComponent.vue';
 import HistoryComponent from './components/HistoryComponent.vue';
+import InvoiceComponent from './components/InvoiceComponent.vue';
 import ManagerSelectButtonComponent from './components/ManagerSelectButtonComponent.vue';
 import OrderComponent from './components/OrderComponent.vue';
 import PaymentComponent from './components/PaymentComponent.vue';
+import PaymentConfirmationComponent from './components/PaymentConfirmationComponent.vue';
 import ReturnComponent from './components/ReturnComponent.vue';
 import { pushFlashedCustomerDisplay } from './customerDisplay.js';
 
@@ -19,7 +22,7 @@ window.bootstrap = bootstrap;
 
 /**
  * Vue 部品を旧 resources/js/app.js と同じケバブケース名で登録する。
- * 部品を移植したらここに足す (名前は旧と同じにする)。
+ * 部品を移植したらここに足す (名前は旧と同じにする。綴りの誤りだけ直す: payment-confimation → payment-confirmation)。
  *   'order-component', 'manager-component', 'daily-report-search-component', 'return-component',
  *   'customer-info-component', 'invoice-component', 'payment-component', 'payment-confimation-component',
  *   'customer-create-component', 'customer-search-component', 'history-component', 'all-history-component',
@@ -38,6 +41,9 @@ export const components = {
     'history-component': HistoryComponent,
     'all-history-component': AllHistoryComponent,
     'history-card-component': HistoryCardComponent,
+    'invoice-component': InvoiceComponent,
+    'payment-confirmation-component': PaymentConfirmationComponent,
+    'daily-report-search-component': DailyReportSearchComponent,
 };
 
 export function registerComponents(app) {

@@ -3,8 +3,10 @@
 use App\Http\Controllers\Auth\DeviceLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DailyReportController;
 use App\Http\Controllers\DisplayLoginController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderHistoryController;
@@ -70,12 +72,21 @@ Route::middleware(['auth', ResolvePosContext::class])->group(function () {
         Route::delete('delete/{order_id}', [OrderHistoryController::class, 'destroy'])->name('order.delete');
     });
 
+    // 請求書発行・入金確認・請求書 PDF (旧と同じ URL。PDF は GET では表示だけ、発行の記録は POST /invoice/issue)
+    Route::prefix('invoice')->group(function () {
+        Route::get('', [InvoiceController::class, 'index'])->name('invoice.index');
+        Route::get('payment_confimation', [InvoiceController::class, 'paymentConfirmation'])->name('invoice.payment_confirmation');
+        Route::get('pdf', [InvoiceController::class, 'pdf'])->name('invoice.pdf');
+        Route::post('issue', [InvoiceController::class, 'issue'])->name('invoice.issue');
+    });
+
+    // 日報と日報 PDF (旧 daily_report/generate/{date} → daily-report/{date}/pdf)
+    Route::get('daily_report', [DailyReportController::class, 'index'])->name('daily_report.index');
+    Route::get('daily-report/{date}/pdf', [DailyReportController::class, 'pdf'])->name('daily_report.pdf');
+
     // まだ移植していない画面。ホーム・メニューのリンク先の名前だけ先に置く (開くと 501)。
     // 各タスクで本物のルートに置き換えたら、ここから消す。
     foreach ([
-        ['invoice', 'invoice.index'],                                     // Task 9
-        ['invoice/payment_confimation', 'invoice.payment_confirmation'],  // Task 9 (URL は旧と同じ)
-        ['daily_report', 'daily_report.index'],                           // Task 9
         ['clothes/create', 'clothes.create'],                             // Task 10
         ['receipt/edit', 'receipt.edit'],                                 // Task 10
         ['delivery', 'delivery.index'],                                   // Task 11

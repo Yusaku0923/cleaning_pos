@@ -9,6 +9,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
+use Tests\Support\LegacyFixtureDatabase;
 use Tests\TestCase;
 
 /**
@@ -18,62 +19,17 @@ use Tests\TestCase;
  */
 class LegacyImportTest extends TestCase
 {
+    use LegacyFixtureDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->loadLegacyFixture();
     }
 
-    /** フィクスチャを入れてよい DB (phpunit.xml の LEGACY_DB_* / DB_DATABASE と同じ)。 */
-    private const FIXTURE_DATABASE = 'legacy_testing';
-
-    private const FIXTURE_HOST = 'db';
-
-    private const TARGET_DATABASE = 'testing';
-
-    /**
-     * フィクスチャ (先頭で旧テーブルを DROP する) を legacy_testing に入れる。
-     * 本物の旧 DB (本番を含む) を消さないよう、SQL を流す前に接続先を確かめる。
-     */
-    private function loadLegacyFixture(): void
-    {
-        $this->assertSafeTestDatabases();
-
-        // フィクスチャの投入だけは書き込みできる接続で行う (`legacy` 接続そのものは読み取り専用)
-        $fixture = config('database.connections.legacy');
-        unset($fixture['options']);
-        config(['database.connections.legacy_fixture' => $fixture]);
-        DB::connection('legacy_fixture')->unprepared(file_get_contents(base_path('tests/fixtures/legacy_small.sql')));
-        DB::purge('legacy_fixture');
-    }
-
-    /** testing 環境・設定キャッシュなし・legacy=docker の legacy_testing・既定=testing でなければ止める。 */
-    private function assertSafeTestDatabases(): void
-    {
-        $legacy = config('database.connections.legacy');
-        $target = config('database.connections.'.config('database.default'));
-        $problems = array_filter([
-            app()->environment('testing') ? null : 'APP_ENV が testing ではない',
-            app()->configurationIsCached() ? '設定がキャッシュされている (php artisan config:clear)' : null,
-            ($legacy['database'] ?? null) === self::FIXTURE_DATABASE ? null : 'legacy の DB 名が '.self::FIXTURE_DATABASE.' ではない ('.($legacy['database'] ?? '').')',
-            ($legacy['host'] ?? null) === self::FIXTURE_HOST ? null : 'legacy のホストが docker の '.self::FIXTURE_HOST.' ではない ('.($legacy['host'] ?? '').')',
-            ($target['database'] ?? null) === self::TARGET_DATABASE ? null : '既定の DB 名が '.self::TARGET_DATABASE.' ではない ('.($target['database'] ?? '').')',
-        ]);
-        if ($problems !== []) {
-            throw new RuntimeException('テスト用 DB ではないのでフィクスチャを入れない: '.implode(' / ', $problems));
-        }
-    }
-
     protected function tearDown(): void
     {
-        $target = config('database.connections.'.config('database.default').'.database');
-        if ($target !== self::TARGET_DATABASE) {
-            parent::tearDown();
-
-            return;
-        }
-        // 後続のテスト (RefreshDatabase は1回しか migrate しない) に投入データを残さない
-        Artisan::call('migrate:fresh', ['--force' => true]);
+        $this->resetImportedDatabase();
         parent::tearDown();
     }
 
