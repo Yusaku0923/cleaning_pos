@@ -3,6 +3,8 @@
 --   (echo "SET @t = '2026-10-29 19:30:00';"; cat ~/v2/cleaning_pos/deploy/xrea/since_cutover.sql) | v2sql > ~/backup/since_cutover.txt
 -- 取り込んだ行は旧の created_at / updated_at のままなので、@t 以後の行 = v2 で入れた・変えた行。
 -- deleted_at が入っている行は v2 で取り消した行 (旧では取り消しとして入れる、または入れない)。
+-- 3〜5 は created_at / updated_at だけで見る。paid_at は入金確認ありのお客さんだと「期間の終わりの日」(切替より後の日) が
+-- 前もって入るので、paid_at で見ると切替前の請求書・注文まで出てしまう。v2 の保存は必ず updated_at を新しくする。
 
 SELECT '== 1. 切替後の新しい預り (注文) ==' AS '';
 SELECT o.id, o.created_at, m.name AS manager, c.name AS customer, o.is_invoice, o.amount, o.reduction, o.discount,
@@ -25,7 +27,7 @@ SELECT '== 3. 切替前の注文で、切替後に変えたもの (お渡し・�
 SELECT o.id, o.created_at, c.name AS customer, o.amount, o.paid_at, o.handed_at, o.deleted_at, o.note, o.updated_at
   FROM orders o
   JOIN customers c ON c.id = o.customer_id
- WHERE o.created_at < @t AND (o.updated_at >= @t OR o.paid_at >= @t OR o.handed_at >= @t OR o.deleted_at >= @t)
+ WHERE o.created_at < @t AND o.updated_at >= @t
  ORDER BY o.id;
 
 SELECT '== 4. 切替前の品物で、切替後に変えたもの (お渡し・タグ変更・取り消し) ==' AS '';
@@ -33,7 +35,7 @@ SELECT i.order_id, i.id, cl.name AS clothes, i.tag, i.handed_at, i.deleted_at, i
   FROM order_items i
   JOIN orders o ON o.id = i.order_id
   JOIN clothes cl ON cl.id = i.clothes_id
- WHERE o.created_at < @t AND (i.updated_at >= @t OR i.handed_at >= @t OR i.deleted_at >= @t)
+ WHERE o.created_at < @t AND i.updated_at >= @t
  ORDER BY i.order_id, i.id;
 
 SELECT '== 5. 請求書 (切替後に作った・入金確認・発行・繰越したもの) ==' AS '';
@@ -41,7 +43,7 @@ SELECT v.id, c.name AS customer, v.period_start, v.period_end, v.paid_at, v.issu
        v.carry_over_id, v.created_at, v.updated_at, v.deleted_at
   FROM invoices v
   JOIN customers c ON c.id = v.customer_id
- WHERE v.created_at >= @t OR v.updated_at >= @t OR v.paid_at >= @t OR v.issued_at >= @t OR v.deleted_at >= @t
+ WHERE v.created_at >= @t OR v.updated_at >= @t
  ORDER BY v.id;
 
 SELECT '== 6. 顧客 (切替後に登録・変更したもの) ==' AS '';

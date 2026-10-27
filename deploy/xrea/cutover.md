@@ -42,6 +42,16 @@ grep -n '!!!' ~/log/deploy_v2.log | tail -3        # 直近に失敗がないか
 tail -3 ~/log/deploy_v2.log                         # "=== Deploy completed: ..." で終わっていること
 ls -ld ~/v2/cleaning_pos/v2/storage/fonts            # drwxr-xr-x cleaningpossystem (PDF のフォントの置き場。書けること)
 grep -c backoff_min ~/commands/pull_v2.bash          # 1 以上 (新しい pull_v2.bash が入っている)
+grep -n '^SESSION_LIFETIME' ~/v2/cleaning_pos/v2/.env                                  # SESSION_LIFETIME=1440
+(cd ~/v2/cleaning_pos/v2 && php83cli artisan config:show session.lifetime)             # lifetime ... 1440
+```
+
+`SESSION_LIFETIME` はログインが続く時間 (分)。1440 = 24 時間。120 (2 時間) のままだと、預り入力などの画面を開いたまま 2 時間ほど放っておくと保存できなくなる
+(「ログインが切れました。もう一度ログインしてください」と出てログインの画面に戻る)。1440 でないときは:
+
+```bash
+cd ~/v2/cleaning_pos/v2 && cp -p .env ~/backup/v2_env_$(date +%Y%m%d%H%M%S)
+sed -i 's/^SESSION_LIFETIME=.*/SESSION_LIFETIME=1440/' .env && php83cli artisan config:cache
 ```
 
 ### 0-3. v2 のコードを直すとき
@@ -65,6 +75,17 @@ v2 の DB は本番のコピー (2026-10-27 時点) なので、**試しに入�
 
 - [ ] ホームが出た (担当者・顧客の一覧が旧と同じ)
 - [ ] メニュー → 「レシート設定」(`/receipt/edit`) のプリンタの IP が旧と同じ (旧の設定を取り込んである)
+
+**ホーム画面のアイコンから開けるかを、ここで試しておく** (切替の夜にはじめて試すと、翌朝アイコンが真っ白で開けないことがある)。
+v2 は入口に Basic 認証があり、iPad の「ホーム画面に追加」のアイコンは Safari とは別のアプリのように開く (Safari で保存したパスワードやログインを使わない)。
+
+5. Safari の共有 → 「ホーム画面に追加」(名前「新レジ (試し)」)
+6. ホーム画面の「新レジ (試し)」を開く
+7. Basic 認証を聞かれたら `asahiya` / Basic 認証のパスワード。アプリのログインの画面が出たら、メールアドレス・パスワードでログインする
+8. 担当者を選ぶ → ホームが出る。いったんアイコンを閉じて (アプリの切り替えで上にはらう)、もう一度開いても入れるか
+
+- [ ] **アイコンから開けた** → 2-9 でアイコンを使う (試しのアイコンは消してよい。2-9 で作り直す)
+- [ ] **開けなかった** (真っ白・何も出ない・Basic 認証の画面が出ない・何度もログインに戻る) → アイコンは消して、**レジは Safari のブックマークから開く** (2-9 の「アイコンが使えないとき」)。旧のアイコンも切替のあとは使わない
 
 ### 1-2. 顧客表示の端末で v2 の顧客表示を開く (閉店後、または旧の表示を少し止めてよいとき)
 
@@ -146,9 +167,22 @@ ls -la ~/backup/*before_cutover_$TS*
 
 → 3 つのファイルができ、`prod_db_before_cutover_*.sql.gz` の大きさが 0 でない (`gunzip -c ... | tail -1` が `-- Dump completed on ...`)。
 
+```bash
+grep -n '^SESSION_LIFETIME' ~/v2/cleaning_pos/v2/.env      # SESSION_LIFETIME=1440 (違えば 0-2 の手順で直してから進む)
+```
+
 `$TS` は下の手順でも使う。途中で SSH が切れたら、つなぎ直して `TS=<上の ls に出た日時 (例 202610291930)>` を打ち直してから続ける。
 
-### 2-2. 旧を止める (メンテナンス中にする)
+### 2-2. 旧の自動デプロイ (cron) を止める (旧を止めるより先に)
+
+```bash
+crontab -l | sed 's|^\(\*/10 .*/pull_prod\.bash\)$|#CUTOVER# \1|' | crontab -
+crontab -l | grep pull_prod
+```
+
+→ `#CUTOVER# */10 * * * * /bin/bash /virtual/cleaningpossystem/commands/pull_prod.bash` (先頭に `#CUTOVER#` が付いた)。
+
+### 2-3. 旧を止める (メンテナンス中にする)
 
 ```bash
 bash ~/v2/cleaning_pos/deploy/xrea/freeze_legacy.bash
@@ -157,15 +191,6 @@ curl -s -o /dev/null -w '%{http_code}\n' http://cleaningpossystem.shop/login
 
 → `止めました: /virtual/cleaningpossystem/public_html/cleaningpossystem.shop/.htaccess` と出て、curl が **503**。
 iPad の旧の画面を再読み込みすると「メンテナンス中です」。
-
-### 2-3. 旧の自動デプロイ (cron) を止める
-
-```bash
-crontab -l | sed 's|^\(\*/10 .*/pull_prod\.bash\)$|#CUTOVER# \1|' | crontab -
-crontab -l | grep pull_prod
-```
-
-→ `#CUTOVER# */10 * * * * /bin/bash /virtual/cleaningpossystem/commands/pull_prod.bash` (先頭に `#CUTOVER#` が付いた)。
 
 ### 2-4. 旧の DB を v2 に取り込む
 
@@ -212,7 +237,9 @@ OK: ビルドした JS に本番のキー (b2d5...) が入っています。
 ```
 
 `tail -3 ~/log/deploy_v2.log` → `=== Deploy completed: ... ===`。config:cache も pull_v2 が流している。
-`NG:` が出たら `tail -50 ~/log/deploy_v2.log` を見る。
+cron の自動デプロイと重なったときは、スクリプトが終わるのを待ってからやり直す (「終わるまで待ちます」「1 分待ってやり直します」と出る。そのまま待つ)。
+`NG: ビルドした JS に本番のキーが見つかりません` が出たら、**1〜2 分待ってから、もう一度 `bash ~/v2/cleaning_pos/deploy/xrea/use_prod_pusher.bash`** を流す (2 回目は「すでに本番のキーです」と出て、作り直しだけする)。
+それでも `NG:` なら `tail -50 ~/log/deploy_v2.log` を見る。
 
 ### 2-8. 表示端末の URL と、レジ iPad の自動ログイン URL を出し直す
 
@@ -234,19 +261,21 @@ URL はこの 1 回しか出ないので、ファイルに控えてある (`cat 
 1. Safari で、2-8 の `http://asahiya-pos.xrea.jp/login/device/...` を開く (AirDrop・メモなどで iPad に送る)
 2. Basic 認証: ユーザー名 `asahiya`、パスワード = Basic 認証のパスワード。**「パスワードを保存」と聞かれたら保存する**
 3. そのままホーム画面に入る (メールアドレス・パスワードの入力なし)
-4. 共有 → **「ホーム画面に追加」** (名前「レジ」など)。Safari のブックマークにも追加
+4. Safari のブックマークに追加する (名前「レジ」など)。**1-1 でアイコンから開けたときだけ**、共有 → 「ホーム画面に追加」もする (名前「レジ」など)。アイコンから開いてログインの画面が出たら、メールアドレス・パスワードでログインする (アイコンは Safari のログインを使わないため)
 5. 旧のブックマーク・ホーム画面のアイコン (`cleaningpossystem.shop`) は**消さずに名前を「旧レジ (使わない)」に変える** (戻すときに使う)。開いても「メンテナンス中」
 
 `device:issue` を使わないときは、`http://asahiya-pos.xrea.jp` をブックマークし、Basic 認証のあとでメールアドレス・パスワードでログインする。
 
-- [ ] ホーム画面のアイコンから開いて、担当者選択 → ホームまで行ける
+**アイコンが使えないとき** (1-1 で開けなかった、または今夜アイコンから開けない): アイコンは使わず、**Safari を開いて、ブックマークの「レジ」から開く**。家族にも「明日からは Safari のブックマークの『レジ』」と伝える。
+
+- [ ] 毎朝開くもの (アイコン、または Safari のブックマーク) から開いて、担当者選択 → ホームまで行ける。一度閉じて開き直しても入れる
 - [ ] 履歴 → 伝票の詳細 → 「レシート再発行」でレシートが出る (取り込んだ本物の伝票。新しいデータは増えない)
 
 ### 2-10. 顧客表示の端末
 
 1. 2-8 の `http://asahiya-pos.xrea.jp/display/login/...` を開く
 2. Basic 認証 (`asahiya` / Basic 認証のパスワード。保存する)
-3. 顧客表示の画面になったら、**この `/display/login/...` の URL をブックマーク / ホーム画面に追加**する (`/customer_display` ではなく、ログインの URL の方)
+3. 顧客表示の画面になったら、**この `/display/login/...` の URL をブラウザのブックマークに追加**する (`/customer_display` ではなく、ログインの URL の方)。iPad で「ホーム画面に追加」も使いたいときは、アイコンから開いて顧客表示の画面になるかをその場で試す (ならなければブックマークだけを使う)
 4. ふだんは開きっぱなし。「顧客表示の再ログインが必要です（スタッフ向け）」と出たら、このブックマークを開き直す
 
 - [ ] レジの iPad でホームの顧客を選ぶ → 表示端末に顧客名が出る (本番の Pusher で届いている)
@@ -266,11 +295,17 @@ crontab -l | grep -E 'pull_(prod|v2)'      # pull_prod は #CUTOVER# 付き、pu
 
 ## 3. 翌朝の確認 (営業開始のとき、家族と一緒に)
 
-- [ ] レジの iPad のホーム画面のアイコンから開ける (Basic 認証を聞かれたら `asahiya` / Basic 認証のパスワード)
+- [ ] レジの iPad で、いつもの入口 (ホーム画面のアイコン、またはアイコンが使えないときは Safari のブックマーク「レジ」) から開ける (Basic 認証を聞かれたら `asahiya` / Basic 認証のパスワード)。アイコンが真っ白なら、Safari のブックマークから開く
 - [ ] 表示端末が待ち受けの画面 (「再ログインが必要です」なら 2-10 のブックマークを開き直す)
 - [ ] 最初のお客さん: 顧客を選ぶ → 表示に出る → 預り → 会計 → レシート → ドロアが開く → 「終了」で表示が戻る
 - [ ] お渡し (返却) を 1 件 → 履歴でお渡し済みになる
 - [ ] 請求書払いのお客さんが来たら、その請求書の PDF を 1 回開く
+
+知っておくこと:
+
+- 「ログインが切れました。もう一度ログインしてください」と出たら、ログインし直して、同じ操作をもう一度する (24 時間ほど画面を開いたままにすると出る。保存はされていない)
+- 「入金確認を記録できませんでした」「タグ番号を変更できませんでした」と出たら、保存されていない。もう一度押す
+- 請求書の画面で月を選んでも、**取り込んだ古い請求書のうち終わりの日が `-00` のもの (例: 請求書 1281・1289 の `2026-07-00` / `2026-08-00`) は出てこない**。旧でも出なかったもので、消えたわけではない (探さなくてよい)
 
 SSH で:
 

@@ -63,6 +63,7 @@ export default {
             .catch(function (error) {
                 // 保存できなかったことを ErrorLogger (console.error を拾う) に残す
                 console.error('タグを更新できませんでした', id, tag, error && error.response ? error.response.data : error);
+                alert('タグ番号を変更できませんでした。もう一度お試しください。');
                 return;
             });
         }

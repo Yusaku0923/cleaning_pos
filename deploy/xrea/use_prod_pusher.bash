@@ -7,7 +7,7 @@
 # 4. ビルドした JS に新しいキーが入ったかを確かめる
 # 戻すとき: cp -p ~/backup/v2_env_<日時> ~/v2/cleaning_pos/v2/.env && /bin/bash ~/commands/pull_v2.bash -f
 # 鍵の値は画面に出さない (先頭 4 文字だけ)。
-# テスト用: SRC_ENV / DST_ENV / BACKUP_DIR を差し替え、NO_DEPLOY=1 で 3・4 を飛ばせる。
+# テスト用: SRC_ENV / DST_ENV / BACKUP_DIR / PULL_V2_TMP / PULL_V2_CMD を差し替え、NO_DEPLOY=1 で 3・4 を飛ばせる。
 set -u
 SRC="${SRC_ENV:-/virtual/cleaningpossystem/prod/cleaning_pos/.env}"
 DST="${DST_ENV:-/virtual/cleaningpossystem/v2/cleaning_pos/v2/.env}"
@@ -66,14 +66,29 @@ done
 
 [ "${NO_DEPLOY:-}" = 1 ] && exit 0
 
-echo "作り直します (pull_v2.bash -f。数分かかります)..."
-if ! /bin/bash /virtual/cleaningpossystem/commands/pull_v2.bash -f; then
-  echo "NG: pull_v2.bash -f が失敗しました。tail -50 ~/log/deploy_v2.log を見てください。" >&2
-  exit 1
-fi
-if grep -rqF "$KEY" "$BUILD_DIR"/assets/*.js 2>/dev/null; then
-  echo "OK: ビルドした JS に本番のキー ($(mask "$KEY")) が入っています。"
-else
-  echo "NG: ビルドした JS に本番のキーが見つかりません ($BUILD_DIR)。" >&2
-  exit 1
-fi
+# cron の pull_v2 が動いている (ロックを持っている) と、pull_v2.bash -f は何もせずに終わる。
+# ロックが空くのを待ってから流し、キーが入っていなければ最大 3 回までやり直す。
+LOCK="${PULL_V2_TMP:-/virtual/cleaningpossystem/tmp}/pull_v2.lock"
+PULL_V2_CMD="${PULL_V2_CMD:-/virtual/cleaningpossystem/commands/pull_v2.bash}"
+wait_lock() {
+  [ -e "$LOCK" ] || return 0
+  if ! flock -n "$LOCK" true 2>/dev/null; then
+    echo "cron の自動デプロイが動いています。終わるまで待ちます (最大 15 分)..."
+    flock -w 900 "$LOCK" true || { echo "NG: 15 分待っても自動デプロイが終わりません。tail -50 ~/log/deploy_v2.log を見てください。" >&2; exit 1; }
+  fi
+}
+for try in 1 2 3; do
+  wait_lock
+  echo "作り直します (pull_v2.bash -f。数分かかります)..."
+  if ! /bin/bash "$PULL_V2_CMD" -f; then
+    echo "NG: pull_v2.bash -f が失敗しました。tail -50 ~/log/deploy_v2.log を見てください。" >&2
+    exit 1
+  fi
+  if grep -rqF "$KEY" "$BUILD_DIR"/assets/*.js 2>/dev/null; then
+    echo "OK: ビルドした JS に本番のキー ($(mask "$KEY")) が入っています。"
+    exit 0
+  fi
+  [ "$try" -lt 3 ] && { echo "まだキーが入っていません (自動デプロイと重なった)。1 分待ってやり直します ($try/3)..."; sleep 60; }
+done
+echo "NG: ビルドした JS に本番のキーが見つかりません ($BUILD_DIR)。1〜2 分待ってから、もう一度 use_prod_pusher.bash を流してください。" >&2
+exit 1

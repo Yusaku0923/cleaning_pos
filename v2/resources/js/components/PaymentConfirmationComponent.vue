@@ -175,7 +175,9 @@ export default {
                 location.reload();
             })
             .catch(function (error) {
-                console.log(error);
+                // 保存できなかったことを ErrorLogger (console.error を拾う) に残し、画面でも知らせる (旧は console だけ)
+                console.error('入金確認を記録できませんでした', error && error.response ? error.response.data : error);
+                alert('入金確認を記録できませんでした。もう一度お試しください。');
                 return;
             });
         }

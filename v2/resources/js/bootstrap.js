@@ -1,7 +1,11 @@
 import axios from 'axios';
+import { installSessionExpiredHandler } from './utils/sessionExpired.js';
 window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+// API が 401 / 419 (ログイン切れ) を返したら案内して /login へ (顧客表示の端末では何もしない)
+installSessionExpiredHandler(window.axios);
 
 /**
  * 顧客表示の受信 (Laravel Echo + Pusher)。旧と同じく Pusher を使うが、チャンネルは
