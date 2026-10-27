@@ -1,18 +1,19 @@
 # v2 の XREA 配置
 
 v2 (Laravel 12 / Vue 3) を XREA (s239.xrea.com, ユーザー cleaningpossystem) で動かす手順と現状。
+**旧からの切替・試し印刷・戻し方は [cutover.md](cutover.md)。**
 本番 (`~/prod`, `~/public_html/cleaningpossystem.shop`, `~/commands/pull_prod.bash`, DB `cleaningpossystem`) には触れない。
 
 ## 現状 (2026-10-23)
 
 | 項目 | 値 |
 |---|---|
-| URL | **http://dev.cleaningpossystem.shop** (一時。下の「URL について」) |
-| Web ルート | `~/public_html/dev.cleaningpossystem.shop/` (symlink + `.htaccess`) |
+| URL | **http://asahiya-pos.xrea.jp** (2026-10-27〜)。`http://dev.cleaningpossystem.shop` も同じ v2 (`.shop` を手放すと無くなる) |
+| Web ルート | `~/public_html/asahiya-pos.xrea.jp/` と `~/public_html/dev.cleaningpossystem.shop/` (どちらも symlink + `.htaccess`) |
 | アプリ | `~/v2/cleaning_pos` (ブランチ `rebuild/v2` の clone。アプリ本体は `v2/` 以下) |
 | PHP | CLI `/usr/local/bin/php83cli`、Web は `.htaccess` の `FcgidWrapper ... php83.fcgi` |
 | Node | `~/node-v20.18.1-linux-x64` (Vite のビルド用。PATH には入れていない) |
-| DB | `cleaningpossystem_dev` (一時。owner が `cleaningpossystem_v2` を作ったら `.env` を差し替える) |
+| DB | `cleaningpossystem_dev` (切替後はこれが本番。`e2e:seed` はこの名前では動かない) |
 | アクセス制御 | 全員 Basic 認証 (ユーザー `asahiya`、`~/.htpasswd_v2`、bcrypt)。店の IP が固定と分かったら `htaccess.v2` に `<RequireAny> Require ip ... / Require valid-user </RequireAny>` |
 | 自動デプロイ | cron `*/10 * * * * /bin/bash ~/commands/pull_v2.bash` (差分がある時だけ)。ログ `~/log/deploy_v2.log` |
 
@@ -83,12 +84,22 @@ curl -s -u asahiya:<pw> http://dev.cleaningpossystem.shop/login | grep 'name="em
 tail -50 ~/log/deploy_v2.log
 ```
 
-どの手順 (git fetch / pull / composer / npm ci / npm run build / migrate / *:cache) も、失敗するとログに
-`!!! <手順> failed (exit N)` を書いて 0 以外で終わり、`~/tmp/pull_v2.failed` を残す。印がある間は次の cron が
-`-f` と同じくすべてやり直し、成功すると印を消す (2026-10-27: composer が exit 143 で落ちた回を次の cron が自動でやり直して成功)。
-`grep -n '!!!' ~/log/deploy_v2.log | tail` で失敗の有無を見る。
+どの手順も、失敗するとログに `!!! <手順> failed (exit N)` を書いて 0 以外で終わる。
 
-## 新旧比較の E2E を XREA の v2 に流す (切替前だけ)
+- **pull より前 (git fetch / rev-parse / diff / pull) の失敗**: ファイルは何も変わっていないので、印を残さない。次の cron が普通にやり直す
+  (回線の一時的な切れでビルドが走らないように。ビルド中は `public/build` が空になり v2 が 500 になるため)。
+- **pull より後 (composer / npm ci / npm run build / migrate / *:cache) の失敗**: `~/tmp/pull_v2.failed` に失敗した手順・回数・
+  まだ終わっていない手順 (`need_composer` / `need_npm`) を残す。次の実行では**終わっていない手順と artisan だけ**をやり直す。
+  同じ失敗を 10 分ごとに繰り返さないよう、待ち時間を 10・20・40・80・160・最大 360 分と延ばす。新しい commit が来たか `-f` なら待たない。
+  成功すると印を消す。
+- 動きのテスト: `bash deploy/xrea/test_pull_v2.bash` (使い捨ての git リポジトリと偽の php / npm。flock が要るので XREA か Linux で)
+
+`grep -n '!!!' ~/log/deploy_v2.log | tail` で失敗の有無、`cat ~/tmp/pull_v2.failed` で印の中身を見る。
+`deploy/xrea/pull_v2.bash` を変えたら `cp -p ~/commands/pull_v2.bash ~/backup/pull_v2_<ts>.bash && cp deploy/xrea/pull_v2.bash ~/commands/` で入れ直す (cron は `~/commands` の方を流す)。
+
+## 新旧比較の E2E を XREA の v2 に流す (切替前だけ。**2026-10-27 で終了**)
+
+`e2e:seed` は `cleaningpossystem_dev` (v2 の DB = 切替後の本番) でも動かなくしたので、以下はもう流せない (記録として残す)。
 
 v2 DB が本番のコピーである間だけ。E2E は E2E 店舗 (test@gmail.com) を作り書き込むので、流したあとは必ず取り込み直す。
 
@@ -101,7 +112,7 @@ php83cli artisan legacy:import --fresh && php83cli artisan legacy:verify
 php83cli artisan display:issue-token > ~/backup/display_token.txt; chmod 600 ~/backup/display_token.txt
 ```
 
-`e2e:seed` は DB 名 `cleaningpossystem` (本番) ではどんなオプションでも動かない。APP_ENV=production では
+`e2e:seed` は DB 名 `cleaningpossystem` (旧の本番)・`cleaningpossystem_dev` (v2) ではどんなオプションでも動かない。APP_ENV=production では
 `--allow-production-env` のときだけ動く。切替後 (v2 DB が本番) は `E2E_ALLOW_V2=1` で流さない。
 
 ## 端末の自動ログイン

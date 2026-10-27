@@ -21,17 +21,20 @@ use Illuminate\Support\Facades\Hash;
  *   納品書の取引先「E2E納品先」(部署「E2E部署」・商品「E2E商品」)
  *   担当者「E2E担当」・顧客「E2E顧客」(通常)・「E2E請求顧客」(請求)・カテゴリ「E2Eカテゴリ」・衣類「E2E衣類」
  * E2E 顧客の注文・請求を消し、集計とタグ採番を初期値に戻す (E2E 顧客以外は触らない)。
- * 本番 (APP_ENV=production) では実行しない。XREA の v2 (APP_ENV=production・本番のコピーの DB) で
- * 新旧比較の E2E を流すときだけ --allow-production-env を付ける (流したあとは legacy:import --fresh で戻す)。
- * 本番 DB (名前が cleaningpossystem) には、どの環境・オプションでも流さない。
+ * 本番 (APP_ENV=production) では実行しない (--allow-production-env は v2 DB の名前が FORBIDDEN_DATABASES 以外のときだけ効く)。
+ * 本番 DB (旧 cleaningpossystem・XREA の v2 cleaningpossystem_dev) には、どの環境・オプションでも流さない。
+ * (XREA の v2 で新旧比較の E2E を流すのは、切替前の Task 12 で終えた。v2 DB が本番になったのでもう流せない。)
  */
 class E2eSeed extends Command
 {
     protected $signature = 'e2e:seed
-        {--allow-production-env : APP_ENV=production でも実行する (XREA の v2 で比較するときだけ。本番 DB には効かない)}';
+        {--allow-production-env : APP_ENV=production でも実行する (本番 DB の名前には効かない)}';
 
-    /** どんな場合も書き込まない DB 名 (本番) */
-    public const FORBIDDEN_DATABASES = ['cleaningpossystem'];
+    /**
+     * どんな場合も書き込まない DB 名。cleaningpossystem = 旧の本番、cleaningpossystem_dev = XREA の v2 (切替後の本番)。
+     * ローカル・CI は v2 / testing なので影響しない。
+     */
+    public const FORBIDDEN_DATABASES = ['cleaningpossystem', 'cleaningpossystem_dev'];
 
     protected $description = 'E2E 用の店舗・担当者・顧客を作り、初期状態に戻す (本番では実行不可)';
 

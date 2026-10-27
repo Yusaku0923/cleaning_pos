@@ -76,4 +76,16 @@ class E2eSeedTest extends TestCase
         $this->artisan('e2e:seed', ['--allow-production-env' => true])->assertFailed();
         $this->assertSame(0, Store::count());
     }
+
+    // XREA の v2 DB (cleaningpossystem_dev) は切替後の本番。こちらにも流さない
+    public function test_seed_never_runs_against_v2_production_database_name(): void
+    {
+        $default = config('database.default');
+        config(["database.connections.$default.database" => 'cleaningpossystem_dev']);
+
+        $this->artisan('e2e:seed')->assertFailed();
+        $this->app['env'] = 'production';
+        $this->artisan('e2e:seed', ['--allow-production-env' => true])->assertFailed();
+        $this->assertSame(0, Store::count());
+    }
 }
