@@ -222,16 +222,18 @@ export default {
                 return;
             });
         },
-        updateTag: function(id, tag) {
+        updateTag: function(id, tag, onSaved) {
             return axios.post('/api/order/update_tag', {
                 id: id,
                 tag: tag,
             })
             .then(function (response) {
+                if (onSaved) onSaved();
                 return response.data;
             })
             .catch(function (error) {
-                console.log(error);
+                // 保存できなかったことを ErrorLogger (console.error を拾う) に残す
+                console.error('タグを更新できませんでした', id, tag, error && error.response ? error.response.data : error);
                 return;
             });
         }

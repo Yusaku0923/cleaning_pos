@@ -249,6 +249,45 @@ test.describe.serial('注文フロー(通常顧客)', () => {
     expect(errors).toEqual([]);
   });
 
+  test('伝票詳細のタグ編集: 保存できたときだけ画面のタグが変わる (範囲外は元のまま)', async ({ page }) => {
+    const errors = collectErrors(page);
+    await login(page);
+    await selectManagerAndCustomer(page, 'E2E顧客');
+    expect(ctx.returnOrderId, '対象の注文IDがない(前のテストが失敗)').toBeGreaterThan(0);
+    await page.goto('/order/show');
+    await page.locator('.odlist-orders-order', { hasText: String(ctx.returnOrderId) }).first().click();
+    await page.locator('.odlist-operation-btn', { hasText: '詳細' }).click();
+    const tagCell = page.locator('.modal-cd-list .card.my-1').first().locator('.col-3').first();
+    const tagText = tagCell.locator('p.mb-0');
+    const before = (await tagText.innerText()).trim();
+    expect(before).toMatch(/^\d{1,2}-\d{3}$/);
+
+    const edit = async (head, body) => {
+      await tagText.click();
+      await tagCell.locator('input[type="number"]').nth(0).fill(String(head));
+      await tagCell.locator('input[type="number"]').nth(1).fill(String(body));
+      const res = page.waitForResponse((r) => /\/api\/order\/update_tag$/.test(r.url()));
+      await tagCell.locator('.bg-success').click();
+      return (await res).status();
+    };
+
+    // 範囲外 (11-000): v2 は保存しない (422)。画面も元のタグのまま
+    const rejected = await edit(11, 0);
+    if (V2) {
+      expect(rejected).toBe(422);
+      await expect(tagText).toHaveText(before);
+      expect(errors.some((e) => e.includes('タグを更新できませんでした'))).toBe(true);
+    }
+
+    // 範囲内 (9-001): 保存され、画面のタグも変わる (再読み込みしても同じ)
+    expect(await edit(9, 1)).toBe(200);
+    await expect(tagText).toHaveText('9-001');
+    await page.reload();
+    await page.locator('.odlist-orders-order', { hasText: String(ctx.returnOrderId) }).first().click();
+    await expect(page.locator('.odlist-detail-clothes').first()).toContainText('9-001');
+    expect(errors.filter((e) => !e.includes('タグを更新できませんでした'))).toEqual([]);
+  });
+
   test('預り一覧で伝票を選び 取り消し すると削除される', async ({ page }) => {
     const errors = collectErrors(page);
     page.on('dialog', (d) => d.accept()); // 「こちらの伝票を削除します。よろしいですか？」

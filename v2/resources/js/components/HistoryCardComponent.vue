@@ -49,7 +49,7 @@ export default {
         close: function() {
             this.dispDetail = false;
         },
-        updateTag: async function(id, tag) {
+        updateTag: async function(id, tag, onSaved) {
             console.log(id);
             console.log(tag);
             return await axios.post('/api/order/update_tag', {
@@ -57,10 +57,12 @@ export default {
                 tag: tag,
             })
             .then(function (response) {
+                if (onSaved) onSaved();
                 return response.data;
             })
             .catch(function (error) {
-                console.log(error);
+                // 保存できなかったことを ErrorLogger (console.error を拾う) に残す
+                console.error('タグを更新できませんでした', id, tag, error && error.response ? error.response.data : error);
                 return;
             });
         }

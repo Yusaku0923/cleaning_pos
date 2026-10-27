@@ -192,8 +192,11 @@ export default {
         },
         sendUpdate: function(index) {
             let tag = this.tagHead + '-' + ('000' + this.tagBody).slice(-3);
-            this.$emit('updateTag', this.showTagEditor, tag);
-            this.order.items[index].tag = tag;
+            const item = this.order.items[index];
+            // 画面のタグは保存できたときだけ書き換える (範囲外などで保存されなければ元のタグのまま)
+            this.$emit('updateTag', this.showTagEditor, tag, function () {
+                item.tag = tag;
+            });
             this.showTagEditor = 0;
         },
         receiptReissue: function() {
