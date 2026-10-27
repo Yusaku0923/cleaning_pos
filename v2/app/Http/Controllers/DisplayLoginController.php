@@ -23,7 +23,8 @@ class DisplayLoginController extends Controller
         Auth::guard('display')->login($store, remember: true);
         $request->session()->regenerate();
 
-        return redirect('/customer_display');
+        // トークン入りの URL を Referer で送らせない (端末ログインと同じ)
+        return redirect('/customer_display')->header('Referrer-Policy', 'no-referrer');
     }
 
     /** 未ログインでも POS の /login には飛ばさない (お客様にログイン画面を見せない) */

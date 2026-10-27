@@ -21,11 +21,17 @@ use Illuminate\Support\Facades\Hash;
  *   納品書の取引先「E2E納品先」(部署「E2E部署」・商品「E2E商品」)
  *   担当者「E2E担当」・顧客「E2E顧客」(通常)・「E2E請求顧客」(請求)・カテゴリ「E2Eカテゴリ」・衣類「E2E衣類」
  * E2E 顧客の注文・請求を消し、集計とタグ採番を初期値に戻す (E2E 顧客以外は触らない)。
- * 本番 (APP_ENV=production) では実行しない。
+ * 本番 (APP_ENV=production) では実行しない。XREA の v2 (APP_ENV=production・本番のコピーの DB) で
+ * 新旧比較の E2E を流すときだけ --allow-production-env を付ける (流したあとは legacy:import --fresh で戻す)。
+ * 本番 DB (名前が cleaningpossystem) には、どの環境・オプションでも流さない。
  */
 class E2eSeed extends Command
 {
-    protected $signature = 'e2e:seed';
+    protected $signature = 'e2e:seed
+        {--allow-production-env : APP_ENV=production でも実行する (XREA の v2 で比較するときだけ。本番 DB には効かない)}';
+
+    /** どんな場合も書き込まない DB 名 (本番) */
+    public const FORBIDDEN_DATABASES = ['cleaningpossystem'];
 
     protected $description = 'E2E 用の店舗・担当者・顧客を作り、初期状態に戻す (本番では実行不可)';
 
@@ -35,8 +41,16 @@ class E2eSeed extends Command
 
     public function handle(): int
     {
-        if (app()->environment('production')) {
-            $this->error('本番 (APP_ENV=production) では e2e:seed を実行できません。');
+        $default = config('database.default');
+        $names = [config("database.connections.$default.database"), DB::connection()->getDatabaseName()];
+        if (array_intersect($names, self::FORBIDDEN_DATABASES) !== []) {
+            $this->error('本番 DB ('.implode(', ', self::FORBIDDEN_DATABASES).') には e2e:seed を実行できません。');
+
+            return self::FAILURE;
+        }
+
+        if (app()->environment('production') && ! $this->option('allow-production-env')) {
+            $this->error('本番 (APP_ENV=production) では e2e:seed を実行できません (XREA の v2 で比較するときだけ --allow-production-env)。');
 
             return self::FAILURE;
         }

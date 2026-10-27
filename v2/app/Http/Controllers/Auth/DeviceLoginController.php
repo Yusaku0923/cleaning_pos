@@ -22,6 +22,7 @@ class DeviceLoginController extends Controller
         $request->session()->regenerate();
         $device->forceFill(['last_used_at' => now()])->save();
 
-        return redirect('/');
+        // 旧 /login/auto と同じく、トークン入りの URL を Referer で送らせない
+        return redirect('/')->header('Referrer-Policy', 'no-referrer');
     }
 }

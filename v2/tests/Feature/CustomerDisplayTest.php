@@ -142,7 +142,8 @@ class CustomerDisplayTest extends TestCase
     private function displayLoginWithRemember(): array
     {
         $token = $this->issueToken($this->store);
-        $res = $this->get('/display/login/'.$token)->assertRedirect('/customer_display');
+        $res = $this->get('/display/login/'.$token)->assertRedirect('/customer_display')
+            ->assertHeader('Referrer-Policy', 'no-referrer');
         $name = auth()->guard('display')->getRecallerName();
         $cookie = $res->getCookie($name, true, false);
         $this->assertNotNull($cookie, 'remember cookie が無い');

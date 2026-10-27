@@ -106,7 +106,8 @@ class AuthTest extends TestCase
         $this->assertNotSame($plain, $device->token_hash, '平文は保存しない');
         $this->assertNull($device->last_used_at);
 
-        $this->get('/login/device/'.$plain)->assertRedirect('/');
+        // 旧 /login/auto と同じく、トークン入りの URL を Referer で外へ送らせない
+        $this->get('/login/device/'.$plain)->assertRedirect('/')->assertHeader('Referrer-Policy', 'no-referrer');
         $this->assertAuthenticatedAs($store);
         $this->assertNotNull($device->fresh()->last_used_at);
 

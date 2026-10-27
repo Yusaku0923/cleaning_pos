@@ -56,4 +56,24 @@ class E2eSeedTest extends TestCase
         $this->artisan('e2e:seed')->assertFailed();
         $this->assertSame(0, Store::count());
     }
+
+    // XREA の v2 (APP_ENV=production、本番のコピーの DB) では明示したときだけ流せる
+    public function test_seed_runs_in_production_env_only_with_explicit_option(): void
+    {
+        $this->app['env'] = 'production';
+        $this->artisan('e2e:seed', ['--allow-production-env' => true])->assertSuccessful();
+        $this->assertSame(1, Store::where('email', 'test@gmail.com')->count());
+    }
+
+    // 本番 DB (cleaningpossystem) には、オプションを付けても・どの環境でも流さない
+    public function test_seed_never_runs_against_production_database_name(): void
+    {
+        $default = config('database.default');
+        config(["database.connections.$default.database" => 'cleaningpossystem']);
+
+        $this->artisan('e2e:seed')->assertFailed();
+        $this->app['env'] = 'production';
+        $this->artisan('e2e:seed', ['--allow-production-env' => true])->assertFailed();
+        $this->assertSame(0, Store::count());
+    }
 }

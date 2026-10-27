@@ -34,8 +34,9 @@ test('メニューから納品書管理へ遷移', async ({ page }) => {
 // ────────────────────────────────────────────────────────────────
 // SP: ホームアクセス時のリダイレクト（iPhone UA）
 // ────────────────────────────────────────────────────────────────
-test('スマホ UA でホームにアクセスすると sp/choice にリダイレクト', async ({ browser }) => {
+test('スマホ UA でホームにアクセスすると sp/choice にリダイレクト', async ({ browser, httpCredentials }) => {
   const ctx = await browser.newContext({
+    httpCredentials, // browser.newContext には use の設定が載らない (XREA の Basic 認証)
     userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
   });
   const page = await ctx.newPage();

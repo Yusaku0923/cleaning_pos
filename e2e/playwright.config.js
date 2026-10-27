@@ -2,9 +2,24 @@
 const { defineConfig, devices } = require('@playwright/test');
 
 // 書き込みを伴うテストがあるため、本番URLへの実行は拒否する
-if (/cleaningpossystem\.shop/.test(process.env.E2E_BASE_URL || '')) {
+const BASE_URL = process.env.E2E_BASE_URL || 'http://localhost:8000';
+if (/cleaningpossystem\.shop/.test(BASE_URL)) {
   throw new Error('E2E は本番(cleaningpossystem.shop)に対して実行できません');
 }
+// v2 の XREA (切替後は本番になる)。E2E は E2E 店舗にデータを作るので、E2E_ALLOW_V2=1 を付けたときだけ流す。
+// 切替(2026-10-29)後は E2E_ALLOW_V2=1 で流さないこと (流すなら v2 DB が本番のコピーである間だけ)。
+const V2_HOSTS = /asahiya-pos\.xrea\.jp/i;
+if (V2_HOSTS.test(BASE_URL) && process.env.E2E_ALLOW_V2 !== '1') {
+  throw new Error('E2E は v2 (asahiya-pos.xrea.jp) に対して E2E_ALLOW_V2=1 がないと実行できません (切替後は本番)');
+}
+// XREA の v2 は全員 Basic 認証。E2E_HTTP_USER / E2E_HTTP_PASSWORD で渡す (リポジトリには書かない)
+const httpCredentials = process.env.E2E_HTTP_USER
+  ? { username: process.env.E2E_HTTP_USER, password: process.env.E2E_HTTP_PASSWORD || '' }
+  : undefined;
+// DNS が古いとき用: E2E_HOST_RESOLVER_RULES='MAP asahiya-pos.xrea.jp 160.251.151.71'
+const launchOptions = process.env.E2E_HOST_RESOLVER_RULES
+  ? { args: [`--host-resolver-rules=${process.env.E2E_HOST_RESOLVER_RULES}`] }
+  : undefined;
 
 // E2E_TARGET=legacy|v2。画面比較の基準画像は常に snapshots/legacy/ (旧で --update-snapshots して作る)。
 // v2 実行時は旧の基準画像と比べる。失敗時の成果物は test-results/<target>/ に分ける。
@@ -20,7 +35,9 @@ module.exports = defineConfig({
   retries: process.env.CI ? 2 : 1, // 失敗は trace を残して1回だけ再試行
   timeout: 30000,
   use: {
-    baseURL: process.env.E2E_BASE_URL || 'http://localhost:8000',
+    baseURL: BASE_URL,
+    httpCredentials,
+    launchOptions,
     headless: !!process.env.CI || process.env.HEADED !== '1',  // HEADED=1 で表示
     slowMo: Number(process.env.SLOWMO || 0),
     screenshot: 'only-on-failure',

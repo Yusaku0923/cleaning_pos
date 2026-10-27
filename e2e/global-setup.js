@@ -19,7 +19,10 @@ module.exports = async (config) => {
   }
 
   const base = process.env.E2E_BASE_URL || config.projects[0].use.baseURL || 'http://localhost:8000';
+  const headers = process.env.E2E_HTTP_USER
+    ? { Authorization: 'Basic ' + Buffer.from(`${process.env.E2E_HTTP_USER}:${process.env.E2E_HTTP_PASSWORD || ''}`).toString('base64') }
+    : {};
   for (const path of ['/login', '/customer_display']) {
-    try { await fetch(base + path, { signal: AbortSignal.timeout(60000) }); } catch (e) { /* 無視: 本テストで検知する */ }
+    try { await fetch(base + path, { headers, signal: AbortSignal.timeout(60000) }); } catch (e) { /* 無視: 本テストで検知する */ }
   }
 };
