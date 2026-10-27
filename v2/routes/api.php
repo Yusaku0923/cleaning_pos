@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ClothesController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\CustomerDisplayController;
 use App\Http\Controllers\Api\CustomerInformationController;
+use App\Http\Controllers\Api\DeliveryEntryController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ReturnController;
@@ -41,6 +42,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('invoice/carry_over', [InvoiceController::class, 'carryOver'])->name('api.invoice.carry_over');
     Route::post('invoice/align_cutoff_date', [InvoiceController::class, 'alignCutoffDate'])->name('api.invoice.align_cutoff_date');
     Route::post('invoice/payment_confirmation', [InvoiceController::class, 'paymentConfirmation'])->name('api.invoice.payment_confirmation');
+
+    // 納品書の日次入力・集計プレビュー (旧と同じ URL・キー名)
+    Route::get('delivery/customers', [DeliveryEntryController::class, 'customers'])->name('delivery.customers');
+    Route::get('delivery/customers/{id}/departments', [DeliveryEntryController::class, 'departments'])->whereNumber('id')->name('delivery.departments');
+    Route::get('delivery/entries', [DeliveryEntryController::class, 'index'])->name('delivery.entries.index');
+    Route::post('delivery/entries', [DeliveryEntryController::class, 'store'])->name('delivery.entries.store');
+    Route::delete('delivery/entries', [DeliveryEntryController::class, 'destroy'])->name('delivery.entries.destroy');
+    Route::get('delivery/entry-status', [DeliveryEntryController::class, 'entryStatus'])->name('delivery.entry_status');
+    Route::get('delivery/preview', [DeliveryEntryController::class, 'preview'])->name('delivery.preview');
 
     // 顧客表示へ送る (旧 POST /api/broadcast。ペイロードは旧と同じ)
     Route::post('customer-display', CustomerDisplayController::class)->name('api.customer_display');

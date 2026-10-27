@@ -36,6 +36,20 @@ class E2eSeedTest extends TestCase
         $this->assertSame(0, (int) $customer->fresh()->total_sales);
     }
 
+    public function test_seed_creates_delivery_customer_and_clears_its_entries(): void
+    {
+        $this->artisan('e2e:seed')->assertSuccessful();
+        $this->artisan('e2e:seed')->assertSuccessful();
+
+        $this->assertSame(1, DB::table('delivery_customers')->where('name', 'E2E納品先')->count());
+        $productId = DB::table('delivery_products')->where('name', 'E2E商品')->value('id');
+        $this->assertNotNull($productId);
+
+        DB::table('delivery_daily_entries')->insert(['delivery_product_id' => $productId, 'date' => '2026-03-01', 'quantity' => 2, 'created_at' => now(), 'updated_at' => now()]);
+        $this->artisan('e2e:seed')->assertSuccessful();
+        $this->assertSame(0, DB::table('delivery_daily_entries')->count());
+    }
+
     public function test_seed_refuses_production(): void
     {
         $this->app['env'] = 'production';

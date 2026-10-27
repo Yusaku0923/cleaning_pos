@@ -16,6 +16,8 @@ import PaymentComponent from './components/PaymentComponent.vue';
 import PaymentConfirmationComponent from './components/PaymentConfirmationComponent.vue';
 import ReturnComponent from './components/ReturnComponent.vue';
 import ClothesMasterComponent from './components/ClothesMasterComponent.vue';
+import DeliveryNoteComponent from './components/DeliveryNoteComponent.vue';
+import DeliverySpEntryComponent from './components/DeliverySpEntryComponent.vue';
 import errorLogger from './utils/ErrorLogger';
 import { pushFlashedCustomerDisplay } from './customerDisplay.js';
 
@@ -53,6 +55,8 @@ export const components = {
     'payment-confirmation-component': PaymentConfirmationComponent,
     'daily-report-search-component': DailyReportSearchComponent,
     'clothes-mst-component': ClothesMasterComponent,
+    'delivery-note-component': DeliveryNoteComponent,
+    'delivery-sp-entry-component': DeliverySpEntryComponent,
 };
 
 export function registerComponents(app) {

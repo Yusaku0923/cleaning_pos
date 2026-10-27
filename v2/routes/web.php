@@ -6,6 +6,8 @@ use App\Http\Controllers\CacheController;
 use App\Http\Controllers\ClothesController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyReportController;
+use App\Http\Controllers\DeliveryNoteController;
+use App\Http\Controllers\DeliveryProductController;
 use App\Http\Controllers\DisplayLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvoiceController;
@@ -87,14 +89,24 @@ Route::middleware(['auth', ResolvePosContext::class])->group(function () {
     Route::get('daily_report', [DailyReportController::class, 'index'])->name('daily_report.index');
     Route::get('daily-report/{date}/pdf', [DailyReportController::class, 'pdf'])->name('daily_report.pdf');
 
-    // まだ移植していない画面。ホーム・メニューのリンク先の名前だけ先に置く (開くと 501)。
-    // 各タスクで本物のルートに置き換えたら、ここから消す。
-    foreach ([
-        ['delivery', 'delivery.index'],                                   // Task 11
-        ['delivery/sp/choice', 'delivery.sp.choice'],                     // Task 11
-    ] as [$uri, $name]) {
-        Route::get($uri, fn () => abort(501, '未実装'))->name($name);
-    }
+    // 納品書 (旧と同じ URL)。取引先・商品は自店舗のものだけ (BelongsToStore)。PDF は旧と同じ GET
+    Route::prefix('delivery')->group(function () {
+        Route::get('/', [DeliveryNoteController::class, 'index'])->name('delivery.index');
+        Route::get('notes/{customer}', [DeliveryNoteController::class, 'notes'])->whereNumber('customer')->name('delivery.notes');
+        Route::get('notes/{customer}/pdf', [DeliveryNoteController::class, 'downloadPdf'])->whereNumber('customer')->name('delivery.pdf');
+        Route::get('notes/{customer}/email', [DeliveryNoteController::class, 'emailForm'])->whereNumber('customer')->name('delivery.email_form');
+        Route::post('notes/{customer}/email', [DeliveryNoteController::class, 'sendEmail'])->whereNumber('customer')->name('delivery.email_send');
+        Route::get('email-logs', [DeliveryNoteController::class, 'emailLogs'])->name('delivery.email_logs');
+        Route::get('sp/choice', [DeliveryNoteController::class, 'spChoice'])->name('delivery.sp.choice');
+        Route::get('sp/entry', [DeliveryNoteController::class, 'spEntry'])->name('delivery.sp.entry');
+
+        // 取引先ごとの商品管理
+        Route::get('{customer}/products', [DeliveryProductController::class, 'index'])->whereNumber('customer')->name('delivery.products.index');
+        Route::get('{customer}/products/create', [DeliveryProductController::class, 'create'])->whereNumber('customer')->name('delivery.products.create');
+        Route::post('{customer}/products', [DeliveryProductController::class, 'store'])->whereNumber('customer')->name('delivery.products.store');
+        Route::get('{customer}/products/{product}/edit', [DeliveryProductController::class, 'edit'])->whereNumber(['customer', 'product'])->name('delivery.products.edit');
+        Route::put('{customer}/products/{product}', [DeliveryProductController::class, 'update'])->whereNumber(['customer', 'product'])->name('delivery.products.update');
+    });
 
     // 商品マスタ・レシート (プリンタ IP) 設定・キャッシュクリア
     Route::get('clothes/create', [ClothesController::class, 'create'])->name('clothes.create');

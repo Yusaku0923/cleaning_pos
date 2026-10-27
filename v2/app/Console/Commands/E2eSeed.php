@@ -5,6 +5,9 @@ namespace App\Console\Commands;
 use App\Models\Category;
 use App\Models\Clothes;
 use App\Models\Customer;
+use App\Models\DeliveryCustomer;
+use App\Models\DeliveryDepartment;
+use App\Models\DeliveryProduct;
 use App\Models\Manager;
 use App\Models\Store;
 use App\Models\TagCounter;
@@ -15,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 /**
  * E2E 用の店舗・担当者・顧客を作り、毎回同じ状態に戻す (e2e/setup-test-store.sh の v2 版。同じデータ)。
  *   ログイン: test@gmail.com / Test123456
+ *   納品書の取引先「E2E納品先」(部署「E2E部署」・商品「E2E商品」)
  *   担当者「E2E担当」・顧客「E2E顧客」(通常)・「E2E請求顧客」(請求)・カテゴリ「E2Eカテゴリ」・衣類「E2E衣類」
  * E2E 顧客の注文・請求を消し、集計とタグ採番を初期値に戻す (E2E 顧客以外は触らない)。
  * 本番 (APP_ENV=production) では実行しない。
@@ -70,6 +74,15 @@ class E2eSeed extends Command
             DB::table('invoices')->whereIn('customer_id', $ids)->delete();
             DB::table('customers')->whereIn('id', $ids)->update(['total_sales' => 0, 'number_of_visits' => 0]);
             DB::table('tag_counters')->where('manager_id', $manager->id)->update(['value' => 1000, 'deleted_at' => null]);
+
+            // 納品書: E2E 取引先 (部署 1・商品 1)。記帳・納品書・送信履歴は毎回消す (E2E 取引先以外は触らない)
+            $delivery = DeliveryCustomer::firstOrCreate(['store_id' => $store->id, 'name' => 'E2E納品先'], ['email' => 'e2e-delivery@example.com']);
+            $department = DeliveryDepartment::firstOrCreate(['delivery_customer_id' => $delivery->id, 'name' => 'E2E部署'], ['sort_order' => 1]);
+            DeliveryProduct::firstOrCreate(['delivery_department_id' => $department->id, 'name' => 'E2E商品'], ['unit_price' => 100, 'tax_rate' => '0.10', 'sort_order' => 1]);
+            $productIds = DB::table('delivery_products')->where('delivery_department_id', $department->id)->pluck('id');
+            DB::table('delivery_daily_entries')->whereIn('delivery_product_id', $productIds)->delete();
+            DB::table('delivery_email_logs')->where('delivery_customer_id', $delivery->id)->delete();
+            DB::table('delivery_notes')->where('delivery_customer_id', $delivery->id)->delete();
 
             return [$store, $manager];
         });
