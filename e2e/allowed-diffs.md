@@ -21,6 +21,8 @@
 | 項目 | 旧 | v2 | 意図した差分 |
 |---|---|---|---|
 | 顧客表示 (`/customer_display`) | 未ログインで誰でも開ける。Pusher の**公開**チャンネル `cleaning-pos` に顧客名が流れ、鍵を知る誰でも購読できる | 表示端末は `GET /display/login/{token}`(`php artisan display:issue-token` で発行)でログインし、店舗ごとの **private** チャンネル `private-store.{店舗ID}.display` だけ購読できる。未ログイン (またはログイン切れ) は `/login` へは飛ばさず、スタッフ向けの案内「顧客表示の再ログインが必要です（スタッフ向け）」を全画面で出す (401)。ログインは remember cookie (365 日) と 10 分ごとのキープアライブで保持。表示端末のログインでは POS の画面・API は使えない | 開き方(ログイン)とチャンネル名だけ。画面の DOM・CSS、イベント名 `customer-display`、ペイロード `{message: {event, ...}}`、送るきっかけ(顧客選択・顧客登録・預り入力を開く・会計後の「終了」)は旧と同じ。顧客選択は GET の代わりにリダイレクト先の画面が POST で送る |
+| 端末の自動ログイン | `GET /login/auto?id=<メール>&pass=<パスワード>` で、URL のパスワードでログイン (`Referrer-Policy: no-referrer`、連続した誤りは 429) | `/login/auto` は無い (404)。端末ごとのトークンの `GET /login/device/{token}` (`php artisan device:issue {名前} --store=`、`device:revoke`)。誤り・取り消し済みは 404、`throttle:10,1` で 429、成功時は `Referrer-Policy: no-referrer` (表示端末の `/display/login/{token}` も同じ) | 端末のブックマーク URL (切替時に作り直す)。smoke の `/login/auto` 3 件は v2 では `/login/device` で同じ観点を確かめる。正しいトークンでのログインは `E2E_DEVICE_URL` (発行した URL) があるときだけ流す |
+| API の認証 | 画面表示のたびに Sanctum の個人トークンを `:token` で画面に埋め込み、API は `Authorization: Bearer` | API トークンを作らない。Sanctum の SPA セッション cookie + `X-XSRF-TOKEN` | 画面に `:token` が無い。smoke「APIトークンは…再利用される」は v2 では「画面にトークンが無く、セッションだけで API が通る」を確かめる |
 
 ## 許容する差分(確定: 旧の不具合の修正。お渡し・入金・履歴・タグ変更)
 
@@ -42,6 +44,17 @@
 | 繰越・締日整列・検索の対象 | ID さえ送れば他店舗の請求書・担当者も扱えた。締日整列は配列の 1 件目以外も処理するが、削除する請求書自身に注文を戻す旧の不具合あり (Task 4) | 自店舗のものだけ (他店舗は 404、何も変えない)。選んだ請求書を 1 件ずつ `InvoiceService::carryOver` / `alignCutoff` で処理 | 画面からの操作では差は出ない |
 | 日報の日付 | `?date=` / `generate/{date}` に日付でない値を入れると 1970 年の日報 | 実在する `Y-m-d` 以外は 404。PDF の URL は `daily-report/{date}/pdf` | 不正な日付のときだけ |
 | 請求書 PDF の消費税 | Blade で `amount - round(amount / (1 + 税率))` | 同じ式を `PriceCalculator::includedTax(..., config('pos.tax_rounding.invoice'))` で計算 (既定 `round` で旧と同じ値。本番ダンプの請求 3 件で旧と一致: `v2/tests/fixtures/legacy_invoice_totals.json`) | 設定を `floor` にしたときだけ |
+
+## 許容する差分(確定: 納品書)
+
+| 項目 | 旧 | v2 | 意図した差分 |
+|---|---|---|---|
+| 納品書の取引先の範囲 | `delivery_customers` に店舗の列が無く、どの店舗でログインしても全取引先が出る | 取引先は店舗ごと (`store_id`、取り込みでは最初の店舗 (本番の店舗 ID 1) に付ける)。自店舗の取引先だけ出る | 本番の店舗の画面は同じ。E2E 店舗では旧は本番の取引先 2 件、v2 は `E2E納品先` 1 件。画面比較「12 納品書」は 1 件目のカードだけ残して比べる |
+
+## スモークの扱い (Task 12)
+
+- `/login/auto` 3 件・API トークン 1 件: 上の「端末の自動ログイン」「API の認証」のとおり v2 は別の仕組みで同じ観点を確かめる (skip しない。トークンでのログイン成功だけ `E2E_DEVICE_URL` が要る)。
+- スマホ UA の `/` → `/delivery/sp/choice` (delivery.spec): 旧と同じ動き (v2 の `HomeController` が同じ正規表現で判定)。v2 でもそのまま流して PASS。ログイン後の行き先も旧と同じ (`LoginController::redirectPath`)。
 
 ## 比較対象外
 
@@ -67,6 +80,6 @@ docker compose -f docker-compose.legacy.yml up -d --build     # http://localhost
 bash e2e/setup-test-store.sh                                   # E2E 用データ(test@gmail.com / Test123456)
 cd e2e && E2E_BASE_URL=http://localhost:8081 E2E_TARGET=legacy npx playwright test
 # 基準画像の作り直し
-E2E_BASE_URL=http://localhost:8081 E2E_TARGET=legacy npx playwright test tests/parity --update-snapshots --project=chromium
+E2E_BASE_URL=http://localhost:8081 E2E_TARGET=legacy npx playwright test tests/parity --update-snapshots --project=parity --no-deps
 docker compose -f docker-compose.legacy.yml down               # 停止(DB も消すなら -v)
 ```

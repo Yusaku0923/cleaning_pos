@@ -70,6 +70,9 @@ export function registerComponents(app) {
 const el = document.getElementById('app');
 if (el) {
     const app = createApp({});
+    // 旧 (Vue 2 の実行時コンパイラ) は要素の間の空白・改行を残した。Vue 3 の既定 'condense' は改行を含む空白を消すので、
+    // Blade で改行して並べたボタンの間の隙間 (inline-block の空白) がなくなる (納品書管理の「商品管理」など)。旧と同じにする
+    app.config.compilerOptions.whitespace = 'preserve';
     registerComponents(app);
     app.mount(el);
 }

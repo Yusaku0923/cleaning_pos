@@ -48,6 +48,15 @@ module.exports = defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: /parity\//,
+    },
+    // 画面比較は書き込み系のテスト (order-flow など) が終わって後始末したあとに撮る。並行で流すと、
+    // 預り一覧などに実行中の注文が映り、基準 (空の状態) と比べられない
+    {
+      name: 'parity',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: /parity\/.*\.spec\.js/,
+      dependencies: ['chromium'],
     },
     {
       name: 'iPhone',

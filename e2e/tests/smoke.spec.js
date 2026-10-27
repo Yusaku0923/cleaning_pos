@@ -5,6 +5,7 @@ const { test, expect } = require('@playwright/test');
 
 const { TARGET, EMAIL, PASSWORD, login, collectErrors, selectManagerAndCustomer } = require('./helpers');
 const V2 = TARGET === 'v2';
+const { apiHeaders } = require('./orderApi');
 
 test.describe('認証', () => {
   test('未ログインは /login にリダイレクトされる', async ({ page }) => {
@@ -93,6 +94,12 @@ const PAGES = [
   ['/delivery/sp/choice', 'SP選択'],
 ];
 
+// Vue のコンポーネントが実際にマウントされたことを示す要素 (白画面・未マウントの検知。旧と同じ DOM)
+const MOUNTED = {
+  '/clothes/create': '.menu-columns', // clothes-mst-component (ClothesMasterComponent)
+  '/receipt/edit': 'input[name="ip[0]"]',
+};
+
 test.describe('主要画面が開く', () => {
   for (const [path, name] of PAGES) {
     test(`${name} (${path})`, async ({ page }) => {
@@ -106,6 +113,7 @@ test.describe('主要画面が開く', () => {
       const bodyText = (await page.locator('body').innerText()).trim();
       expect(bodyText.length, `${path} が白画面`).toBeGreaterThan(0);
       expect(page.url(), `${path} がホームへ弾かれた`).toContain(path === '/' ? '' : path);
+      if (MOUNTED[path]) await expect(page.locator(MOUNTED[path]).first(), `${path} の画面部品が出ない`).toBeVisible();
       expect(errors, `${path} でJSエラー`).toEqual([]);
     });
   }
@@ -150,10 +158,10 @@ test('APIトークンはページ表示のたびに増えず、同一セッシ�
     // v2 は API トークンを発行しない (Sanctum の SPA セッション cookie)。画面にトークンが出ず、API がセッションで通ることを確かめる
     const html = await (await page.request.get('/order/create')).text();
     expect(html).not.toMatch(/:token=/);
-    const xsrf = (await page.context().cookies()).find((c) => c.name === 'XSRF-TOKEN');
+    const managerId = Number(new URL(page.url()).searchParams.get('m'));
     const res = await page.request.post('/api/customer/search', {
-      data: { manager_id: Number(new URL(page.url()).searchParams.get('m')), keyword: 'E2E' },
-      headers: { Accept: 'application/json', 'X-XSRF-TOKEN': decodeURIComponent(xsrf ? xsrf.value : '') },
+      data: { manager_id: managerId, keyword: 'E2E' },
+      headers: await apiHeaders(page), // XSRF-TOKEN Cookie + Origin (Sanctum の stateful 判定)。Bearer トークンは付けない
     });
     expect(res.status(), 'セッションだけで API が通る').toBeLessThan(400);
     return;

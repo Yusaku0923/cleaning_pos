@@ -11,6 +11,8 @@ export default defineConfig({
         vue({
             template: {
                 transformAssetUrls: { base: null, includeAbsolute: false },
+                // 旧 (vue-loader 15) と同じく要素の間の空白を残す (Vue 3 の既定 'condense' はボタンの間の隙間を消す)
+                compilerOptions: { whitespace: 'preserve' },
             },
         }),
     ],

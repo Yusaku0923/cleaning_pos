@@ -1,7 +1,8 @@
 // @ts-check
 // 新旧の画面比較。基準画像は常に旧で作る(snapshots/legacy/)。
-//   基準の作成: E2E_TARGET=legacy E2E_BASE_URL=http://localhost:8081 npx playwright test tests/parity --update-snapshots
-//   v2 の確認 : E2E_TARGET=v2     E2E_BASE_URL=<v2 の URL>          npx playwright test tests/parity
+//   基準の作成: E2E_TARGET=legacy E2E_BASE_URL=http://localhost:8081 npx playwright test tests/parity --project=parity --no-deps --update-snapshots
+//   v2 の確認 : E2E_TARGET=v2     E2E_BASE_URL=<v2 の URL>          npx playwright test tests/parity --project=parity --no-deps
+//   (project「parity」は全体実行では chromium のテストのあとに流れる。単独なら --project=parity --no-deps)
 // 個人情報の混入を避けるため、担当者「E2E担当」・顧客「E2E顧客」「E2E請求顧客」(setup-test-store.sh)の画面だけを撮る。
 // 日時・タグ番号・注文件数など実行ごとに変わる値は mask で隠す。
 const { test, expect } = require('@playwright/test');
@@ -132,6 +133,10 @@ test.describe('画面比較(旧=基準)', () => {
   test('12 納品書', async ({ page }) => {
     await login(page);
     await page.goto('/delivery');
+    // 取引先の数はデータ次第 (旧は全店舗の取引先を出し、v2 は自店舗だけ: allowed-diffs.md「納品書の取引先」)。
+    // 1 件目のカードだけを残して配置を比べる
+    await page.locator('#app .card').first().waitFor();
+    await page.evaluate(() => document.querySelectorAll('#app .card').forEach((c, i) => { if (i > 0) c.remove(); }));
     // 納品書の取引先名は本番データなので隠し、ボタン類の配置だけを比べる
     await shot(page, 'delivery', { extraMasks: [page.locator('.card-title')] });
   });
