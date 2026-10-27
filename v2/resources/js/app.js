@@ -15,7 +15,15 @@ import OrderComponent from './components/OrderComponent.vue';
 import PaymentComponent from './components/PaymentComponent.vue';
 import PaymentConfirmationComponent from './components/PaymentConfirmationComponent.vue';
 import ReturnComponent from './components/ReturnComponent.vue';
+import ClothesMasterComponent from './components/ClothesMasterComponent.vue';
+import errorLogger from './utils/ErrorLogger';
 import { pushFlashedCustomerDisplay } from './customerDisplay.js';
+
+// クライアントエラー収集 (旧と同じ。window.onerror / unhandledrejection / console.error・warn を /api/client-error へ送る)
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    errorLogger.init();
+    window.errorLogger = errorLogger;
+}
 
 // 旧 (Laravel Mix) と同じく Bootstrap 5.2.2 の JS を同梱 (data-bs-* のモーダル等)
 window.bootstrap = bootstrap;
@@ -44,6 +52,7 @@ export const components = {
     'invoice-component': InvoiceComponent,
     'payment-confirmation-component': PaymentConfirmationComponent,
     'daily-report-search-component': DailyReportSearchComponent,
+    'clothes-mst-component': ClothesMasterComponent,
 };
 
 export function registerComponents(app) {

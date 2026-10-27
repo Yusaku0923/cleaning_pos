@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ClientErrorController;
 use App\Http\Controllers\Api\ClothesController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\CustomerDisplayController;
@@ -19,6 +21,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('customer_info/delete', [CustomerInformationController::class, 'delete'])->name('api.customer_info.delete');
 
     Route::post('clothes/search', [ClothesController::class, 'search'])->name('api.clothes.search');
+    // 商品マスタ (旧と同じ URL・キー名)
+    Route::post('clothes/store', [ClothesController::class, 'store'])->name('api.clothes.store');
+    Route::post('clothes/update', [ClothesController::class, 'update'])->name('api.clothes.update');
+    Route::post('clothes/delete', [ClothesController::class, 'delete'])->name('api.clothes.delete');
+    Route::post('category/store', [CategoryController::class, 'store'])->name('api.category.store');
     Route::post('orders', [OrderController::class, 'store'])->name('api.orders.store');
     // 預り一覧・全体検索・取り消し・タグ変更・入金・お渡し (旧と同じ URL・キー名)
     Route::post('order/search', [OrderController::class, 'search'])->name('api.order.search');
@@ -38,3 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // 顧客表示へ送る (旧 POST /api/broadcast。ペイロードは旧と同じ)
     Route::post('customer-display', CustomerDisplayController::class)->name('api.customer_display');
 });
+
+// ブラウザの JS エラー収集 (旧と同じく未ログインでも送れる。1 IP あたり 60 回/分)
+Route::post('client-error', [ClientErrorController::class, 'store'])
+    ->middleware('throttle:client-error')
+    ->name('api.client_error.store');

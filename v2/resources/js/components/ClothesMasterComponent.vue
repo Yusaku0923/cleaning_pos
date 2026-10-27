@@ -1,0 +1,229 @@
+<template>
+    <div class="col-12">
+        <div class="col-10 mx-auto">
+            <div>
+                <div class="card col-12 py-3 mb-4 h4 text-center">
+                    {{ categoryName }}
+                </div>
+                <div class="col-12 menu-columns justify-content-between">
+                    <!-- 商品選択時のみ表示 -->
+                    <button
+                        class="card menu-card col-12 mx-auto text-dark text-decoration-none"
+                        v-if="mode === 'clothes'"
+                        @click="switchCategory()"
+                    >
+                        <span class="fw-light text-secondary return-icon text-center mx-auto"><i class="fa-solid fa-rotate-left"></i></span>
+                        <span class="text-center mx-auto">もどる</span>
+                    </button>
+
+                    <!-- 追加ボタン（選択画面によって変える） -->
+                    <button type="button" class="card menu-card col-12 mx-auto" @click="showCreate()">
+                        <span class="fw-light text-primary menu-icon text-center mx-auto">＋</span>
+                        <span class="text-center mx-auto">{{ categoryName }}を追加する</span>
+                    </button>
+                    
+                    <!-- カテゴリ表示 -->
+                    <template v-if="mode === 'category'">
+                        <button
+                            class="card menu-card col-12 mx-auto"
+                            v-for="(card, index, _) in cards"
+                            :key="index"
+                            @click="switchClothes(index)"
+                        >
+                            <div class="category-label-field position-relative">
+                                <p class="col-12 category-label text-center position-absolute top-50 start-50 translate-middle fs-22">{{ card.name }}</p>
+                            </div>
+                        </button>
+                    </template>
+
+                    <!-- 商品名 -->
+                    <template v-if="mode === 'clothes'">
+                        <button
+                            class="card menu-card col-12 mx-auto"
+                            v-for="(card, index, _) in cards"
+                            :key="index"
+                            @click="selectClothes(index)"
+                        >
+                            <div class="clothes-label-upper-field">
+                                <span class="col-12 clothes-label mx-auto text-center fs-22">{{ card.name }}</span>
+                            </div>
+                            <div class="clothes-label-lower-field text-center">
+                                <span class="price-label mx-auto text-center">{{ card.price.toLocaleString() }}円</span>
+                            </div>
+                        </button>
+                    </template>
+
+                </div>
+            </div>
+        </div>
+        <!-- modal -->
+        <clothes-edit-modal
+            @close="close"
+            @create="createClothes"
+            @update="updateClothes"
+            @delete="deleteClothes"
+            :mode="modalMode"
+            :info="modalInfo"
+            v-if="showClothesModal"
+        ></clothes-edit-modal>
+        <category-create-modal
+            @close="close"
+            @create="createCategory"
+            v-if="showCategoryModal"
+        ></category-create-modal>
+        <!-- modal -->
+    </div>
+</template>
+
+<script>
+import ClothesEditModal from './Modals/ClothesEditModalComponent.vue';
+import CategoryCreateModal from './Modals/CategoryCreateModalComponent.vue';
+
+export default {
+    // 旧は Bearer トークンを props で受けて付けていた。v2 は同一オリジンのセッション Cookie (Sanctum SPA) で認証する
+    props: {
+        category_clothes: {
+            require: true
+        },
+    },
+    data() {
+        return {
+            mode: 'category',
+            categoryName: 'カテゴリー',
+            cards: this.category_clothes,
+            showCategoryModal: false,
+            showClothesModal: false,
+            selectedCategory: '',
+            selectedClothes: '',
+            modalMode: '',
+            modalInfo: ''
+        }
+    },
+    components: {
+        'clothes-edit-modal': ClothesEditModal,
+        'category-create-modal': CategoryCreateModal,
+    },
+    methods: {
+        close: function() {
+            this.showCategoryModal = false;
+            this.showClothesModal = false;
+        },
+        switchClothes: function(index) {
+            this.mode = 'clothes';
+            this.categoryName = this.category_clothes[index]['name'];
+            this.cards = this.category_clothes[index]['clothes'];
+            this.selectedCategory = this.category_clothes[index]['id'];
+        },
+        switchCategory: function() {
+            this.mode = 'category';
+            this.categoryName = 'カテゴリー';
+            this.cards = this.category_clothes;
+        },
+        showCreate: function() {
+            if (this.mode === 'category') {
+                this.showCategoryModal = true;
+            } else if (this.mode === 'clothes') {
+                this.modalMode = 'create';
+                this.modalInfo = [];
+                this.showClothesModal = true;
+                this.selectedClothes = '';
+            }
+        },
+        selectClothes: function(index) {
+            this.modalMode = 'edit';
+            this.modalInfo = this.cards[index];
+            this.showClothesModal = true;
+            this.selectedClothes = this.cards[index]['id'];
+        },
+        createCategory: function(name) {
+            this.showCategoryModal = false;
+            return axios.post('/api/category/store', {
+                name: name,
+            })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                // self.updateState(response.data.category);
+                window.location.reload();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        createClothes: function(name, name_kana, price, tag_count) {
+            this.showClothesModal = false;
+            let self = this;
+            return axios.post('/api/clothes/store', {
+                category_id: this.selectedCategory,
+                name: name,
+                name_kana: name_kana,
+                price: price,
+                tag_count: tag_count,
+            })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                self.updateState(response.data.category);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        updateClothes: async function(name, name_kana, price, tag_count) {
+            this.showClothesModal = false;
+            let self = this;
+            return await axios.post('/api/clothes/update', {
+                id: this.selectedClothes,
+                category_id: this.selectedCategory,
+                name: name,
+                name_kana: name_kana,
+                price: price,
+                tag_count: tag_count,
+            })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                self.updateState(response.data.category);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        deleteClothes: function(name, name_kana, price, tag_count) {
+            this.showClothesModal = false;
+            let self = this;
+            return axios.post('/api/clothes/delete', {
+                id: this.selectedClothes,
+                category_id: this.selectedCategory,
+                name: name,
+                name_kana: name_kana,
+                price: price,
+                tag_count: tag_count,
+            })
+            .then(function (response) {
+                // let index = self.category_clothes.findIndex( item => item.id === response.id );
+                // self.cards = res.clothes;
+                // self.category_clothes.splice(index, 1, res);
+
+                self.updateState(response.data.category);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        updateState: function(res) {
+            let index = this.category_clothes.findIndex( item => item.id === res[0].id );
+            this.cards = res[0].clothes;
+            this.category_clothes.splice(index, 1, res[0]);
+
+            return;
+        }
+    }
+}
+</script>

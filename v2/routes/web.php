@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\DeviceLoginController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CacheController;
+use App\Http\Controllers\ClothesController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DailyReportController;
 use App\Http\Controllers\DisplayLoginController;
@@ -12,6 +14,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderHistoryController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReturnController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TagCounterController;
 use App\Http\Middleware\ResolvePosContext;
 use Illuminate\Support\Facades\Route;
@@ -87,12 +90,15 @@ Route::middleware(['auth', ResolvePosContext::class])->group(function () {
     // まだ移植していない画面。ホーム・メニューのリンク先の名前だけ先に置く (開くと 501)。
     // 各タスクで本物のルートに置き換えたら、ここから消す。
     foreach ([
-        ['clothes/create', 'clothes.create'],                             // Task 10
-        ['receipt/edit', 'receipt.edit'],                                 // Task 10
         ['delivery', 'delivery.index'],                                   // Task 11
         ['delivery/sp/choice', 'delivery.sp.choice'],                     // Task 11
     ] as [$uri, $name]) {
         Route::get($uri, fn () => abort(501, '未実装'))->name($name);
     }
-    Route::post('cache/clear', fn () => abort(501, '未実装'))->name('cache.clear'); // Task 10
+
+    // 商品マスタ・レシート (プリンタ IP) 設定・キャッシュクリア
+    Route::get('clothes/create', [ClothesController::class, 'create'])->name('clothes.create');
+    Route::get('receipt/edit', [SettingsController::class, 'editPrinter'])->name('receipt.edit');
+    Route::post('settings/printer', [SettingsController::class, 'updatePrinter'])->name('settings.printer');
+    Route::post('cache/clear', [CacheController::class, 'clear'])->name('cache.clear');
 });

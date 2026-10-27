@@ -69,11 +69,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRF-TOKEN': csrfToken
             }
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(response => {
+            // POST /cache/clear は 302 で戻る (fetch が戻り先の画面まで辿る)。成功かどうかは status だけで見る
             btn.disabled = false;
             btn.textContent = originalText;
-            showResult(data.success, data.message, data.output || '');
+            showResult(response.ok, response.ok ? actionName + 'を実行しました' : actionName + 'に失敗しました (' + response.status + ')');
         })
         .catch(error => {
             btn.disabled = false;
