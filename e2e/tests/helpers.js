@@ -62,17 +62,26 @@ async function selectManagerAndCustomer(page, customerName) {
  * v2: 選択中の担当者・顧客は URL (?m=&c=) で持つ。テストが page.goto('/order/create') のように
  * クエリ無しで開いても legacy (セッション) と同じ画面になるよう、以後の同一オリジンの画面遷移に
  * 今の m / c を付ける (画面内のリンクは元から m / c 付き)。
+ * 「今の」m / c は画面遷移のたびに URL から読み直す (入力クリア → /?m= のあとに古い c を付けない)。
  */
 async function carryPosContext(page) {
   const current = new URL(page.url());
-  const ctx = ['m', 'c'].filter((k) => current.searchParams.has(k)).map((k) => [k, current.searchParams.get(k)]);
-  expect(ctx.length, '担当者を選んだあとの URL に m が無い').toBeGreaterThan(0);
+  const read = (u) => ['m', 'c'].filter((k) => u.searchParams.has(k)).map((k) => [k, u.searchParams.get(k)]);
+  const state = { ctx: read(current) };
+  expect(state.ctx.length, '担当者を選んだあとの URL に m が無い').toBeGreaterThan(0);
+  if (page.__posContextListener) page.off('framenavigated', page.__posContextListener);
+  page.__posContextListener = (frame) => {
+    if (frame !== page.mainFrame()) return;
+    const u = new URL(frame.url());
+    if (u.origin === current.origin && u.searchParams.has('m')) state.ctx = read(u);
+  };
+  page.on('framenavigated', page.__posContextListener);
   await page.unroute('**/*').catch(() => {});
   await page.route('**/*', (route) => {
     const req = route.request();
     const url = new URL(req.url());
     if (!req.isNavigationRequest() || url.origin !== current.origin || url.searchParams.has('m')) return route.continue();
-    for (const [k, v] of ctx) url.searchParams.set(k, v);
+    for (const [k, v] of state.ctx) url.searchParams.set(k, v);
     return route.continue({ url: url.toString() });
   });
 }

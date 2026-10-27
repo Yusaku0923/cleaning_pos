@@ -42,7 +42,7 @@ async function clothesId(page, headers) {
 }
 
 /** 注文を登録して order_id を返す。qty 個の E2E衣類 (500 円) */
-async function storeOrder(page, headers, ctx, { qty = 2, payment = 1000, notPaid = false, invoice = false } = {}) {
+async function storeOrder(page, headers, ctx, { qty = 2, payment = 1000, notPaid = false, invoice = false, checkReturn = false } = {}) {
   const res = V2
     ? await page.request.post('/api/orders', {
       headers,
@@ -50,7 +50,7 @@ async function storeOrder(page, headers, ctx, { qty = 2, payment = 1000, notPaid
         manager_id: ctx.managerId, customer_id: ctx.customerId,
         items: [{ clothes_id: ctx.clothesId, qty }],
         discount_ratio: null, discount_amount: 0, deposit: payment,
-        is_invoice: invoice, not_paid: notPaid || invoice, check_return: false, created_at: null,
+        is_invoice: invoice, not_paid: notPaid || invoice, check_return: checkReturn, created_at: null,
       },
     })
     : await page.request.post('/api/order/store', {
@@ -59,7 +59,7 @@ async function storeOrder(page, headers, ctx, { qty = 2, payment = 1000, notPaid
         manager_id: ctx.managerId, customer_id: ctx.customerId,
         indexes: [ctx.clothesId], order: { [ctx.clothesId]: qty },
         amount: 500 * qty, reduction: 0, discount: 0, payment,
-        not_paid: notPaid, invoice, check_return: false, dont_issue_tag_list: [], created_at: '',
+        not_paid: notPaid, invoice, check_return: checkReturn, dont_issue_tag_list: [], created_at: '',
       },
     });
   expect(res.status(), await res.text()).toBe(V2 ? 201 : 200);
@@ -191,7 +191,6 @@ test.describe.serial('注文フロー(通常顧客)', () => {
   });
 
   test('登録した注文が預り一覧に出る', async ({ page }) => {
-    test.fixme(V2, 'Task 8: /order/show は未移植 (501)');
     await login(page);
     await selectManagerAndCustomer(page, 'E2E顧客');
     await page.goto('/order/show');
@@ -205,13 +204,90 @@ test.describe.serial('注文フロー(通常顧客)', () => {
     ctx.clothesId = ctx.clothesId || await clothesId(page, headers);
     await readIds(page, ctx);
     ctx.unpaidOrderId = await storeOrder(page, headers, ctx, { qty: 1, payment: 0, notPaid: true });
-    test.fixme(V2, 'Task 8: /payment は未移植 (501)');
     await page.goto('/payment');
     await expect(page.locator('body')).toContainText('500');
   });
 
+  test('入金画面で未収の注文を選び お支払 → お会計 すると入金され、一覧から消える', async ({ page }) => {
+    const errors = collectErrors(page);
+    await login(page);
+    await selectManagerAndCustomer(page, 'E2E顧客');
+    expect(ctx.unpaidOrderId, '未収の注文がない(前のテストが失敗)').toBeGreaterThan(0);
+    await page.goto('/payment');
+    const row = page.locator('.payment-orders-order', { hasText: String(ctx.unpaidOrderId) });
+    await row.click();
+    await expect(page.locator('.payment-detail-clothes').first()).toContainText('E2E衣類');
+    await page.locator('.payment-operation-btn', { hasText: 'お支払' }).click();
+    await page.locator('.modal-ac-keypad-upper-key', { hasText: /^5$/ }).click();
+    await page.locator('.modal-ac-keypad-lower-key', { hasText: /^00$/ }).click();
+    const paid = page.waitForResponse((r) => /\/api\/payment$/.test(r.url()) && r.request().method() === 'POST');
+    await page.locator('.modal-ac-send').click();
+    expect((await paid).status()).toBe(200);
+    await page.waitForLoadState('load');
+    await expect(page.locator('.payment-orders-order', { hasText: String(ctx.unpaidOrderId) })).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+
+  test('お渡し画面で 全選択 → お渡し すると渡し済みになり、未渡し一覧から消える', async ({ page }) => {
+    const errors = collectErrors(page);
+    await login(page);
+    await selectManagerAndCustomer(page, 'E2E顧客');
+    const headers = await apiHeaders(page);
+    ctx.clothesId = ctx.clothesId || await clothesId(page, headers);
+    await readIds(page, ctx);
+    ctx.returnOrderId = await storeOrder(page, headers, ctx, { qty: 2, checkReturn: true });
+    await page.goto('/return');
+    await page.locator('.unhanded-orders-order', { hasText: String(ctx.returnOrderId) }).click();
+    await expect(page.locator('.unhanded-detail-clothes')).toHaveCount(2);
+    await page.locator('.unhanded-operation-btn', { hasText: '全選択' }).click();
+    await expect(page.locator('.unhanded-detail-clothes.unhanded-selected')).toHaveCount(2);
+    const handed = page.waitForResponse((r) => /\/api\/return\/update$/.test(r.url()));
+    await page.locator('.unhanded-operation-btn', { hasText: 'お渡し' }).last().click();
+    expect((await handed).status()).toBe(200);
+    await page.waitForLoadState('load');
+    await expect(page.locator('.unhanded-orders-order', { hasText: String(ctx.returnOrderId) })).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+
+  test('預り一覧で伝票を選び 取り消し すると削除される', async ({ page }) => {
+    const errors = collectErrors(page);
+    page.on('dialog', (d) => d.accept()); // 「こちらの伝票を削除します。よろしいですか？」
+    await login(page);
+    await selectManagerAndCustomer(page, 'E2E顧客');
+    expect(ctx.returnOrderId, '削除対象の注文IDがない(前のテストが失敗)').toBeGreaterThan(0);
+    await page.goto('/order/show');
+    await page.locator('.odlist-orders-order', { hasText: String(ctx.returnOrderId) }).first().click();
+    await expect(page.locator('.odlist-detail-clothes')).toHaveCount(2);
+    const deleted = page.waitForResponse((r) => /\/api\/order\/delete$/.test(r.url()));
+    await page.locator('.odlist-operation-btn', { hasText: '取り消し' }).click();
+    expect((await deleted).status()).toBe(200);
+    await page.waitForLoadState('load');
+    await expect(page.locator('.odlist-orders-order', { hasText: String(ctx.returnOrderId) })).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+
+  test('ホームの 直前預り取り消し で最後の注文が削除される', async ({ page }) => {
+    const errors = collectErrors(page);
+    await login(page);
+    await selectManagerAndCustomer(page, 'E2E顧客');
+    const headers = await apiHeaders(page);
+    ctx.clothesId = ctx.clothesId || await clothesId(page, headers);
+    await readIds(page, ctx);
+    const latest = await storeOrder(page, headers, ctx, { qty: 1 });
+    await page.goto('/');
+    await page.locator('[data-bs-target="#order-cancel-modal"]').click();
+    const modal = page.locator('#order-cancel-modal');
+    await expect(modal).toBeVisible();
+    await expect(modal).toContainText(`伝票番号: ${latest}`);
+    await modal.locator('button[type="submit"]', { hasText: '削除' }).click();
+    await page.waitForLoadState('load');
+    await expect(page.locator('body')).toContainText('E2E顧客'); // 担当者・顧客を引き継いだホームに戻る
+    const gone = await page.request.get(`/api/receipt/${latest}`, { headers });
+    expect(gone.status(), '削除した注文が残っている').toBe(404);
+    expect(errors).toEqual([]);
+  });
+
   test('作った注文をすべて削除できる(後始末)', async ({ page }) => {
-    test.fixme(V2, 'Task 8: 注文の削除は未移植 (globalSetup の e2e:seed が毎回消す)');
     await login(page);
     await selectManagerAndCustomer(page, 'E2E顧客');
     const headers = await apiHeaders(page);
@@ -272,7 +348,6 @@ test.describe.serial('請求フロー(請求顧客)', () => {
   });
 
   test('作った請求注文を削除できる(後始末。請求も消える)', async ({ page }) => {
-    test.fixme(V2, 'Task 8: 注文の削除は未移植 (globalSetup の e2e:seed が毎回消す)');
     await login(page);
     await selectManagerAndCustomer(page, 'E2E請求顧客');
     const headers = await apiHeaders(page);

@@ -130,10 +130,10 @@
                         @include('modals.edit_customer')
                     @endif
                     @if (!empty($latest_order))
-                        @includeIf('modals.cancel_order') {{-- Task 8 --}}
+                        @include('modals.cancel_order')
                     @endif
                     @if (!is_null($tag))
-                        @includeIf('modals.edit_tag') {{-- Task 8 --}}
+                        @include('modals.edit_tag')
                     @endif
                     {{-- modals --}}
                 </div>

@@ -25,4 +25,10 @@ class CustomerInformation extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    /** 顧客情報欄に出す CS 情報 (旧はセッション customer_info。古い順) */
+    public static function forScreen(Customer $customer): array
+    {
+        return static::where('customer_id', $customer->id)->orderBy('created_at', 'asc')->get()->toArray();
+    }
 }

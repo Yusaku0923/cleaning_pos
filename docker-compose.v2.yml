@@ -12,14 +12,22 @@ services:
     working_dir: /app
     volumes:
       - ./v2:/app
+      # Windows のバインドマウント (9p) は stat が遅く 1 リクエスト 2.5〜3 秒かかっていた。
+      # vendor / node_modules は名前付きボリュームに置く (初回は composer install / npm ci をコンテナで実行)。
+      - v2-vendor:/app/vendor
+      - v2-node-modules:/app/node_modules
+      - ./deploy/v2/php-dev.ini:/usr/local/etc/php/conf.d/zz-dev.ini:ro
     environment:
+      PHP_CLI_SERVER_WORKERS: "4"
       DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: "3306"
       DB_DATABASE: v2
       DB_USERNAME: v2
       DB_PASSWORD: v2-local
-    command: php artisan serve --host=0.0.0.0 --port=8000
+    # vendor ボリュームが空 (初回・down -v のあと) なら先に composer install する。
+    # --no-reload: PHP_CLI_SERVER_WORKERS (並列 4) を効かせるため。.env を変えたら restart する
+    command: sh -c '[ -f vendor/autoload.php ] || composer install --no-interaction; [ -d node_modules/.bin ] || npm ci; exec php artisan serve --host=0.0.0.0 --port=8000 --no-reload'
     depends_on:
       db:
         condition: service_healthy
@@ -44,3 +52,5 @@ services:
       retries: 60
 volumes:
   v2-db:
+  v2-vendor:
+  v2-node-modules:

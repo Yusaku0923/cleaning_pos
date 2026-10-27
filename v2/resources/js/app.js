@@ -1,12 +1,17 @@
 import './bootstrap';
 import * as bootstrap from 'bootstrap';
 import { createApp } from 'vue';
+import AllHistoryComponent from './components/AllHistoryComponent.vue';
 import CustomerInfoComponent from './components/CustomerInfoComponent.vue';
 import CustomerCreateComponent from './components/CustomerCreateComponent.vue';
 import CustomerDisplayComponent from './components/CustomerDisplayComponent.vue';
 import CustomerSearchComponent from './components/CustomerSearchComponent.vue';
+import HistoryCardComponent from './components/HistoryCardComponent.vue';
+import HistoryComponent from './components/HistoryComponent.vue';
 import ManagerSelectButtonComponent from './components/ManagerSelectButtonComponent.vue';
 import OrderComponent from './components/OrderComponent.vue';
+import PaymentComponent from './components/PaymentComponent.vue';
+import ReturnComponent from './components/ReturnComponent.vue';
 import { pushFlashedCustomerDisplay } from './customerDisplay.js';
 
 // 旧 (Laravel Mix) と同じく Bootstrap 5.2.2 の JS を同梱 (data-bs-* のモーダル等)
@@ -28,6 +33,11 @@ export const components = {
     'customer-search-component': CustomerSearchComponent,
     'manager-select-btn-component': ManagerSelectButtonComponent,
     'order-component': OrderComponent,
+    'return-component': ReturnComponent,
+    'payment-component': PaymentComponent,
+    'history-component': HistoryComponent,
+    'all-history-component': AllHistoryComponent,
+    'history-card-component': HistoryCardComponent,
 };
 
 export function registerComponents(app) {

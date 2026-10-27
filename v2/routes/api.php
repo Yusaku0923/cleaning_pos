@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\CustomerDisplayController;
 use App\Http\Controllers\Api\CustomerInformationController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ReturnController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('clothes/search', [ClothesController::class, 'search'])->name('api.clothes.search');
     Route::post('orders', [OrderController::class, 'store'])->name('api.orders.store');
+    // 預り一覧・全体検索・取り消し・タグ変更・入金・お渡し (旧と同じ URL・キー名)
+    Route::post('order/search', [OrderController::class, 'search'])->name('api.order.search');
+    Route::post('order/delete', [OrderController::class, 'delete'])->name('api.order.delete');
+    Route::post('order/update_tag', [OrderController::class, 'updateTag'])->name('api.order.update_tag');
+    Route::post('payment', [OrderController::class, 'payment'])->name('api.order.payment');
+    Route::post('return/update', [ReturnController::class, 'update'])->name('api.return.update');
     // レシート印刷用データ (旧と同じ URL・キー名)
     Route::get('receipt/{order}', [OrderController::class, 'receipt'])->name('api.receipt');
 

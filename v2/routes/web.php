@@ -7,6 +7,10 @@ use App\Http\Controllers\DisplayLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderHistoryController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReturnController;
+use App\Http\Controllers\TagCounterController;
 use App\Http\Middleware\ResolvePosContext;
 use Illuminate\Support\Facades\Route;
 
@@ -51,17 +55,24 @@ Route::middleware(['auth', ResolvePosContext::class])->group(function () {
         Route::delete('delete/{id}', [CustomerController::class, 'destroy'])->whereNumber('id')->name('customer.delete');
     });
 
+    Route::prefix('tag')->group(function () {
+        Route::post('update', [TagCounterController::class, 'update'])->name('tag.update');
+    });
+
+    Route::get('payment', [PaymentController::class, 'index'])->name('payment.index');
+    Route::get('return', [ReturnController::class, 'index'])->name('return.index');
+
     Route::prefix('order')->group(function () {
         Route::get('create', [OrderController::class, 'create'])->name('order.create');
+        Route::get('all_show', [OrderHistoryController::class, 'allShow'])->name('order.all_show');
+        Route::get('show', [OrderHistoryController::class, 'show'])->name('order.show');
+        // 直前預り取り消し (旧と同じ DELETE。GET では消さない)
+        Route::delete('delete/{order_id}', [OrderHistoryController::class, 'destroy'])->name('order.delete');
     });
 
     // まだ移植していない画面。ホーム・メニューのリンク先の名前だけ先に置く (開くと 501)。
     // 各タスクで本物のルートに置き換えたら、ここから消す。
     foreach ([
-        ['order/all_show', 'order.all_show'],                             // Task 8
-        ['order/show', 'order.show'],                                     // Task 8
-        ['return', 'return.index'],                                       // Task 8
-        ['payment', 'payment.index'],                                     // Task 8
         ['invoice', 'invoice.index'],                                     // Task 9
         ['invoice/payment_confimation', 'invoice.payment_confirmation'],  // Task 9 (URL は旧と同じ)
         ['daily_report', 'daily_report.index'],                           // Task 9

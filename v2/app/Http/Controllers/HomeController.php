@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Order\OrderQueries;
 use App\Domain\Tag\TagNumber;
 use App\Models\Customer;
 use App\Models\CustomerInformation;
@@ -28,19 +29,18 @@ class HomeController extends Controller
 
         $managers = Manager::query()->get();
         if ($manager !== null) {
-            $tag = TagCounter::where('manager_id', $manager->id)->value('value');
+            // 採番 (TagAllocator) と同じく論理削除された行も読む (表示 = 次に振られるタグ)
+            $tag = TagCounter::withTrashed()->where('manager_id', $manager->id)->value('value');
             $latest_order = $this->fetchLatestOrder($manager->id);
         }
         if ($customer !== null) {
-            $orders = $this->fetchOrders($customer, 4);
+            $orders = app(OrderQueries::class)->fetchOrders($customer->id, 4);
             $unpaid_amount = Order::where('customer_id', $customer->id)
                 ->whereNull('paid_at')
                 ->sum('amount');
             $latest_visit = Order::where('customer_id', $customer->id)
                 ->max('created_at');
-            $info = CustomerInformation::where('customer_id', $customer->id)
-                ->orderBy('created_at', 'asc')
-                ->get()->toArray();
+            $info = CustomerInformation::forScreen($customer);
         }
 
         return view('home')->with([
@@ -91,26 +91,5 @@ class HomeController extends Controller
             ->get()->toArray();
 
         return $order;
-    }
-
-    /** 旧 Order::fetchOrders($customer_id, $limit) と同じ形 (来店履歴カード用)。 */
-    private function fetchOrders(Customer $customer, int $limit): array
-    {
-        $orders = Order::where('customer_id', $customer->id)
-            ->orderBy('orders.created_at', 'desc')
-            ->limit($limit)
-            ->get()->toArray();
-
-        foreach ($orders as $key => $array) {
-            $orders[$key]['customer_name'] = $customer->name;
-            $orders[$key]['items'] = OrderItem::select('order_items.*', 'clothes.name', 'clothes.name_kana', 'clothes.price', 'clothes.tag_count')
-                ->join('clothes', 'order_items.clothes_id', '=', 'clothes.id')
-                ->where('order_items.order_id', $array['id'])
-                ->orderBy('order_items.id', 'asc')
-                ->get()->toArray();
-            $orders[$key]['count'] = count($orders[$key]['items']);
-        }
-
-        return $orders;
     }
 }

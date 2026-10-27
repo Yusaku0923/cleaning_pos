@@ -8,6 +8,7 @@ use App\Domain\Money\PriceCalculator;
 use App\Domain\Tag\TagAllocator;
 use App\Models\Clothes;
 use App\Models\Customer;
+use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Carbon\CarbonImmutable;
@@ -20,6 +21,7 @@ use InvalidArgumentException;
  * 注文の登録 (旧 Api\OrdersController::store)。
  * 注文・品物 (タグ)・タグ採番・請求書・顧客の集計を 1 トランザクションで行う (途中で失敗したら何も残らない)。
  * 金額は商品マスタの単価から計算する (画面から送られた合計は使わない)。
+ * お渡し・入金・取り消しもここ (旧 Api\ReturnController / Api\OrdersController::payment / delete)。
  */
 class OrderService
 {
@@ -131,6 +133,79 @@ class OrderService
             ]);
 
             return $order->setRelation('items', OrderItem::where('order_id', $order->id)->orderBy('id')->get());
+        });
+    }
+
+    /**
+     * 品物を渡す (旧 Api\ReturnController::update)。品物はこの注文のものだけ (呼ぶ側で確認済み)。
+     * 全部渡し終わったら注文も渡し済みにする (markReturned)。日付の指定があればその日の 00:00、なければ今 (旧と同じ)。
+     */
+    public function handItems(Order $o, array $itemIds, ?CarbonImmutable $handedOn = null): void
+    {
+        DB::transaction(function () use ($o, $itemIds, $handedOn) {
+            $o = Order::whereKey($o->id)->lockForUpdate()->firstOrFail();
+            OrderItem::where('order_id', $o->id)->whereIn('id', $itemIds)->update(['handed_at' => CarbonImmutable::now()]);
+
+            if (! OrderItem::where('order_id', $o->id)->whereNull('handed_at')->exists()) {
+                $this->markReturned($o, $handedOn?->startOfDay() ?? CarbonImmutable::now());
+            }
+        });
+    }
+
+    /**
+     * 注文を渡し済みにする。請求書払いなら、お渡し日の期間の請求書に載せる。
+     * 請求書は注文経路と同じ InvoiceService::findOrCreateFor で探す・作る (同じ顧客・同じ日なら同じ請求書・同じ paid_at)。
+     */
+    public function markReturned(Order $o, CarbonImmutable $at): void
+    {
+        DB::transaction(function () use ($o, $at) {
+            $o->handed_at = $at;
+            if ($o->is_invoice) {
+                $customer = Customer::withTrashed()->findOrFail($o->customer_id);
+                $o->invoice_id = $this->invoices->findOrCreateFor($customer, $at)->id;
+            }
+            $o->save();
+        });
+    }
+
+    /** 入金 (旧 Api\OrdersController::payment): お預り金額と入金日時 (今) を入れる。 */
+    public function pay(Order $o, int $amount): void
+    {
+        $o->forceFill(['payment' => $amount, 'paid_at' => CarbonImmutable::now()])->save();
+    }
+
+    /**
+     * 注文の取り消し (旧 destroy / Api\OrdersController::delete) を 1 トランザクションで。
+     * - 注文と品物を論理削除し、顧客の累計売上・来店回数を戻す (注文の顧客で。旧は画面から送られた顧客で、全体検索・直前預り取り消しでは戻していなかった)。
+     * - 請求書に載っていた注文なら、請求書に他の注文が残っていないときだけ請求書も論理削除する (旧の意図。旧はここで 500 になり請求書が残っていた)。
+     *   ただし発行済み (issued_at あり) と、繰越の元・先になっている請求書は空でも残す (渡した請求書・繰越額の記録を消さない)。
+     */
+    public function delete(Order $o): void
+    {
+        DB::transaction(function () use ($o) {
+            $o = Order::whereKey($o->id)->lockForUpdate()->firstOrFail();
+            $invoiceId = $o->invoice_id;
+
+            OrderItem::where('order_id', $o->id)->delete();
+            $o->delete();
+            Customer::withTrashed()->whereKey($o->customer_id)->decrementEach([
+                'total_sales' => (int) $o->amount,
+                'number_of_visits' => 1,
+            ]);
+
+            if ($invoiceId === null) {
+                return;
+            }
+            $invoice = Invoice::whereKey($invoiceId)->lockForUpdate()->first();
+            if ($invoice === null
+                || Order::where('invoice_id', $invoice->id)->exists()
+                || $invoice->issued_at !== null
+                || $invoice->has_carried_over
+                || $invoice->carry_over_id !== null
+                || Invoice::where('carry_over_id', $invoice->id)->exists()) {
+                return;
+            }
+            $invoice->delete();
         });
     }
 }
