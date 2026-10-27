@@ -10,7 +10,7 @@ v2 (Laravel 12 / Vue 3) を XREA (s239.xrea.com, ユーザー cleaningpossystem)
 |---|---|
 | URL | **http://asahiya-pos.xrea.jp** (2026-10-27〜)。`http://dev.cleaningpossystem.shop` も同じ v2 (`.shop` を手放すと無くなる) |
 | Web ルート | `~/public_html/asahiya-pos.xrea.jp/` と `~/public_html/dev.cleaningpossystem.shop/` (どちらも symlink + `.htaccess`) |
-| アプリ | `~/v2/cleaning_pos` (ブランチ `rebuild/v2` の clone。アプリ本体は `v2/` 以下) |
+| アプリ | `~/v2/cleaning_pos` (ブランチ `main` の clone。アプリ本体は `v2/` 以下) |
 | PHP | CLI `/usr/local/bin/php83cli`、Web は `.htaccess` の `FcgidWrapper ... php83.fcgi` |
 | Node | `~/node-v20.18.1-linux-x64` (Vite のビルド用。PATH には入れていない) |
 | DB | `cleaningpossystem_dev` (切替後はこれが本番。`e2e:seed` はこの名前では動かない) |
@@ -53,7 +53,7 @@ MYSQL_PWD=... mysqldump --single-transaction --no-tablespaces -h 127.0.0.1 -u cl
 # 1. Node 20.18.1 (SHASUMS256 で検証して展開)
 curl -LO https://nodejs.org/dist/v20.18.1/node-v20.18.1-linux-x64.tar.xz && tar -xJf node-v20.18.1-linux-x64.tar.xz -C ~
 # 2. clone とビルド
-git clone -b rebuild/v2 https://github.com/Yusaku0923/cleaning_pos.git ~/v2/cleaning_pos
+git clone -b main https://github.com/Yusaku0923/cleaning_pos.git ~/v2/cleaning_pos
 cd ~/v2/cleaning_pos/v2
 php83cli ~/composer.phar install --no-dev --optimize-autoloader
 PATH=~/node-v20.18.1-linux-x64/bin:$PATH npm ci && PATH=~/node-v20.18.1-linux-x64/bin:$PATH npm run build
